@@ -59,9 +59,9 @@ public class IVLPQ
 
     @XmlElementRefs({
         @XmlElementRef(name = "high", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "width", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "low", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "center", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "low", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false)
+        @XmlElementRef(name = "width", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false)
     })
     protected List<JAXBElement<? extends PQ>> rest;
 
@@ -71,8 +71,8 @@ public class IVLPQ
      * <p>
      * You are getting this "catch-all" property because of the following reason: 
      * The field name "High" is used by two different parts of a schema. See: 
-     * line 180 of file:/C:/Project/pdm/war/src/main/resourses/xsd-hl7/coreschemas/datatypes.xsd
-     * line 171 of file:/C:/Project/pdm/war/src/main/resourses/xsd-hl7/coreschemas/datatypes.xsd
+     * line 180 of file:/C:/Project/PDM/war/src/main/resourses/xsd-hl7/coreschemas/datatypes.xsd
+     * line 171 of file:/C:/Project/PDM/war/src/main/resourses/xsd-hl7/coreschemas/datatypes.xsd
      * <p>
      * To get rid of this property, apply a property customization to one 
      * of both of the following declarations to change their names: 

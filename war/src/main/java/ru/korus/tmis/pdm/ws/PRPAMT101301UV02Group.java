@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;group ref="{urn:hl7-org:v3}InfrastructureRootElements"/>
  *         &lt;element name="id" type="{urn:hl7-org:v3}II" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="code" type="{urn:hl7-org:v3}CD" minOccurs="0"/>
- *         &lt;element name="name" type="{urn:hl7-org:v3}EN_explicit" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="name" type="{urn:hl7-org:v3}EN" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="desc" type="{urn:hl7-org:v3}ED" minOccurs="0"/>
  *         &lt;element name="statusCode" type="{urn:hl7-org:v3}CS" minOccurs="0"/>
  *         &lt;element name="existenceTime" type="{urn:hl7-org:v3}IVL_TS" minOccurs="0"/>
@@ -64,7 +64,7 @@ public class PRPAMT101301UV02Group {
     protected List<II> templateId;
     protected List<II> id;
     protected CD code;
-    protected List<ENExplicit> name;
+    protected List<EN> name;
     protected ED desc;
     protected CS statusCode;
     protected IVLTS existenceTime;
@@ -232,13 +232,13 @@ public class PRPAMT101301UV02Group {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ENExplicit }
+     * {@link EN }
      * 
      * 
      */
-    public List<ENExplicit> getName() {
+    public List<EN> getName() {
         if (name == null) {
-            name = new ArrayList<ENExplicit>();
+            name = new ArrayList<EN>();
         }
         return this.name;
     }

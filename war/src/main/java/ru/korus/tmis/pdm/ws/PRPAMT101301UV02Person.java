@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;group ref="{urn:hl7-org:v3}InfrastructureRootElements"/>
  *         &lt;element name="id" type="{urn:hl7-org:v3}II" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="name" type="{urn:hl7-org:v3}PN" maxOccurs="unbounded"/>
+ *         &lt;element name="name" type="{urn:hl7-org:v3}PN_explicit" maxOccurs="unbounded"/>
  *         &lt;element name="desc" type="{urn:hl7-org:v3}ED" minOccurs="0"/>
  *         &lt;element name="telecom" type="{urn:hl7-org:v3}TEL" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="administrativeGenderCode" type="{urn:hl7-org:v3}CE" minOccurs="0"/>
@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="multipleBirthInd" type="{urn:hl7-org:v3}BL" minOccurs="0"/>
  *         &lt;element name="multipleBirthOrderNumber" type="{urn:hl7-org:v3}INT" minOccurs="0"/>
  *         &lt;element name="organDonorInd" type="{urn:hl7-org:v3}BL" minOccurs="0"/>
- *         &lt;element name="addr" type="{urn:hl7-org:v3}AD" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="addr" type="{urn:hl7-org:v3}AD_explicit" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="maritalStatusCode" type="{urn:hl7-org:v3}CE" minOccurs="0"/>
  *         &lt;element name="asEmployee" type="{urn:hl7-org:v3}PRPA_MT101301UV02.Employee" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="asCitizen" type="{urn:hl7-org:v3}PRPA_MT101301UV02.Citizen" maxOccurs="unbounded" minOccurs="0"/>
@@ -96,7 +96,7 @@ public class PRPAMT101301UV02Person {
     protected List<II> templateId;
     protected List<II> id;
     @XmlElement(required = true)
-    protected List<PN> name;
+    protected List<PNExplicit> name;
     protected ED desc;
     protected List<TEL> telecom;
     protected CE administrativeGenderCode;
@@ -106,7 +106,7 @@ public class PRPAMT101301UV02Person {
     protected BL multipleBirthInd;
     protected INT multipleBirthOrderNumber;
     protected BL organDonorInd;
-    protected List<AD> addr;
+    protected List<ADExplicit> addr;
     protected CE maritalStatusCode;
     @XmlElement(nillable = true)
     protected List<PRPAMT101301UV02Employee> asEmployee;
@@ -266,13 +266,13 @@ public class PRPAMT101301UV02Person {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link PN }
+     * {@link PNExplicit }
      * 
      * 
      */
-    public List<PN> getName() {
+    public List<PNExplicit> getName() {
         if (name == null) {
-            name = new ArrayList<PN>();
+            name = new ArrayList<PNExplicit>();
         }
         return this.name;
     }
@@ -516,13 +516,13 @@ public class PRPAMT101301UV02Person {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link AD }
+     * {@link ADExplicit }
      * 
      * 
      */
-    public List<AD> getAddr() {
+    public List<ADExplicit> getAddr() {
         if (addr == null) {
-            addr = new ArrayList<AD>();
+            addr = new ArrayList<ADExplicit>();
         }
         return this.addr;
     }

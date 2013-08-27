@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "PDManager_Service", targetNamespace = "http://www.korusconsulting.ru/PDManager/", wsdlLocation = "file:/C:/Project/pdm/war/src/main/resourses/wsdl/PDManager.wsdl")
+@WebServiceClient(name = "PDManager_Service", targetNamespace = "http://www.korusconsulting.ru/PDManager/", wsdlLocation = "file:/C:/Project/PDM/war/src/main/resourses/wsdl/PDManager.wsdl")
 public class PDManagerService
     extends Service
 {
@@ -30,7 +30,7 @@ public class PDManagerService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("file:/C:/Project/pdm/war/src/main/resourses/wsdl/PDManager.wsdl");
+            url = new URL("file:/C:/Project/PDM/war/src/main/resourses/wsdl/PDManager.wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

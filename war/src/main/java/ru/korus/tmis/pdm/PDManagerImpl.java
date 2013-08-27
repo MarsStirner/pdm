@@ -1,9 +1,7 @@
 package ru.korus.tmis.pdm;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.jws.*;
-import javax.xml.soap.SOAPException;
 import javax.xml.ws.WebServiceContext;
 
 import org.springframework.context.ApplicationContext;
