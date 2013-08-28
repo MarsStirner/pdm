@@ -57,6 +57,7 @@ public class ObjectFactory {
     private final static QName _ADBuildingNumberSuffix_QNAME = new QName("urn:hl7-org:v3", "buildingNumberSuffix");
     private final static QName _ADHouseNumberNumeric_QNAME = new QName("urn:hl7-org:v3", "houseNumberNumeric");
     private final static QName _ADCounty_QNAME = new QName("urn:hl7-org:v3", "county");
+    private final static QName _COCTMT090100UV01LicensedEntityIssuingOrganization_QNAME = new QName("urn:hl7-org:v3", "issuingOrganization");
     private final static QName _PRPAIN101308UV02MFMIMT700711UV01ControlActProcessQueryByParameter_QNAME = new QName("urn:hl7-org:v3", "queryByParameter");
     private final static QName _PRPAIN101308UV02MFMIMT700711UV01RegistrationEventAuthor_QNAME = new QName("urn:hl7-org:v3", "author");
     private final static QName _MCCIMT000100UV01LocatedEntityLocation_QNAME = new QName("urn:hl7-org:v3", "location");
@@ -65,8 +66,8 @@ public class ObjectFactory {
     private final static QName _IVLPQLow_QNAME = new QName("urn:hl7-org:v3", "low");
     private final static QName _IVLPQCenter_QNAME = new QName("urn:hl7-org:v3", "center");
     private final static QName _IVLPQWidth_QNAME = new QName("urn:hl7-org:v3", "width");
-    private final static QName _PRPAMT101301UV02GuardianGuardianOrganization_QNAME = new QName("urn:hl7-org:v3", "guardianOrganization");
-    private final static QName _PRPAMT101301UV02GuardianGuardianPerson_QNAME = new QName("urn:hl7-org:v3", "guardianPerson");
+    private final static QName _PRPAMT101303UV02GuardianGuardianOrganization_QNAME = new QName("urn:hl7-org:v3", "guardianOrganization");
+    private final static QName _PRPAMT101303UV02GuardianGuardianPerson_QNAME = new QName("urn:hl7-org:v3", "guardianPerson");
     private final static QName _PRPAMT101303UV02PersonBirthPlace_QNAME = new QName("urn:hl7-org:v3", "birthPlace");
     private final static QName _COCTMT090003UV01AssignedEntityAssignedOrganization_QNAME = new QName("urn:hl7-org:v3", "assignedOrganization");
     private final static QName _COCTMT090003UV01AssignedEntityRepresentedOrganization_QNAME = new QName("urn:hl7-org:v3", "representedOrganization");
@@ -80,22 +81,21 @@ public class ObjectFactory {
     private final static QName _ENPrefix_QNAME = new QName("urn:hl7-org:v3", "prefix");
     private final static QName _ENFamily_QNAME = new QName("urn:hl7-org:v3", "family");
     private final static QName _ENGiven_QNAME = new QName("urn:hl7-org:v3", "given");
-    private final static QName _COCTMT030200UV09ContactPartyContactPerson_QNAME = new QName("urn:hl7-org:v3", "contactPerson");
+    private final static QName _COCTMT150003UV03ContactPartyContactPerson_QNAME = new QName("urn:hl7-org:v3", "contactPerson");
     private final static QName _COCTMT030200UV09ContactPartyContactOrganization_QNAME = new QName("urn:hl7-org:v3", "contactOrganization");
-    private final static QName _MFMIMT700711UV01PriorRegistrationSubject1_QNAME = new QName("urn:hl7-org:v3", "subject1");
-    private final static QName _MFMIMT700711UV01PriorRegistrationSubject2_QNAME = new QName("urn:hl7-org:v3", "subject2");
+    private final static QName _MFMIMT700701UV01PriorRegistrationSubject1_QNAME = new QName("urn:hl7-org:v3", "subject1");
+    private final static QName _MFMIMT700701UV01PriorRegistrationSubject2_QNAME = new QName("urn:hl7-org:v3", "subject2");
     private final static QName _COCTMT710000UV07PlaceLocatedEntity_QNAME = new QName("urn:hl7-org:v3", "locatedEntity");
-    private final static QName _COCTMT090300UV01LicensedEntityIssuingOrganization_QNAME = new QName("urn:hl7-org:v3", "issuingOrganization");
     private final static QName _COCTMT040200UV09ResponsiblePartyAgentOrganization_QNAME = new QName("urn:hl7-org:v3", "agentOrganization");
     private final static QName _COCTMT040200UV09ResponsiblePartyRepresentedPerson_QNAME = new QName("urn:hl7-org:v3", "representedPerson");
     private final static QName _COCTMT040200UV09ResponsiblePartyAgentPerson_QNAME = new QName("urn:hl7-org:v3", "agentPerson");
-    private final static QName _COCTMT090300UV01RoleOtherScopingOrganization_QNAME = new QName("urn:hl7-org:v3", "scopingOrganization");
-    private final static QName _PRPAMT101306UV02QueryByParameterMatchCriterionList_QNAME = new QName("urn:hl7-org:v3", "matchCriterionList");
-    private final static QName _COCTMT960000UV05PositionComponent2_QNAME = new QName("urn:hl7-org:v3", "component2");
-    private final static QName _COCTMT670000UV04GuarantorRoleGuarantorPerson_QNAME = new QName("urn:hl7-org:v3", "guarantorPerson");
-    private final static QName _COCTMT670000UV04GuarantorRoleGuarantorOrganization_QNAME = new QName("urn:hl7-org:v3", "guarantorOrganization");
     private final static QName _PRPAMT101301UV02BirthPlaceSubjectOf_QNAME = new QName("urn:hl7-org:v3", "subjectOf");
     private final static QName _PRPAMT101301UV02BirthPlaceBirthplace_QNAME = new QName("urn:hl7-org:v3", "birthplace");
+    private final static QName _COCTMT090300UV01RoleOtherScopingOrganization_QNAME = new QName("urn:hl7-org:v3", "scopingOrganization");
+    private final static QName _PRPAMT101306UV02QueryByParameterMatchCriterionList_QNAME = new QName("urn:hl7-org:v3", "matchCriterionList");
+    private final static QName _COCTMT670000UV04GuarantorRoleGuarantorPerson_QNAME = new QName("urn:hl7-org:v3", "guarantorPerson");
+    private final static QName _COCTMT670000UV04GuarantorRoleGuarantorOrganization_QNAME = new QName("urn:hl7-org:v3", "guarantorOrganization");
+    private final static QName _COCTMT960000UV05PositionComponent2_QNAME = new QName("urn:hl7-org:v3", "component2");
     private final static QName _COCTMT150000UV02OrganizationPartOfWholeOrganization_QNAME = new QName("urn:hl7-org:v3", "wholeOrganization");
 
     /**
@@ -3971,6 +3971,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150003UV03Organization }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "issuingOrganization", scope = COCTMT090100UV01LicensedEntity.class)
+    public JAXBElement<COCTMT150003UV03Organization> createCOCTMT090100UV01LicensedEntityIssuingOrganization(COCTMT150003UV03Organization value) {
+        return new JAXBElement<COCTMT150003UV03Organization>(_COCTMT090100UV01LicensedEntityIssuingOrganization_QNAME, COCTMT150003UV03Organization.class, COCTMT090100UV01LicensedEntity.class, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PRPAMT101307UV02QueryByParameter }{@code >}}
      * 
      */
@@ -4043,33 +4052,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "guardianOrganization", scope = PRPAMT101301UV02Guardian.class)
-    public JAXBElement<COCTMT150007UVOrganization> createPRPAMT101301UV02GuardianGuardianOrganization(COCTMT150007UVOrganization value) {
-        return new JAXBElement<COCTMT150007UVOrganization>(_PRPAMT101301UV02GuardianGuardianOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101301UV02Guardian.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT030207UV07Person }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "guardianPerson", scope = PRPAMT101301UV02Guardian.class)
-    public JAXBElement<COCTMT030207UV07Person> createPRPAMT101301UV02GuardianGuardianPerson(COCTMT030207UV07Person value) {
-        return new JAXBElement<COCTMT030207UV07Person>(_PRPAMT101301UV02GuardianGuardianPerson_QNAME, COCTMT030207UV07Person.class, PRPAMT101301UV02Guardian.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link MCCIMT000100UV01Agent }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "asAgent", scope = MCCIMT000100UV01Device.class)
-    public JAXBElement<MCCIMT000100UV01Agent> createMCCIMT000100UV01DeviceAsAgent(MCCIMT000100UV01Agent value) {
-        return new JAXBElement<MCCIMT000100UV01Agent>(_MCCIMT000300UV01DeviceAsAgent_QNAME, MCCIMT000100UV01Agent.class, MCCIMT000100UV01Device.class, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MFMIMT700701UV01Author2 }{@code >}}
      * 
      */
@@ -4084,7 +4066,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "guardianOrganization", scope = PRPAMT101303UV02Guardian.class)
     public JAXBElement<COCTMT150007UVOrganization> createPRPAMT101303UV02GuardianGuardianOrganization(COCTMT150007UVOrganization value) {
-        return new JAXBElement<COCTMT150007UVOrganization>(_PRPAMT101301UV02GuardianGuardianOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101303UV02Guardian.class, value);
+        return new JAXBElement<COCTMT150007UVOrganization>(_PRPAMT101303UV02GuardianGuardianOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101303UV02Guardian.class, value);
     }
 
     /**
@@ -4093,7 +4075,16 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "guardianPerson", scope = PRPAMT101303UV02Guardian.class)
     public JAXBElement<COCTMT030207UV07Person> createPRPAMT101303UV02GuardianGuardianPerson(COCTMT030207UV07Person value) {
-        return new JAXBElement<COCTMT030207UV07Person>(_PRPAMT101301UV02GuardianGuardianPerson_QNAME, COCTMT030207UV07Person.class, PRPAMT101303UV02Guardian.class, value);
+        return new JAXBElement<COCTMT030207UV07Person>(_PRPAMT101303UV02GuardianGuardianPerson_QNAME, COCTMT030207UV07Person.class, PRPAMT101303UV02Guardian.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link MCCIMT000100UV01Agent }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "asAgent", scope = MCCIMT000100UV01Device.class)
+    public JAXBElement<MCCIMT000100UV01Agent> createMCCIMT000100UV01DeviceAsAgent(MCCIMT000100UV01Agent value) {
+        return new JAXBElement<MCCIMT000100UV01Agent>(_MCCIMT000300UV01DeviceAsAgent_QNAME, MCCIMT000100UV01Agent.class, MCCIMT000100UV01Device.class, value);
     }
 
     /**
@@ -4165,7 +4156,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "guardianOrganization", scope = PRPAMT101310UV02Guardian.class)
     public JAXBElement<COCTMT150007UVOrganization> createPRPAMT101310UV02GuardianGuardianOrganization(COCTMT150007UVOrganization value) {
-        return new JAXBElement<COCTMT150007UVOrganization>(_PRPAMT101301UV02GuardianGuardianOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101310UV02Guardian.class, value);
+        return new JAXBElement<COCTMT150007UVOrganization>(_PRPAMT101303UV02GuardianGuardianOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101310UV02Guardian.class, value);
     }
 
     /**
@@ -4174,7 +4165,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "guardianPerson", scope = PRPAMT101310UV02Guardian.class)
     public JAXBElement<COCTMT030207UV07Person> createPRPAMT101310UV02GuardianGuardianPerson(COCTMT030207UV07Person value) {
-        return new JAXBElement<COCTMT030207UV07Person>(_PRPAMT101301UV02GuardianGuardianPerson_QNAME, COCTMT030207UV07Person.class, PRPAMT101310UV02Guardian.class, value);
+        return new JAXBElement<COCTMT030207UV07Person>(_PRPAMT101303UV02GuardianGuardianPerson_QNAME, COCTMT030207UV07Person.class, PRPAMT101310UV02Guardian.class, value);
     }
 
     /**
@@ -4220,15 +4211,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "assigningOrganization", scope = PRPAMT101310UV02IdentifiedPerson.class)
     public JAXBElement<COCTMT150000UV02Organization> createPRPAMT101310UV02IdentifiedPersonAssigningOrganization(COCTMT150000UV02Organization value) {
         return new JAXBElement<COCTMT150000UV02Organization>(_PRPAMT101310UV02IdentifiedPersonAssigningOrganization_QNAME, COCTMT150000UV02Organization.class, PRPAMT101310UV02IdentifiedPerson.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link MCCIMT000300UV01Organization }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "representedOrganization", scope = MCCIMT000300UV01Agent.class)
-    public JAXBElement<MCCIMT000300UV01Organization> createMCCIMT000300UV01AgentRepresentedOrganization(MCCIMT000300UV01Organization value) {
-        return new JAXBElement<MCCIMT000300UV01Organization>(_COCTMT090003UV01AssignedEntityRepresentedOrganization_QNAME, MCCIMT000300UV01Organization.class, MCCIMT000300UV01Agent.class, value);
     }
 
     /**
@@ -4340,12 +4322,21 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150003UV03Person }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = COCTMT150003UV03ContactParty.class)
+    public JAXBElement<COCTMT150003UV03Person> createCOCTMT150003UV03ContactPartyContactPerson(COCTMT150003UV03Person value) {
+        return new JAXBElement<COCTMT150003UV03Person>(_COCTMT150003UV03ContactPartyContactPerson_QNAME, COCTMT150003UV03Person.class, COCTMT150003UV03ContactParty.class, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT030207UV07Person }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = COCTMT030200UV09ContactParty.class)
     public JAXBElement<COCTMT030207UV07Person> createCOCTMT030200UV09ContactPartyContactPerson(COCTMT030207UV07Person value) {
-        return new JAXBElement<COCTMT030207UV07Person>(_COCTMT030200UV09ContactPartyContactPerson_QNAME, COCTMT030207UV07Person.class, COCTMT030200UV09ContactParty.class, value);
+        return new JAXBElement<COCTMT030207UV07Person>(_COCTMT150003UV03ContactPartyContactPerson_QNAME, COCTMT030207UV07Person.class, COCTMT030200UV09ContactParty.class, value);
     }
 
     /**
@@ -4358,12 +4349,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT070000UV01LocatedEntity }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link MFMIMT700701UV01Subject3 }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "asLocatedEntity", scope = COCTMT090300UV01Device.class)
-    public JAXBElement<COCTMT070000UV01LocatedEntity> createCOCTMT090300UV01DeviceAsLocatedEntity(COCTMT070000UV01LocatedEntity value) {
-        return new JAXBElement<COCTMT070000UV01LocatedEntity>(_COCTMT090100UV01PersonAsLocatedEntity_QNAME, COCTMT070000UV01LocatedEntity.class, COCTMT090300UV01Device.class, value);
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "subject1", scope = MFMIMT700701UV01PriorRegistration.class)
+    public JAXBElement<MFMIMT700701UV01Subject3> createMFMIMT700701UV01PriorRegistrationSubject1(MFMIMT700701UV01Subject3 value) {
+        return new JAXBElement<MFMIMT700701UV01Subject3>(_MFMIMT700701UV01PriorRegistrationSubject1_QNAME, MFMIMT700701UV01Subject3 .class, MFMIMT700701UV01PriorRegistration.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link MFMIMT700701UV01Subject4 }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "subject2", scope = MFMIMT700701UV01PriorRegistration.class)
+    public JAXBElement<MFMIMT700701UV01Subject4> createMFMIMT700701UV01PriorRegistrationSubject2(MFMIMT700701UV01Subject4 value) {
+        return new JAXBElement<MFMIMT700701UV01Subject4>(_MFMIMT700701UV01PriorRegistrationSubject2_QNAME, MFMIMT700701UV01Subject4 .class, MFMIMT700701UV01PriorRegistration.class, value);
     }
 
     /**
@@ -4466,6 +4466,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150003UV03Organization }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "issuingOrganization", scope = COCTMT090300UV01LicensedEntity.class)
+    public JAXBElement<COCTMT150003UV03Organization> createCOCTMT090300UV01LicensedEntityIssuingOrganization(COCTMT150003UV03Organization value) {
+        return new JAXBElement<COCTMT150003UV03Organization>(_COCTMT090100UV01LicensedEntityIssuingOrganization_QNAME, COCTMT150003UV03Organization.class, COCTMT090300UV01LicensedEntity.class, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT090300UV01AssignedDevice }{@code >}}
      * 
      */
@@ -4484,12 +4493,21 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVPerson }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = COCTMT150007UVContactParty.class)
+    public JAXBElement<COCTMT150007UVPerson> createCOCTMT150007UVContactPartyContactPerson(COCTMT150007UVPerson value) {
+        return new JAXBElement<COCTMT150007UVPerson>(_COCTMT150003UV03ContactPartyContactPerson_QNAME, COCTMT150007UVPerson.class, COCTMT150007UVContactParty.class, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MFMIMT700711UV01Subject3 }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "subject1", scope = MFMIMT700711UV01PriorRegistration.class)
     public JAXBElement<MFMIMT700711UV01Subject3> createMFMIMT700711UV01PriorRegistrationSubject1(MFMIMT700711UV01Subject3 value) {
-        return new JAXBElement<MFMIMT700711UV01Subject3>(_MFMIMT700711UV01PriorRegistrationSubject1_QNAME, MFMIMT700711UV01Subject3 .class, MFMIMT700711UV01PriorRegistration.class, value);
+        return new JAXBElement<MFMIMT700711UV01Subject3>(_MFMIMT700701UV01PriorRegistrationSubject1_QNAME, MFMIMT700711UV01Subject3 .class, MFMIMT700711UV01PriorRegistration.class, value);
     }
 
     /**
@@ -4498,7 +4516,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "subject2", scope = MFMIMT700711UV01PriorRegistration.class)
     public JAXBElement<MFMIMT700711UV01Subject4> createMFMIMT700711UV01PriorRegistrationSubject2(MFMIMT700711UV01Subject4 value) {
-        return new JAXBElement<MFMIMT700711UV01Subject4>(_MFMIMT700711UV01PriorRegistrationSubject2_QNAME, MFMIMT700711UV01Subject4 .class, MFMIMT700711UV01PriorRegistration.class, value);
+        return new JAXBElement<MFMIMT700711UV01Subject4>(_MFMIMT700701UV01PriorRegistrationSubject2_QNAME, MFMIMT700711UV01Subject4 .class, MFMIMT700711UV01PriorRegistration.class, value);
     }
 
     /**
@@ -4511,21 +4529,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT710000UV07LocatedEntity }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "locatedEntity", scope = COCTMT710000UV07Place.class)
-    public JAXBElement<COCTMT710000UV07LocatedEntity> createCOCTMT710000UV07PlaceLocatedEntity(COCTMT710000UV07LocatedEntity value) {
-        return new JAXBElement<COCTMT710000UV07LocatedEntity>(_COCTMT710000UV07PlaceLocatedEntity_QNAME, COCTMT710000UV07LocatedEntity.class, COCTMT710000UV07Place.class, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT040203UV09NotificationParty }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "notificationParty", scope = MCCIMT000300UV01Organization.class)
     public JAXBElement<COCTMT040203UV09NotificationParty> createMCCIMT000300UV01OrganizationNotificationParty(COCTMT040203UV09NotificationParty value) {
         return new JAXBElement<COCTMT040203UV09NotificationParty>(_MCCIMT000100UV01OrganizationNotificationParty_QNAME, COCTMT040203UV09NotificationParty.class, MCCIMT000300UV01Organization.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT710000UV07LocatedEntity }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "locatedEntity", scope = COCTMT710000UV07Place.class)
+    public JAXBElement<COCTMT710000UV07LocatedEntity> createCOCTMT710000UV07PlaceLocatedEntity(COCTMT710000UV07LocatedEntity value) {
+        return new JAXBElement<COCTMT710000UV07LocatedEntity>(_COCTMT710000UV07PlaceLocatedEntity_QNAME, COCTMT710000UV07LocatedEntity.class, COCTMT710000UV07Place.class, value);
     }
 
     /**
@@ -4565,30 +4583,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT030207UV07Person }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT090300UV01AssignedDevice }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = PRPAMT101310UV02ContactParty.class)
-    public JAXBElement<COCTMT030207UV07Person> createPRPAMT101310UV02ContactPartyContactPerson(COCTMT030207UV07Person value) {
-        return new JAXBElement<COCTMT030207UV07Person>(_COCTMT030200UV09ContactPartyContactPerson_QNAME, COCTMT030207UV07Person.class, PRPAMT101310UV02ContactParty.class, value);
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "assignedDevice", scope = MFMIMT700711UV01AuthorOrPerformer.class)
+    public JAXBElement<COCTMT090300UV01AssignedDevice> createMFMIMT700711UV01AuthorOrPerformerAssignedDevice(COCTMT090300UV01AssignedDevice value) {
+        return new JAXBElement<COCTMT090300UV01AssignedDevice>(_COCTMT090003UV01AssignedEntityAssignedDevice_QNAME, COCTMT090300UV01AssignedDevice.class, MFMIMT700711UV01AuthorOrPerformer.class, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT090100UV01AssignedPerson }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactOrganization", scope = PRPAMT101310UV02ContactParty.class)
-    public JAXBElement<COCTMT150007UVOrganization> createPRPAMT101310UV02ContactPartyContactOrganization(COCTMT150007UVOrganization value) {
-        return new JAXBElement<COCTMT150007UVOrganization>(_COCTMT030200UV09ContactPartyContactOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101310UV02ContactParty.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150003UV03Organization }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "issuingOrganization", scope = COCTMT090300UV01LicensedEntity.class)
-    public JAXBElement<COCTMT150003UV03Organization> createCOCTMT090300UV01LicensedEntityIssuingOrganization(COCTMT150003UV03Organization value) {
-        return new JAXBElement<COCTMT150003UV03Organization>(_COCTMT090300UV01LicensedEntityIssuingOrganization_QNAME, COCTMT150003UV03Organization.class, COCTMT090300UV01LicensedEntity.class, value);
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "assignedPerson", scope = MFMIMT700711UV01AuthorOrPerformer.class)
+    public JAXBElement<COCTMT090100UV01AssignedPerson> createMFMIMT700711UV01AuthorOrPerformerAssignedPerson(COCTMT090100UV01AssignedPerson value) {
+        return new JAXBElement<COCTMT090100UV01AssignedPerson>(_COCTMT090003UV01AssignedEntityAssignedPerson_QNAME, COCTMT090100UV01AssignedPerson.class, MFMIMT700711UV01AuthorOrPerformer.class, value);
     }
 
     /**
@@ -4646,21 +4655,39 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT030203UV07Person }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT070000UV01LocatedEntity }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = COCTMT040203UV09NotificationParty.class)
-    public JAXBElement<COCTMT030203UV07Person> createCOCTMT040203UV09NotificationPartyContactPerson(COCTMT030203UV07Person value) {
-        return new JAXBElement<COCTMT030203UV07Person>(_COCTMT030200UV09ContactPartyContactPerson_QNAME, COCTMT030203UV07Person.class, COCTMT040203UV09NotificationParty.class, value);
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "asLocatedEntity", scope = COCTMT090300UV01Device.class)
+    public JAXBElement<COCTMT070000UV01LocatedEntity> createCOCTMT090300UV01DeviceAsLocatedEntity(COCTMT070000UV01LocatedEntity value) {
+        return new JAXBElement<COCTMT070000UV01LocatedEntity>(_COCTMT090100UV01PersonAsLocatedEntity_QNAME, COCTMT070000UV01LocatedEntity.class, COCTMT090300UV01Device.class, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150003UV03Organization }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link PRPAMT101301UV02Subject2 }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactOrganization", scope = COCTMT040203UV09NotificationParty.class)
-    public JAXBElement<COCTMT150003UV03Organization> createCOCTMT040203UV09NotificationPartyContactOrganization(COCTMT150003UV03Organization value) {
-        return new JAXBElement<COCTMT150003UV03Organization>(_COCTMT030200UV09ContactPartyContactOrganization_QNAME, COCTMT150003UV03Organization.class, COCTMT040203UV09NotificationParty.class, value);
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "subjectOf", scope = PRPAMT101301UV02BirthPlace.class)
+    public JAXBElement<PRPAMT101301UV02Subject2> createPRPAMT101301UV02BirthPlaceSubjectOf(PRPAMT101301UV02Subject2 value) {
+        return new JAXBElement<PRPAMT101301UV02Subject2>(_PRPAMT101301UV02BirthPlaceSubjectOf_QNAME, PRPAMT101301UV02Subject2 .class, PRPAMT101301UV02BirthPlace.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT710007UV07Place }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "birthplace", scope = PRPAMT101301UV02BirthPlace.class)
+    public JAXBElement<COCTMT710007UV07Place> createPRPAMT101301UV02BirthPlaceBirthplace(COCTMT710007UV07Place value) {
+        return new JAXBElement<COCTMT710007UV07Place>(_PRPAMT101301UV02BirthPlaceBirthplace_QNAME, COCTMT710007UV07Place.class, PRPAMT101301UV02BirthPlace.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link MCCIMT000300UV01Organization }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "representedOrganization", scope = MCCIMT000300UV01Agent.class)
+    public JAXBElement<MCCIMT000300UV01Organization> createMCCIMT000300UV01AgentRepresentedOrganization(MCCIMT000300UV01Organization value) {
+        return new JAXBElement<MCCIMT000300UV01Organization>(_COCTMT090003UV01AssignedEntityRepresentedOrganization_QNAME, MCCIMT000300UV01Organization.class, MCCIMT000300UV01Agent.class, value);
     }
 
     /**
@@ -4687,7 +4714,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "subject1", scope = MFMIMT700721UV01PriorRegistration.class)
     public JAXBElement<MFMIMT700721UV01Subject3> createMFMIMT700721UV01PriorRegistrationSubject1(MFMIMT700721UV01Subject3 value) {
-        return new JAXBElement<MFMIMT700721UV01Subject3>(_MFMIMT700711UV01PriorRegistrationSubject1_QNAME, MFMIMT700721UV01Subject3 .class, MFMIMT700721UV01PriorRegistration.class, value);
+        return new JAXBElement<MFMIMT700721UV01Subject3>(_MFMIMT700701UV01PriorRegistrationSubject1_QNAME, MFMIMT700721UV01Subject3 .class, MFMIMT700721UV01PriorRegistration.class, value);
     }
 
     /**
@@ -4696,7 +4723,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "subject2", scope = MFMIMT700721UV01PriorRegistration.class)
     public JAXBElement<MFMIMT700721UV01Subject4> createMFMIMT700721UV01PriorRegistrationSubject2(MFMIMT700721UV01Subject4 value) {
-        return new JAXBElement<MFMIMT700721UV01Subject4>(_MFMIMT700711UV01PriorRegistrationSubject2_QNAME, MFMIMT700721UV01Subject4 .class, MFMIMT700721UV01PriorRegistration.class, value);
+        return new JAXBElement<MFMIMT700721UV01Subject4>(_MFMIMT700701UV01PriorRegistrationSubject2_QNAME, MFMIMT700721UV01Subject4 .class, MFMIMT700721UV01PriorRegistration.class, value);
     }
 
     /**
@@ -4754,24 +4781,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150000UV02Person }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = COCTMT150000UV02ContactParty.class)
-    public JAXBElement<COCTMT150000UV02Person> createCOCTMT150000UV02ContactPartyContactPerson(COCTMT150000UV02Person value) {
-        return new JAXBElement<COCTMT150000UV02Person>(_COCTMT030200UV09ContactPartyContactPerson_QNAME, COCTMT150000UV02Person.class, COCTMT150000UV02ContactParty.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT710000UV07Place }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "location", scope = COCTMT070000UV01LocatedEntity.class)
-    public JAXBElement<COCTMT710000UV07Place> createCOCTMT070000UV01LocatedEntityLocation(COCTMT710000UV07Place value) {
-        return new JAXBElement<COCTMT710000UV07Place>(_MCCIMT000100UV01LocatedEntityLocation_QNAME, COCTMT710000UV07Place.class, COCTMT070000UV01LocatedEntity.class, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PRPAMT101306UV02QueryByParameter }{@code >}}
      * 
      */
@@ -4790,21 +4799,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT960000UV05Author }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "author", scope = COCTMT960000UV05Position.class)
-    public JAXBElement<COCTMT960000UV05Author> createCOCTMT960000UV05PositionAuthor(COCTMT960000UV05Author value) {
-        return new JAXBElement<COCTMT960000UV05Author>(_PRPAIN101308UV02MFMIMT700711UV01RegistrationEventAuthor_QNAME, COCTMT960000UV05Author.class, COCTMT960000UV05Position.class, value);
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "guardianOrganization", scope = PRPAMT101301UV02Guardian.class)
+    public JAXBElement<COCTMT150007UVOrganization> createPRPAMT101301UV02GuardianGuardianOrganization(COCTMT150007UVOrganization value) {
+        return new JAXBElement<COCTMT150007UVOrganization>(_PRPAMT101303UV02GuardianGuardianOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101301UV02Guardian.class, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT960000UV05Component2 }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT030207UV07Person }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "component2", scope = COCTMT960000UV05Position.class)
-    public JAXBElement<COCTMT960000UV05Component2> createCOCTMT960000UV05PositionComponent2(COCTMT960000UV05Component2 value) {
-        return new JAXBElement<COCTMT960000UV05Component2>(_COCTMT960000UV05PositionComponent2_QNAME, COCTMT960000UV05Component2 .class, COCTMT960000UV05Position.class, value);
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "guardianPerson", scope = PRPAMT101301UV02Guardian.class)
+    public JAXBElement<COCTMT030207UV07Person> createPRPAMT101301UV02GuardianGuardianPerson(COCTMT030207UV07Person value) {
+        return new JAXBElement<COCTMT030207UV07Person>(_PRPAMT101303UV02GuardianGuardianPerson_QNAME, COCTMT030207UV07Person.class, PRPAMT101301UV02Guardian.class, value);
     }
 
     /**
@@ -4832,42 +4841,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "queryByParameter", scope = PRPAIN101307UV02QUQIMT021001UV01ControlActProcess.class)
     public JAXBElement<PRPAMT101307UV02QueryByParameter> createPRPAIN101307UV02QUQIMT021001UV01ControlActProcessQueryByParameter(PRPAMT101307UV02QueryByParameter value) {
         return new JAXBElement<PRPAMT101307UV02QueryByParameter>(_PRPAIN101308UV02MFMIMT700711UV01ControlActProcessQueryByParameter_QNAME, PRPAMT101307UV02QueryByParameter.class, PRPAIN101307UV02QUQIMT021001UV01ControlActProcess.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "guardianOrganization", scope = COCTMT030200UV09Guardian.class)
-    public JAXBElement<COCTMT150007UVOrganization> createCOCTMT030200UV09GuardianGuardianOrganization(COCTMT150007UVOrganization value) {
-        return new JAXBElement<COCTMT150007UVOrganization>(_PRPAMT101301UV02GuardianGuardianOrganization_QNAME, COCTMT150007UVOrganization.class, COCTMT030200UV09Guardian.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT030207UV07Person }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "guardianPerson", scope = COCTMT030200UV09Guardian.class)
-    public JAXBElement<COCTMT030207UV07Person> createCOCTMT030200UV09GuardianGuardianPerson(COCTMT030207UV07Person value) {
-        return new JAXBElement<COCTMT030207UV07Person>(_PRPAMT101301UV02GuardianGuardianPerson_QNAME, COCTMT030207UV07Person.class, COCTMT030200UV09Guardian.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "representedOrganization", scope = COCTMT090108UVAssignedPerson.class)
-    public JAXBElement<COCTMT150007UVOrganization> createCOCTMT090108UVAssignedPersonRepresentedOrganization(COCTMT150007UVOrganization value) {
-        return new JAXBElement<COCTMT150007UVOrganization>(_COCTMT090003UV01AssignedEntityRepresentedOrganization_QNAME, COCTMT150007UVOrganization.class, COCTMT090108UVAssignedPerson.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT090108UVPerson }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "assignedPerson", scope = COCTMT090108UVAssignedPerson.class)
-    public JAXBElement<COCTMT090108UVPerson> createCOCTMT090108UVAssignedPersonAssignedPerson(COCTMT090108UVPerson value) {
-        return new JAXBElement<COCTMT090108UVPerson>(_COCTMT090003UV01AssignedEntityAssignedPerson_QNAME, COCTMT090108UVPerson.class, COCTMT090108UVAssignedPerson.class, value);
     }
 
     /**
@@ -4903,7 +4876,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = PRPAMT101301UV02ContactParty.class)
     public JAXBElement<COCTMT030207UV07Person> createPRPAMT101301UV02ContactPartyContactPerson(COCTMT030207UV07Person value) {
-        return new JAXBElement<COCTMT030207UV07Person>(_COCTMT030200UV09ContactPartyContactPerson_QNAME, COCTMT030207UV07Person.class, PRPAMT101301UV02ContactParty.class, value);
+        return new JAXBElement<COCTMT030207UV07Person>(_COCTMT150003UV03ContactPartyContactPerson_QNAME, COCTMT030207UV07Person.class, PRPAMT101301UV02ContactParty.class, value);
     }
 
     /**
@@ -4913,87 +4886,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactOrganization", scope = PRPAMT101301UV02ContactParty.class)
     public JAXBElement<COCTMT150007UVOrganization> createPRPAMT101301UV02ContactPartyContactOrganization(COCTMT150007UVOrganization value) {
         return new JAXBElement<COCTMT150007UVOrganization>(_COCTMT030200UV09ContactPartyContactOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101301UV02ContactParty.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150000UV02Organization }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "scopingOrganization", scope = COCTMT090100UV01RoleOther.class)
-    public JAXBElement<COCTMT150000UV02Organization> createCOCTMT090100UV01RoleOtherScopingOrganization(COCTMT150000UV02Organization value) {
-        return new JAXBElement<COCTMT150000UV02Organization>(_COCTMT090300UV01RoleOtherScopingOrganization_QNAME, COCTMT150000UV02Organization.class, COCTMT090100UV01RoleOther.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT090300UV01AssignedDevice }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "assignedDevice", scope = MFMIMT700711UV01AuthorOrPerformer.class)
-    public JAXBElement<COCTMT090300UV01AssignedDevice> createMFMIMT700711UV01AuthorOrPerformerAssignedDevice(COCTMT090300UV01AssignedDevice value) {
-        return new JAXBElement<COCTMT090300UV01AssignedDevice>(_COCTMT090003UV01AssignedEntityAssignedDevice_QNAME, COCTMT090300UV01AssignedDevice.class, MFMIMT700711UV01AuthorOrPerformer.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT090100UV01AssignedPerson }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "assignedPerson", scope = MFMIMT700711UV01AuthorOrPerformer.class)
-    public JAXBElement<COCTMT090100UV01AssignedPerson> createMFMIMT700711UV01AuthorOrPerformerAssignedPerson(COCTMT090100UV01AssignedPerson value) {
-        return new JAXBElement<COCTMT090100UV01AssignedPerson>(_COCTMT090003UV01AssignedEntityAssignedPerson_QNAME, COCTMT090100UV01AssignedPerson.class, MFMIMT700711UV01AuthorOrPerformer.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT030207UV07Person }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = PRPAMT101303UV02ContactParty.class)
-    public JAXBElement<COCTMT030207UV07Person> createPRPAMT101303UV02ContactPartyContactPerson(COCTMT030207UV07Person value) {
-        return new JAXBElement<COCTMT030207UV07Person>(_COCTMT030200UV09ContactPartyContactPerson_QNAME, COCTMT030207UV07Person.class, PRPAMT101303UV02ContactParty.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactOrganization", scope = PRPAMT101303UV02ContactParty.class)
-    public JAXBElement<COCTMT150007UVOrganization> createPRPAMT101303UV02ContactPartyContactOrganization(COCTMT150007UVOrganization value) {
-        return new JAXBElement<COCTMT150007UVOrganization>(_COCTMT030200UV09ContactPartyContactOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101303UV02ContactParty.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link MFMIMT700701UV01Subject3 }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "subject1", scope = MFMIMT700701UV01PriorRegistration.class)
-    public JAXBElement<MFMIMT700701UV01Subject3> createMFMIMT700701UV01PriorRegistrationSubject1(MFMIMT700701UV01Subject3 value) {
-        return new JAXBElement<MFMIMT700701UV01Subject3>(_MFMIMT700711UV01PriorRegistrationSubject1_QNAME, MFMIMT700701UV01Subject3 .class, MFMIMT700701UV01PriorRegistration.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link MFMIMT700701UV01Subject4 }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "subject2", scope = MFMIMT700701UV01PriorRegistration.class)
-    public JAXBElement<MFMIMT700701UV01Subject4> createMFMIMT700701UV01PriorRegistrationSubject2(MFMIMT700701UV01Subject4 value) {
-        return new JAXBElement<MFMIMT700701UV01Subject4>(_MFMIMT700711UV01PriorRegistrationSubject2_QNAME, MFMIMT700701UV01Subject4 .class, MFMIMT700701UV01PriorRegistration.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150000UV02Organization }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "representedOrganization", scope = COCTMT090300UV01AssignedDevice.class)
-    public JAXBElement<COCTMT150000UV02Organization> createCOCTMT090300UV01AssignedDeviceRepresentedOrganization(COCTMT150000UV02Organization value) {
-        return new JAXBElement<COCTMT150000UV02Organization>(_COCTMT090003UV01AssignedEntityRepresentedOrganization_QNAME, COCTMT150000UV02Organization.class, COCTMT090300UV01AssignedDevice.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT090300UV01Device }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "assignedDevice", scope = COCTMT090300UV01AssignedDevice.class)
-    public JAXBElement<COCTMT090300UV01Device> createCOCTMT090300UV01AssignedDeviceAssignedDevice(COCTMT090300UV01Device value) {
-        return new JAXBElement<COCTMT090300UV01Device>(_COCTMT090003UV01AssignedEntityAssignedDevice_QNAME, COCTMT090300UV01Device.class, COCTMT090300UV01AssignedDevice.class, value);
     }
 
     /**
@@ -5030,6 +4922,87 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "width", scope = IVLINT.class)
     public JAXBElement<INT> createIVLINTWidth(INT value) {
         return new JAXBElement<INT>(_IVLPQWidth_QNAME, INT.class, IVLINT.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150003UV03Organization }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "assigningOrganization", scope = PRPAMT101304UV02IdentifiedPerson.class)
+    public JAXBElement<COCTMT150003UV03Organization> createPRPAMT101304UV02IdentifiedPersonAssigningOrganization(COCTMT150003UV03Organization value) {
+        return new JAXBElement<COCTMT150003UV03Organization>(_PRPAMT101310UV02IdentifiedPersonAssigningOrganization_QNAME, COCTMT150003UV03Organization.class, PRPAMT101304UV02IdentifiedPerson.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT030207UV07Person }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = PRPAMT101303UV02ContactParty.class)
+    public JAXBElement<COCTMT030207UV07Person> createPRPAMT101303UV02ContactPartyContactPerson(COCTMT030207UV07Person value) {
+        return new JAXBElement<COCTMT030207UV07Person>(_COCTMT150003UV03ContactPartyContactPerson_QNAME, COCTMT030207UV07Person.class, PRPAMT101303UV02ContactParty.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactOrganization", scope = PRPAMT101303UV02ContactParty.class)
+    public JAXBElement<COCTMT150007UVOrganization> createPRPAMT101303UV02ContactPartyContactOrganization(COCTMT150007UVOrganization value) {
+        return new JAXBElement<COCTMT150007UVOrganization>(_COCTMT030200UV09ContactPartyContactOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101303UV02ContactParty.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "guardianOrganization", scope = COCTMT030200UV09Guardian.class)
+    public JAXBElement<COCTMT150007UVOrganization> createCOCTMT030200UV09GuardianGuardianOrganization(COCTMT150007UVOrganization value) {
+        return new JAXBElement<COCTMT150007UVOrganization>(_PRPAMT101303UV02GuardianGuardianOrganization_QNAME, COCTMT150007UVOrganization.class, COCTMT030200UV09Guardian.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT030207UV07Person }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "guardianPerson", scope = COCTMT030200UV09Guardian.class)
+    public JAXBElement<COCTMT030207UV07Person> createCOCTMT030200UV09GuardianGuardianPerson(COCTMT030207UV07Person value) {
+        return new JAXBElement<COCTMT030207UV07Person>(_PRPAMT101303UV02GuardianGuardianPerson_QNAME, COCTMT030207UV07Person.class, COCTMT030200UV09Guardian.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150000UV02Organization }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "scopingOrganization", scope = COCTMT090100UV01RoleOther.class)
+    public JAXBElement<COCTMT150000UV02Organization> createCOCTMT090100UV01RoleOtherScopingOrganization(COCTMT150000UV02Organization value) {
+        return new JAXBElement<COCTMT150000UV02Organization>(_COCTMT090300UV01RoleOtherScopingOrganization_QNAME, COCTMT150000UV02Organization.class, COCTMT090100UV01RoleOther.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150000UV02Organization }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "representedOrganization", scope = COCTMT090300UV01AssignedDevice.class)
+    public JAXBElement<COCTMT150000UV02Organization> createCOCTMT090300UV01AssignedDeviceRepresentedOrganization(COCTMT150000UV02Organization value) {
+        return new JAXBElement<COCTMT150000UV02Organization>(_COCTMT090003UV01AssignedEntityRepresentedOrganization_QNAME, COCTMT150000UV02Organization.class, COCTMT090300UV01AssignedDevice.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT090300UV01Device }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "assignedDevice", scope = COCTMT090300UV01AssignedDevice.class)
+    public JAXBElement<COCTMT090300UV01Device> createCOCTMT090300UV01AssignedDeviceAssignedDevice(COCTMT090300UV01Device value) {
+        return new JAXBElement<COCTMT090300UV01Device>(_COCTMT090003UV01AssignedEntityAssignedDevice_QNAME, COCTMT090300UV01Device.class, COCTMT090300UV01AssignedDevice.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150000UV02Person }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = COCTMT150000UV02ContactParty.class)
+    public JAXBElement<COCTMT150000UV02Person> createCOCTMT150000UV02ContactPartyContactPerson(COCTMT150000UV02Person value) {
+        return new JAXBElement<COCTMT150000UV02Person>(_COCTMT150003UV03ContactPartyContactPerson_QNAME, COCTMT150000UV02Person.class, COCTMT150000UV02ContactParty.class, value);
     }
 
     /**
@@ -5276,21 +5249,30 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT030203UV07Person }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = COCTMT040203UV09NotificationParty.class)
+    public JAXBElement<COCTMT030203UV07Person> createCOCTMT040203UV09NotificationPartyContactPerson(COCTMT030203UV07Person value) {
+        return new JAXBElement<COCTMT030203UV07Person>(_COCTMT150003UV03ContactPartyContactPerson_QNAME, COCTMT030203UV07Person.class, COCTMT040203UV09NotificationParty.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150003UV03Organization }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactOrganization", scope = COCTMT040203UV09NotificationParty.class)
+    public JAXBElement<COCTMT150003UV03Organization> createCOCTMT040203UV09NotificationPartyContactOrganization(COCTMT150003UV03Organization value) {
+        return new JAXBElement<COCTMT150003UV03Organization>(_COCTMT030200UV09ContactPartyContactOrganization_QNAME, COCTMT150003UV03Organization.class, COCTMT040203UV09NotificationParty.class, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT710007UV07LocatedEntity }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "locatedEntity", scope = COCTMT710007UV07Place.class)
     public JAXBElement<COCTMT710007UV07LocatedEntity> createCOCTMT710007UV07PlaceLocatedEntity(COCTMT710007UV07LocatedEntity value) {
         return new JAXBElement<COCTMT710007UV07LocatedEntity>(_COCTMT710000UV07PlaceLocatedEntity_QNAME, COCTMT710007UV07LocatedEntity.class, COCTMT710007UV07Place.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link MFMIMT700711UV01Author2 }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "author", scope = PRPAIN101306UV02MFMIMT700711UV01RegistrationEvent.class)
-    public JAXBElement<MFMIMT700711UV01Author2> createPRPAIN101306UV02MFMIMT700711UV01RegistrationEventAuthor(MFMIMT700711UV01Author2 value) {
-        return new JAXBElement<MFMIMT700711UV01Author2>(_PRPAIN101308UV02MFMIMT700711UV01RegistrationEventAuthor_QNAME, MFMIMT700711UV01Author2 .class, PRPAIN101306UV02MFMIMT700711UV01RegistrationEvent.class, value);
     }
 
     /**
@@ -5348,48 +5330,48 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link PRPAMT101301UV02Subject2 }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link MFMIMT700711UV01Author2 }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "subjectOf", scope = PRPAMT101301UV02BirthPlace.class)
-    public JAXBElement<PRPAMT101301UV02Subject2> createPRPAMT101301UV02BirthPlaceSubjectOf(PRPAMT101301UV02Subject2 value) {
-        return new JAXBElement<PRPAMT101301UV02Subject2>(_PRPAMT101301UV02BirthPlaceSubjectOf_QNAME, PRPAMT101301UV02Subject2 .class, PRPAMT101301UV02BirthPlace.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT710007UV07Place }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "birthplace", scope = PRPAMT101301UV02BirthPlace.class)
-    public JAXBElement<COCTMT710007UV07Place> createPRPAMT101301UV02BirthPlaceBirthplace(COCTMT710007UV07Place value) {
-        return new JAXBElement<COCTMT710007UV07Place>(_PRPAMT101301UV02BirthPlaceBirthplace_QNAME, COCTMT710007UV07Place.class, PRPAMT101301UV02BirthPlace.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150003UV03Organization }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "assigningOrganization", scope = PRPAMT101304UV02IdentifiedPerson.class)
-    public JAXBElement<COCTMT150003UV03Organization> createPRPAMT101304UV02IdentifiedPersonAssigningOrganization(COCTMT150003UV03Organization value) {
-        return new JAXBElement<COCTMT150003UV03Organization>(_PRPAMT101310UV02IdentifiedPersonAssigningOrganization_QNAME, COCTMT150003UV03Organization.class, PRPAMT101304UV02IdentifiedPerson.class, value);
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "author", scope = PRPAIN101306UV02MFMIMT700711UV01RegistrationEvent.class)
+    public JAXBElement<MFMIMT700711UV01Author2> createPRPAIN101306UV02MFMIMT700711UV01RegistrationEventAuthor(MFMIMT700711UV01Author2 value) {
+        return new JAXBElement<MFMIMT700711UV01Author2>(_PRPAIN101308UV02MFMIMT700711UV01RegistrationEventAuthor_QNAME, MFMIMT700711UV01Author2 .class, PRPAIN101306UV02MFMIMT700711UV01RegistrationEvent.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "schoolOrganization", scope = PRPAMT101303UV02Student.class)
-    public JAXBElement<COCTMT150007UVOrganization> createPRPAMT101303UV02StudentSchoolOrganization(COCTMT150007UVOrganization value) {
-        return new JAXBElement<COCTMT150007UVOrganization>(_PRPAMT101304UV02StudentSchoolOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101303UV02Student.class, value);
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "representedOrganization", scope = COCTMT090108UVAssignedPerson.class)
+    public JAXBElement<COCTMT150007UVOrganization> createCOCTMT090108UVAssignedPersonRepresentedOrganization(COCTMT150007UVOrganization value) {
+        return new JAXBElement<COCTMT150007UVOrganization>(_COCTMT090003UV01AssignedEntityRepresentedOrganization_QNAME, COCTMT150007UVOrganization.class, COCTMT090108UVAssignedPerson.class, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVPerson }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT090108UVPerson }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = COCTMT150007UVContactParty.class)
-    public JAXBElement<COCTMT150007UVPerson> createCOCTMT150007UVContactPartyContactPerson(COCTMT150007UVPerson value) {
-        return new JAXBElement<COCTMT150007UVPerson>(_COCTMT030200UV09ContactPartyContactPerson_QNAME, COCTMT150007UVPerson.class, COCTMT150007UVContactParty.class, value);
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "assignedPerson", scope = COCTMT090108UVAssignedPerson.class)
+    public JAXBElement<COCTMT090108UVPerson> createCOCTMT090108UVAssignedPersonAssignedPerson(COCTMT090108UVPerson value) {
+        return new JAXBElement<COCTMT090108UVPerson>(_COCTMT090003UV01AssignedEntityAssignedPerson_QNAME, COCTMT090108UVPerson.class, COCTMT090108UVAssignedPerson.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT960000UV05Author }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "author", scope = COCTMT960000UV05Position.class)
+    public JAXBElement<COCTMT960000UV05Author> createCOCTMT960000UV05PositionAuthor(COCTMT960000UV05Author value) {
+        return new JAXBElement<COCTMT960000UV05Author>(_PRPAIN101308UV02MFMIMT700711UV01RegistrationEventAuthor_QNAME, COCTMT960000UV05Author.class, COCTMT960000UV05Position.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT960000UV05Component2 }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "component2", scope = COCTMT960000UV05Position.class)
+    public JAXBElement<COCTMT960000UV05Component2> createCOCTMT960000UV05PositionComponent2(COCTMT960000UV05Component2 value) {
+        return new JAXBElement<COCTMT960000UV05Component2>(_COCTMT960000UV05PositionComponent2_QNAME, COCTMT960000UV05Component2 .class, COCTMT960000UV05Position.class, value);
     }
 
     /**
@@ -5408,6 +5390,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "birthplace", scope = PRPAMT101303UV02BirthPlace.class)
     public JAXBElement<COCTMT710007UV07Place> createPRPAMT101303UV02BirthPlaceBirthplace(COCTMT710007UV07Place value) {
         return new JAXBElement<COCTMT710007UV07Place>(_PRPAMT101301UV02BirthPlaceBirthplace_QNAME, COCTMT710007UV07Place.class, PRPAMT101303UV02BirthPlace.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "schoolOrganization", scope = PRPAMT101303UV02Student.class)
+    public JAXBElement<COCTMT150007UVOrganization> createPRPAMT101303UV02StudentSchoolOrganization(COCTMT150007UVOrganization value) {
+        return new JAXBElement<COCTMT150007UVOrganization>(_PRPAMT101304UV02StudentSchoolOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101303UV02Student.class, value);
     }
 
     /**
@@ -5456,6 +5447,51 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT710000UV07Place }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "birthplace", scope = COCTMT030200UV09BirthPlace.class)
+    public JAXBElement<COCTMT710000UV07Place> createCOCTMT030200UV09BirthPlaceBirthplace(COCTMT710000UV07Place value) {
+        return new JAXBElement<COCTMT710000UV07Place>(_PRPAMT101301UV02BirthPlaceBirthplace_QNAME, COCTMT710000UV07Place.class, COCTMT030200UV09BirthPlace.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "schoolOrganization", scope = COCTMT030200UV09Student.class)
+    public JAXBElement<COCTMT150007UVOrganization> createCOCTMT030200UV09StudentSchoolOrganization(COCTMT150007UVOrganization value) {
+        return new JAXBElement<COCTMT150007UVOrganization>(_PRPAMT101304UV02StudentSchoolOrganization_QNAME, COCTMT150007UVOrganization.class, COCTMT030200UV09Student.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT710000UV07Place }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "location", scope = COCTMT070000UV01LocatedEntity.class)
+    public JAXBElement<COCTMT710000UV07Place> createCOCTMT070000UV01LocatedEntityLocation(COCTMT710000UV07Place value) {
+        return new JAXBElement<COCTMT710000UV07Place>(_MCCIMT000100UV01LocatedEntityLocation_QNAME, COCTMT710000UV07Place.class, COCTMT070000UV01LocatedEntity.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT030207UV07Person }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = PRPAMT101310UV02ContactParty.class)
+    public JAXBElement<COCTMT030207UV07Person> createPRPAMT101310UV02ContactPartyContactPerson(COCTMT030207UV07Person value) {
+        return new JAXBElement<COCTMT030207UV07Person>(_COCTMT150003UV03ContactPartyContactPerson_QNAME, COCTMT030207UV07Person.class, PRPAMT101310UV02ContactParty.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactOrganization", scope = PRPAMT101310UV02ContactParty.class)
+    public JAXBElement<COCTMT150007UVOrganization> createPRPAMT101310UV02ContactPartyContactOrganization(COCTMT150007UVOrganization value) {
+        return new JAXBElement<COCTMT150007UVOrganization>(_COCTMT030200UV09ContactPartyContactOrganization_QNAME, COCTMT150007UVOrganization.class, PRPAMT101310UV02ContactParty.class, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PRPAMT101310UV02Subject2 }{@code >}}
      * 
      */
@@ -5471,42 +5507,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "birthplace", scope = PRPAMT101310UV02BirthPlace.class)
     public JAXBElement<COCTMT710007UV07Place> createPRPAMT101310UV02BirthPlaceBirthplace(COCTMT710007UV07Place value) {
         return new JAXBElement<COCTMT710007UV07Place>(_PRPAMT101301UV02BirthPlaceBirthplace_QNAME, COCTMT710007UV07Place.class, PRPAMT101310UV02BirthPlace.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150007UVOrganization }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "schoolOrganization", scope = COCTMT030200UV09Student.class)
-    public JAXBElement<COCTMT150007UVOrganization> createCOCTMT030200UV09StudentSchoolOrganization(COCTMT150007UVOrganization value) {
-        return new JAXBElement<COCTMT150007UVOrganization>(_PRPAMT101304UV02StudentSchoolOrganization_QNAME, COCTMT150007UVOrganization.class, COCTMT030200UV09Student.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150003UV03Person }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "contactPerson", scope = COCTMT150003UV03ContactParty.class)
-    public JAXBElement<COCTMT150003UV03Person> createCOCTMT150003UV03ContactPartyContactPerson(COCTMT150003UV03Person value) {
-        return new JAXBElement<COCTMT150003UV03Person>(_COCTMT030200UV09ContactPartyContactPerson_QNAME, COCTMT150003UV03Person.class, COCTMT150003UV03ContactParty.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT710000UV07Place }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "birthplace", scope = COCTMT030200UV09BirthPlace.class)
-    public JAXBElement<COCTMT710000UV07Place> createCOCTMT030200UV09BirthPlaceBirthplace(COCTMT710000UV07Place value) {
-        return new JAXBElement<COCTMT710000UV07Place>(_PRPAMT101301UV02BirthPlaceBirthplace_QNAME, COCTMT710000UV07Place.class, COCTMT030200UV09BirthPlace.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link COCTMT150003UV03Organization }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:hl7-org:v3", name = "issuingOrganization", scope = COCTMT090100UV01LicensedEntity.class)
-    public JAXBElement<COCTMT150003UV03Organization> createCOCTMT090100UV01LicensedEntityIssuingOrganization(COCTMT150003UV03Organization value) {
-        return new JAXBElement<COCTMT150003UV03Organization>(_COCTMT090300UV01LicensedEntityIssuingOrganization_QNAME, COCTMT150003UV03Organization.class, COCTMT090100UV01LicensedEntity.class, value);
     }
 
 }

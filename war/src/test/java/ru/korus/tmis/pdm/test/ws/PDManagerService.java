@@ -30,7 +30,7 @@ public class PDManagerService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:7070/pdm-war/tmis-pdm?wsdl");
+            url = new URL("http://localhost:8080/pdm-war/tmis-pdm?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

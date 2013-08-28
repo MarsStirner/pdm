@@ -27,175 +27,135 @@ import ru.korus.tmis.pdm.ws.*;
 public class PersonalData {
 
     public static class Term {
-        private final String code;
-        private final String codeSystem;
-    	private Term(String code, String codeSystem) {
-    		this.code = code;
-    		this.codeSystem = codeSystem;
+        private String code;
+        private String codeSystem;
+    	static private Term newInstance(String code, String codeSystem) {
+            Term res = new Term();
+    		res.code = code;
+    		res.codeSystem = codeSystem;
+            return res;
     	}
+
+        public String getCode() {
+            return code;
+        }
+
+        public String getCodeSystem() {
+            return codeSystem;
+        }
     }
 
     public static class Telecom {
-        private final String value;
-        private final String use;
-    	private Telecom(String value, String use) {
-    		this.value = value;
-    		this.use = use;
+        private String value;
+        private String use;
+        static private Telecom newInstance(String value, String use) {
+            Telecom res = new Telecom();
+    		res.value = value;
+    		res.use = use;
+            return res;
     	}
 
     }
     
     public static class Addr {
-        private final String use;
+        private String use;
         
-        private final String country;
-        private final String streetAddressLine;
-        private final String direction;
-        private final String postBox;
-        private final String unitType;
-        private final String delimiter;
-        private final String deliveryInstallationArea;
-        private final String deliveryModeIdentifier;
-        private final String postalCode;
-        private final String deliveryAddressLine;
-        private final String streetName;
-        private final String unitID;
-        private final String additionalLocator;
-        private final String deliveryMode;
-        private final String streetNameBase;
-        private final String deliveryInstallationQualifier;
-        private final String county;
-        private final String precinct;
-        private final String careOf;
-        private final String houseNumber;
-        private final String censusTract;
-        private final String buildingNumberSuffix;
-        private final String houseNumberNumeric;
-        private final String streetNameType;
-        private final String deliveryInstallationType;
-        private final String state;
-        private final String city;
+        private String country;
+        private String streetAddressLine;
+        private String direction;
+        private String postBox;
+        private String unitType;
+        private String delimiter;
+        private String deliveryInstallationArea;
+        private String deliveryModeIdentifier;
+        private String postalCode;
+        private String deliveryAddressLine;
+        private String streetName;
+        private String unitID;
+        private String additionalLocator;
+        private String deliveryMode;
+        private String streetNameBase;
+        private String deliveryInstallationQualifier;
+        private String county;
+        private String precinct;
+        private String careOf;
+        private String houseNumber;
+        private String censusTract;
+        private String buildingNumberSuffix;
+        private String houseNumberNumeric;
+        private String streetNameType;
+        private String deliveryInstallationType;
+        private String state;
+        private String city;
 
-        public Addr(ADExplicit addr, String use) {
-            this.use = use;
-            String country = null;
-            String streetAddressLine = null;
-            String direction = null;
-            String postBox = null;
-            String unitType = null;
-            String delimiter = null;
-            String deliveryInstallationArea = null;
-            String deliveryModeIdentifier = null;
-            String postalCode = null;
-            String deliveryAddressLine = null;
-            String streetName = null;
-            String unitID = null;
-            String additionalLocator = null;
-            String deliveryMode = null;
-            String streetNameBase = null;
-            String deliveryInstallationQualifier = null;
-            String county = null;
-            String precinct = null;
-            String careOf = null;
-            String houseNumber = null;
-            String censusTract = null;
-            String buildingNumberSuffix = null;
-            String houseNumberNumeric = null;
-            String streetNameType = null;
-            String deliveryInstallationType = null;
-            String state = null;
-            String city = null;
+        static public Addr newInstance(AD addr, String use) {
+            Addr res = new Addr();
+            res.use = use;
+
             for (Serializable object : addr.getContent()) {
                 if (object instanceof JAXBElement) {
                     JAXBElement el = (JAXBElement) object;
                     if (el.getValue() instanceof ADXPExplicit) {
                         final String value =  ((ADXPExplicit)el.getValue()).getContent();
                         if (el.getValue() instanceof AdxpExplicitCountry) {
-                            country = value;
+                            res.country = value;
                         } else if (el.getValue() instanceof AdxpExplicitStreetAddressLine) {
-                            streetAddressLine = value;
+                            res.streetAddressLine = value;
                         } else if (el.getValue() instanceof AdxpExplicitDirection)  {
-                            direction = value;
+                            res.direction = value;
                         } else if (el.getValue() instanceof AdxpExplicitPostBox)  {
-                            postBox = value;
+                            res.postBox = value;
                         } else if (el.getValue() instanceof AdxpExplicitUnitType)  {
-                            unitType = value;
+                            res.unitType = value;
                         } else if (el.getValue() instanceof AdxpExplicitDelimiter)  {
-                            delimiter = value;
+                            res.delimiter = value;
                         } else if (el.getValue() instanceof AdxpExplicitDeliveryInstallationArea)  {
-                            deliveryInstallationArea = value;
+                            res.deliveryInstallationArea = value;
                         } else if (el.getValue() instanceof AdxpExplicitDeliveryModeIdentifier)  {
-                            deliveryModeIdentifier = value;
+                            res.deliveryModeIdentifier = value;
                         } else if (el.getValue() instanceof AdxpExplicitPostalCode)  {
-                            postalCode = value;
+                            res.postalCode = value;
                         } else if (el.getValue() instanceof AdxpExplicitDeliveryAddressLine)  {
-                            deliveryAddressLine = value;
+                            res.deliveryAddressLine = value;
                         } else if (el.getValue() instanceof AdxpExplicitStreetName)  {
-                            streetName = value;
+                            res.streetName = value;
                         } else if (el.getValue() instanceof AdxpExplicitUnitID)  {
-                            unitID = value;
+                            res.unitID = value;
                         } else if (el.getValue() instanceof AdxpExplicitAdditionalLocator)  {
-                            additionalLocator = value;
+                            res.additionalLocator = value;
                         } else if (el.getValue() instanceof AdxpExplicitDeliveryMode)  {
-                            deliveryMode = value;
+                            res.deliveryMode = value;
                         } else if (el.getValue() instanceof AdxpExplicitStreetNameBase)  {
-                            streetNameBase = value;
+                            res.streetNameBase = value;
                         } else if (el.getValue() instanceof AdxpExplicitDeliveryInstallationQualifier)  {
-                            deliveryInstallationQualifier = value;
+                            res.deliveryInstallationQualifier = value;
                         } else if (el.getValue() instanceof AdxpExplicitCounty)  {
-                            county = value;
+                            res.county = value;
                         } else if (el.getValue() instanceof AdxpExplicitPrecinct)  {
-                            precinct = value;
+                            res.precinct = value;
                         } else if (el.getValue() instanceof AdxpExplicitCareOf)  {
-                            careOf = value;
+                            res.careOf = value;
                         } else if (el.getValue() instanceof AdxpExplicitHouseNumber)  {
-                            houseNumber = value;
+                            res.houseNumber = value;
                         } else if (el.getValue() instanceof AdxpExplicitCensusTract)  {
-                            censusTract = value;
+                            res.censusTract = value;
                         } else if (el.getValue() instanceof AdxpExplicitBuildingNumberSuffix)  {
-                            buildingNumberSuffix = value;
+                            res.buildingNumberSuffix = value;
                         } else if (el.getValue() instanceof AdxpExplicitHouseNumberNumeric)  {
-                            houseNumberNumeric = value;
+                            res.houseNumberNumeric = value;
                         } else if (el.getValue() instanceof  AdxpExplicitStreetNameType1)  {
-                            streetNameType = value;
+                            res.streetNameType = value;
                         } else if (el.getValue() instanceof AdxpExplicitDeliveryInstallationType)  {
-                            deliveryInstallationType = value;
+                            res.deliveryInstallationType = value;
                         } else if (el.getValue() instanceof AdxpExplicitState)  {
-                            state = value;
+                            res.state = value;
                         } else if (el.getValue() instanceof AdxpExplicitCity)  {
-                            city = value;
+                            res.city = value;
                         }
                     }
-
                 }
             }
-            this.country = country;
-            this.streetAddressLine = streetAddressLine;
-            this.direction = direction;
-            this.postBox = postBox;
-            this.unitType = unitType;
-            this.delimiter = delimiter;
-            this.deliveryInstallationArea = deliveryInstallationArea;
-            this.deliveryModeIdentifier = deliveryModeIdentifier;
-            this.postalCode = postalCode;
-            this.deliveryAddressLine = deliveryAddressLine;
-            this.streetName = streetName;
-            this.unitID = unitID;
-            this.additionalLocator = additionalLocator;
-            this.deliveryMode = deliveryMode;
-            this.streetNameBase = streetNameBase;
-            this.deliveryInstallationQualifier = deliveryInstallationQualifier;
-            this.county = county;
-            this.precinct = precinct;
-            this.careOf = careOf;
-            this.houseNumber = houseNumber;
-            this.censusTract = censusTract;
-            this.buildingNumberSuffix = buildingNumberSuffix;
-            this.houseNumberNumeric = houseNumberNumeric;
-            this.streetNameType = streetNameType;
-            this.deliveryInstallationType = deliveryInstallationType;
-            this.state = state;
-            this.city = city;
+            return res;
         }
         
         public String getCountry() {
@@ -317,27 +277,27 @@ public class PersonalData {
     /**
      * Имя
      */
-    final private String given;
+    private String given;
     
      /**
      * Отчество 
      */
-    final private String middleName;
+    private String middleName;
     
     /**
      * Фамилия
      */
-    final private String family;
+    private String family;
     
     /**
      * Пол
      */
-    final private Term gender; 
+    private Term gender;
 
     /**
      * Дата рождения в фомате yyyyMMdd 
      */
-    final private String birthData;
+    private String birthData;
     
     /**
      * Документы: 
@@ -347,19 +307,40 @@ public class PersonalData {
      * Документ, удостоверяющий временную нетрудоспособность; 
      * Документ об образовании  
      */
-    final private Vector<Term> docs = new Vector<Term>();
+    private Vector<Term> docs = new Vector<Term>();
     
     /**
      * Контактные телефоны и электронные адреса
      */
-    final private Vector<Telecom> telecoms = new Vector<Telecom>();
-   
-    final private Vector<Addr> address = new Vector<Addr>();
-	/**
-     * @param parameters
+    private Vector<Telecom> telecoms = new Vector<Telecom>();
+
+    /**
+     *   Домашний/ рабочий т др. адреса.
+     *   Возможные значения атрибута use:
+     *   "H" - home address; "HP" - primary home; "HV" - vacation home,
+     *   "WP" - work place, "DIR" - direct, "PUB" - public, "BAD" - bad address, "TMP"
      */
-    public PersonalData(PRPAIN101311UV02 prm, WebServiceContext wsContext) {
+    private Vector<Addr> address = new Vector<Addr>();
+
+    private Addr birthPlace;
+
+    public PersonalData() {
         id = null;
+        given = null;
+        middleName = null;
+        family = null;
+        gender = null;
+        birthData = null;
+        birthPlace = null;
+    }
+
+    /**
+     *
+     * @param prm
+     */
+    static public PersonalData newInstance(PRPAIN101311UV02 prm) {
+        PersonalData res = new PersonalData();
+        res.id = null;
         String given = null;
         String family = null;
         String middleName = null;
@@ -382,29 +363,37 @@ public class PersonalData {
                 }
             }
         }
-        this.given = given;
-        this.family = family;
-        this.middleName = middleName;
+        res.given = given;
+        res.family = family;
+        res.middleName = middleName;
         CE genderCode = identifiedPerson.getAdministrativeGenderCode();
-        this.gender = genderCode == null ? null : new Term(genderCode.getCode(), genderCode.getCodeSystem());
+        res.gender = genderCode == null ? null : Term.newInstance(genderCode.getCode(), genderCode.getCodeSystem());
         TS birthTime = identifiedPerson.getBirthTime();
-        this.birthData = birthTime == null ? null : birthTime.getValue();
+        res.birthData = birthTime == null ? null : birthTime.getValue();
         
         for( TEL telecom : identifiedPerson.getTelecom() ) {
            final String use = telecom.getUse().isEmpty() ? null : telecom.getUse().get(0).name();
-           telecoms.add(new Telecom(telecom.getValue(), use));
+            res.telecoms.add(Telecom.newInstance(telecom.getValue(), use));
         }       
         
         for (PRPAMT101301UV02OtherIDs ids : identifiedPerson.getAsOtherIDs()) {
         	for(II ii : ids.getId() ) {
-        		docs.add(new Term(ii.getExtension(), ii.getRoot()));
+        		res.docs.add(Term.newInstance(ii.getExtension(), ii.getRoot()));
         	}
         }
         
-        for(ADExplicit addr : identifiedPerson.getAddr()) {
+        for(AD addr : identifiedPerson.getAddr()) {
             final String use = addr.getUse().isEmpty() ? null : addr.getUse().get(0).name();
-            address.add(new Addr(addr, use));
+            res.address.add(Addr.newInstance(addr, use));
         }
+
+        Addr birthPlace = null;
+        if (identifiedPerson.getBirthPlace() instanceof JAXBElement &&
+            identifiedPerson.getBirthPlace().getValue() instanceof PRPAMT101301UV02BirthPlace ){
+            birthPlace = Addr.newInstance(identifiedPerson.getBirthPlace().getValue().getAddr(), null);
+        }
+        res.birthPlace = birthPlace;
+        return res;
     }
     
     public String getId() {
@@ -415,4 +404,39 @@ public class PersonalData {
 		this.id = id;
 	}
 
+    public String getGiven() {
+        return given;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public String getFamily() {
+        return family;
+    }
+
+    public Term getGender() {
+        return gender;
+    }
+
+    public String getBirthData() {
+        return birthData;
+    }
+
+    public Vector<Term> getDocs() {
+        return docs;
+    }
+
+    public Vector<Telecom> getTelecoms() {
+        return telecoms;
+    }
+
+    public Vector<Addr> getAddress() {
+        return address;
+    }
+
+    public Addr getBirthPlace() {
+        return birthPlace;
+    }
 }

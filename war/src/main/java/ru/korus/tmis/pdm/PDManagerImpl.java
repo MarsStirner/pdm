@@ -7,7 +7,10 @@ import javax.xml.ws.WebServiceContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.data.mongodb.core.query.Query;
 
+import org.springframework.data.mongodb.core.query.Query;
 import ru.korus.tmis.pdm.ws.II;
 import ru.korus.tmis.pdm.ws.ObjectFactory;
 import ru.korus.tmis.pdm.ws.PDManager;
@@ -59,7 +62,7 @@ public class PDManagerImpl implements PDManager {
     @WebResult(name = "PRPA_IN101312UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters")
     public PRPAIN101312UV02 add(PRPAIN101311UV02 parameters)  {
 
-        final PersonalData personalData = new PersonalData(parameters, wsContext);
+        final PersonalData personalData = PersonalData.newInstance(parameters);
         final String id = save(personalData);
         return  getPRPAIN101312UV02(id);
     }
@@ -111,13 +114,19 @@ public class PDManagerImpl implements PDManager {
 		II ii = factory.createII();
 		ii.setExtension(id);
 		ii.setRoot(pdmOid);
-	    person.getId().add(ii);		
+	    person.getId().add(ii);
 		return res;
 	}
 
     private String save(PersonalData personalData) {
-    	mongoOperation.save(personalData);
-    	//personalData.setId("tst-tst-001");
+        for(PersonalData.Term doc : personalData.getDocs()) {
+            BasicQuery query = new BasicQuery(String.format("{docs: { $elemMatch: {code:'%s' , codeSystem : '%s'}}}", doc.getCode(), doc.getCodeSystem()));
+            if (!mongoOperation.find(query, PersonalData.class).isEmpty() ){
+                throw new RuntimeException("The person already added");
+            }
+
+        }
+        mongoOperation.save(personalData);
 		return personalData.getId();
 	}
 

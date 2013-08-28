@@ -341,7 +341,7 @@ StaticMifToXsd.xsl version 2.0</xs:documentation>
          <xs:element name="multipleBirthInd" type="BL" minOccurs="0" maxOccurs="1"/>
          <xs:element name="multipleBirthOrderNumber" type="INT" minOccurs="0" maxOccurs="1"/>
          <xs:element name="organDonorInd" type="BL" minOccurs="0" maxOccurs="1"/>
-         <xs:element name="addr" type="AD_explicit" minOccurs="0" maxOccurs="unbounded"/>
+         <xs:element name="addr" type="AD" minOccurs="0" maxOccurs="unbounded"/>
          <xs:element name="maritalStatusCode" type="CE" minOccurs="0" maxOccurs="1"/>
          <xs:element name="asEmployee" type="PRPA_MT101301UV02.Employee" nillable="true"
                      minOccurs="0"

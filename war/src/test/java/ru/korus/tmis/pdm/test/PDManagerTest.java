@@ -16,6 +16,8 @@ import ru.korus.tmis.pdm.test.ws.PRPAIN101312UV02;
 import ru.korus.tmis.pdm.test.ws.PRPAMT101301UV02IdentifiedPerson;
 import ru.korus.tmis.pdm.test.ws.PRPAMT101301UV02Person;
 import static org.testng.Assert.*;
+import ru.korus.tmis.pdm.test.ws.PRPAMT101301UV02OtherIDs;
+import ru.korus.tmis.pdm.test.ws.II;
 
 public class PDManagerTest {
     static PRPAIN101312UV02 tmp;
@@ -47,14 +49,10 @@ public class PDManagerTest {
         giv.getContent().add("Ivan");
         name.getContent().add(factory.createENGiven(giv));
         person.getName().add(name);
-        // final EnGiven enGiven = new EnGiven();
-        // enGiven.getContent().add("Ivan");
-        // ObjectFactory factory = new ObjectFactory();
-        // JAXBElement<EnGiven> givenJAXBElement = factory.createENGiven(enGiven);
-        // givenJAXBElement.setValue(enGiven);
-        // PN pn = new PN();
-        // pn.getContent().add(givenJAXBElement);
-        // person.getName().add(pn);
+        person.getAsOtherIDs().add(new PRPAMT101301UV02OtherIDs() );
+        person.getAsOtherIDs().get(0).getId().add(new II());
+        person.getAsOtherIDs().get(0).getId().get(0).setRoot("3.0.0.1");
+        person.getAsOtherIDs().get(0).getId().get(0).setExtension("123456___123");
 
         tmp = pdManager.add(prm);
         String root = tmp.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().

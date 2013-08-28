@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="multipleBirthInd" type="{urn:hl7-org:v3}BL" minOccurs="0"/>
  *         &lt;element name="multipleBirthOrderNumber" type="{urn:hl7-org:v3}INT" minOccurs="0"/>
  *         &lt;element name="organDonorInd" type="{urn:hl7-org:v3}BL" minOccurs="0"/>
- *         &lt;element name="addr" type="{urn:hl7-org:v3}AD_explicit" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="addr" type="{urn:hl7-org:v3}AD" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="maritalStatusCode" type="{urn:hl7-org:v3}CE" minOccurs="0"/>
  *         &lt;element name="asEmployee" type="{urn:hl7-org:v3}PRPA_MT101301UV02.Employee" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="asCitizen" type="{urn:hl7-org:v3}PRPA_MT101301UV02.Citizen" maxOccurs="unbounded" minOccurs="0"/>
@@ -106,7 +106,7 @@ public class PRPAMT101301UV02Person {
     protected BL multipleBirthInd;
     protected INT multipleBirthOrderNumber;
     protected BL organDonorInd;
-    protected List<ADExplicit> addr;
+    protected List<AD> addr;
     protected CE maritalStatusCode;
     @XmlElement(nillable = true)
     protected List<PRPAMT101301UV02Employee> asEmployee;
@@ -516,13 +516,13 @@ public class PRPAMT101301UV02Person {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ADExplicit }
+     * {@link AD }
      * 
      * 
      */
-    public List<ADExplicit> getAddr() {
+    public List<AD> getAddr() {
         if (addr == null) {
-            addr = new ArrayList<ADExplicit>();
+            addr = new ArrayList<AD>();
         }
         return this.addr;
     }
