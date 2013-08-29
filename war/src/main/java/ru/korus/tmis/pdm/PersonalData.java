@@ -48,6 +48,7 @@ public class PersonalData {
     public static class Telecom {
         private String value;
         private String use;
+
         static private Telecom newInstance(String value, String use) {
             Telecom res = new Telecom();
     		res.value = value;
@@ -55,6 +56,13 @@ public class PersonalData {
             return res;
     	}
 
+        public String getValue() {
+            return value;
+        }
+
+        public String getUse() {
+            return use;
+        }
     }
     
     public static class Addr {
@@ -315,24 +323,17 @@ public class PersonalData {
     private Vector<Telecom> telecoms = new Vector<Telecom>();
 
     /**
-     *   Домашний/ рабочий т др. адреса.
+     *   Домашний/рабочий и др. адреса.
      *   Возможные значения атрибута use:
      *   "H" - home address; "HP" - primary home; "HV" - vacation home,
      *   "WP" - work place, "DIR" - direct, "PUB" - public, "BAD" - bad address, "TMP"
      */
     private Vector<Addr> address = new Vector<Addr>();
 
+    /** 
+     * Место рождения
+     */
     private Addr birthPlace;
-
-    public PersonalData() {
-        id = null;
-        given = null;
-        middleName = null;
-        family = null;
-        gender = null;
-        birthData = null;
-        birthPlace = null;
-    }
 
     /**
      *
