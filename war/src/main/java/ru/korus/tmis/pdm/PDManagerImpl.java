@@ -43,7 +43,7 @@ public class PDManagerImpl implements PDManager {
     @Override
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/new")
     @WebResult(name = "PRPA_IN101312UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters")
-    public PRPAIN101312UV02 add(PRPAIN101311UV02 parameters();
+    public PRPAIN101312UV02 add(PRPAIN101311UV02 parameters) {
 
         final PersonalData personalData = PersonalData.newInstance(parameters);
         final String id = save(personalData);
