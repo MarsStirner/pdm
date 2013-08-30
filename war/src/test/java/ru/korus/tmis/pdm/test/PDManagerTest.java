@@ -2,28 +2,18 @@ package ru.korus.tmis.pdm.test;
 
 import org.testng.annotations.Test;
 
-import ru.korus.tmis.pdm.test.ws.EnGiven;
-import ru.korus.tmis.pdm.test.ws.ObjectFactory;
-import ru.korus.tmis.pdm.test.ws.PDManager;
-import ru.korus.tmis.pdm.test.ws.PDManagerService;
-import ru.korus.tmis.pdm.test.ws.PN;
-import ru.korus.tmis.pdm.test.ws.PRPAIN101311UV02;
-import ru.korus.tmis.pdm.test.ws.PRPAIN101311UV02MFMIMT700721UV01ControlActProcess;
-import ru.korus.tmis.pdm.test.ws.PRPAIN101311UV02MFMIMT700721UV01RegistrationRequest;
-import ru.korus.tmis.pdm.test.ws.PRPAIN101311UV02MFMIMT700721UV01Subject1;
-import ru.korus.tmis.pdm.test.ws.PRPAIN101311UV02MFMIMT700721UV01Subject2;
-import ru.korus.tmis.pdm.test.ws.PRPAIN101312UV02;
-import ru.korus.tmis.pdm.test.ws.PRPAMT101301UV02IdentifiedPerson;
-import ru.korus.tmis.pdm.test.ws.PRPAMT101301UV02Person;
+import ru.korus.tmis.pdm.test.ws.*;
+
+import javax.xml.bind.JAXBElement;
+
+import java.util.UUID;
+
 import static org.testng.Assert.*;
-import ru.korus.tmis.pdm.test.ws.PRPAMT101301UV02OtherIDs;
-import ru.korus.tmis.pdm.test.ws.II;
 
 public class PDManagerTest {
-    static PRPAIN101312UV02 tmp;
 
     @Test
-    static public void addNewPerson() {
+    public void addNewPerson() {
         PDManagerService serv = new PDManagerService();
         PDManager pdManager = serv.getPDManagerSOAP();
 
@@ -52,11 +42,36 @@ public class PDManagerTest {
         person.getAsOtherIDs().add(new PRPAMT101301UV02OtherIDs() );
         person.getAsOtherIDs().get(0).getId().add(new II());
         person.getAsOtherIDs().get(0).getId().get(0).setRoot("3.0.0.1");
-        person.getAsOtherIDs().get(0).getId().get(0).setExtension("123456___123");
+        person.getAsOtherIDs().get(0).getId().get(0).setExtension(UUID.randomUUID().toString());
 
-        tmp = pdManager.add(prm);
-        String root = tmp.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().
+        PRPAIN101312UV02 res = pdManager.add(prm);
+        String root = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().
                 getIdentifiedPerson().getId().get(0).getRoot();
+        assertEquals(root, "3.0.0.0");
+    }
+
+    @Test
+    public void findById() {
+        ObjectFactory factory = new ObjectFactory();
+        PDManagerService serv = new PDManagerService();
+        PDManager pdManager = serv.getPDManagerSOAP();
+        PRPAIN101307UV02 prm = factory.createPRPAIN101307UV02();
+        final PRPAIN101307UV02QUQIMT021001UV01ControlActProcess controlActProcess = factory.createPRPAIN101307UV02QUQIMT021001UV01ControlActProcess();
+        prm.setControlActProcess(controlActProcess);
+        final PRPAMT101307UV02QueryByParameter query = factory.createPRPAMT101307UV02QueryByParameter();
+        final JAXBElement<PRPAMT101307UV02QueryByParameter> queryPrm =
+                factory.createPRPAIN101307UV02QUQIMT021001UV01ControlActProcessQueryByParameter(query);
+        controlActProcess.setQueryByParameter(queryPrm);
+        final PRPAMT101307UV02ParameterList prmList = factory.createPRPAMT101307UV02ParameterList();
+        query.setParameterList(prmList);
+        final PRPAMT101307UV02IdentifiedPersonIdentifier person = factory.createPRPAMT101307UV02IdentifiedPersonIdentifier();
+        prmList.getIdentifiedPersonIdentifier().add(person);
+        final II ii = factory.createII();
+        person.getValue().add(ii);
+        ii.setRoot("521de96e1462e75663ae98ea");
+
+        PRPAIN101308UV02 res = pdManager.getDemographics(prm);
+        String root = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getId().get(0).getRoot();
         assertEquals(root, "3.0.0.0");
     }
 
