@@ -86,32 +86,38 @@ public class PDManagerImpl implements PDManager {
             docsQuery +=  "docs:{ $elemMatch:" + cur + "},";
         }
         query = mongoOr(query, docsQuery);
+        System.out.println("findPerson mogo query: " + query);
         BasicQuery basicQuery = new BasicQuery(query);
         return mongoOperation.find(basicQuery, PersonalData.class);
     }
 
     private String mongoOr(String... values) {
-        String res = "{$or[";
+        String res = "{$or:[";
+        boolean isAdded = false;
         for(String val : values) {
             if( val != null && !val.isEmpty()) {
-                res = "{" + val + "},";
+                res += "{" + val + "},";
+                isAdded = true;
             }
+        }
+        if (isAdded) {
+            res = res.substring(0,res.length() - 1);
         }
         return res + "]}";
     }
 
     private String newLevel(String s) {
-        if(s == null && "".equals(s)) {
+        if(s == null || "".equals(s)) {
             return "";
         }
         return String.format("{ %s }  ", s);
     }
 
     private String addFindPrm(String name, String value) {
-        if(value == null && "".equals(value)) {
+        if(value == null || "".equals(value)) {
             return "";
         }
-        return String.format("%s: '%s' ", name, value);
+        return String.format("%s: '%s', ", name, value);
     }
 
     /*
@@ -155,13 +161,13 @@ public class PDManagerImpl implements PDManager {
         PRPAIN101306UV02 res = factory.createPRPAIN101306UV02();
         PRPAIN101306UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101306UV02MFMIMT700711UV01ControlActProcess();
         res.setControlActProcess(controlActProcess);
-        PRPAIN101306UV02MFMIMT700711UV01Subject1 subject = factory.createPRPAIN101306UV02MFMIMT700711UV01Subject1();
-        controlActProcess.getSubject().add(subject);
-        PRPAIN101306UV02MFMIMT700711UV01RegistrationEvent event = factory.createPRPAIN101306UV02MFMIMT700711UV01RegistrationEvent();
-        subject.setRegistrationEvent(event);
-        final PRPAIN101306UV02MFMIMT700711UV01Subject2 subject2 = factory.createPRPAIN101306UV02MFMIMT700711UV01Subject2();
-        event.setSubject1(subject2);
         for (PersonalData personalData : personalDataList) {
+            PRPAIN101306UV02MFMIMT700711UV01Subject1 subject = factory.createPRPAIN101306UV02MFMIMT700711UV01Subject1();
+            controlActProcess.getSubject().add(subject);
+            PRPAIN101306UV02MFMIMT700711UV01RegistrationEvent event = factory.createPRPAIN101306UV02MFMIMT700711UV01RegistrationEvent();
+            subject.setRegistrationEvent(event);
+            final PRPAIN101306UV02MFMIMT700711UV01Subject2 subject2 = factory.createPRPAIN101306UV02MFMIMT700711UV01Subject2();
+        event.setSubject1(subject2);
             final PRPAMT101310UV02IdentifiedPerson person = factory.createPRPAMT101310UV02IdentifiedPerson();
             subject2.setIdentifiedPerson(person);
             II ii = createPdmII(personalData.getId());
