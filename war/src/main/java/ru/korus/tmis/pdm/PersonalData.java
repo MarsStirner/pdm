@@ -342,61 +342,103 @@ public class PersonalData {
     static public PersonalData newInstance(PRPAIN101311UV02 prm) {
         PersonalData res = new PersonalData();
         res.id = null;
-        String given = null;
-        String family = null;
-        String middleName = null;
         PRPAMT101301UV02Person identifiedPerson = prm.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson();
         List<PNExplicit> names = identifiedPerson.getName();
         if (!names.isEmpty()) {
-            PNExplicit pn = names.get(0);
-            for (Serializable object : pn.getContent()) {
-                if (object instanceof JAXBElement) {
-                    JAXBElement el = (JAXBElement) object;
-                    if (el.getValue() instanceof EnExplicitGiven) {
-                        if (given == null) {
-                            given = ((EnExplicitGiven)el.getValue()).getContent();
-                        } else {
-                            middleName = ((EnExplicitGiven)el.getValue()).getContent();
-                        }
-                    } else if (el.getValue() instanceof EnExplicitFamily) {
-                        family = ((EnExplicitGiven)el.getValue()).getContent();
-                    }
-                }
-            }
+            initNames(res, names.get(0));
         }
-        res.given = given;
-        res.family = family;
-        res.middleName = middleName;
         CE genderCode = identifiedPerson.getAdministrativeGenderCode();
         res.gender = genderCode == null ? null : Term.newInstance(genderCode.getCode(), genderCode.getCodeSystem());
         TS birthTime = identifiedPerson.getBirthTime();
         res.birthData = birthTime == null ? null : birthTime.getValue();
-        
-        for( TEL telecom : identifiedPerson.getTelecom() ) {
-           final String use = telecom.getUse().isEmpty() ? null : telecom.getUse().get(0).name();
-            res.telecoms.add(Telecom.newInstance(telecom.getValue(), use));
-        }       
-        
+
+        initTelecom(res, identifiedPerson.getTelecom());
+
         for (PRPAMT101301UV02OtherIDs ids : identifiedPerson.getAsOtherIDs()) {
-        	for(II ii : ids.getId() ) {
-        		res.docs.add(Term.newInstance(ii.getExtension(), ii.getRoot()));
-        	}
+            initDocs(res, ids.getId());
         }
-        
-        for(AD addr : identifiedPerson.getAddr()) {
+
+        final List<AD> addrList = identifiedPerson.getAddr();
+        initAddr(res, addrList);
+
+        if (identifiedPerson.getBirthPlace() instanceof JAXBElement &&
+            identifiedPerson.getBirthPlace().getValue() instanceof PRPAMT101301UV02BirthPlace ){
+            res.birthPlace = Addr.newInstance(identifiedPerson.getBirthPlace().getValue().getAddr(), null);
+        }
+        return res;
+    }
+
+    private static void initAddr(PersonalData res, List<AD> addrList) {
+        for(AD addr : addrList) {
             final String use = addr.getUse().isEmpty() ? null : addr.getUse().get(0).name();
             res.address.add(Addr.newInstance(addr, use));
         }
+    }
 
-        Addr birthPlace = null;
-        if (identifiedPerson.getBirthPlace() instanceof JAXBElement &&
-            identifiedPerson.getBirthPlace().getValue() instanceof PRPAMT101301UV02BirthPlace ){
-            birthPlace = Addr.newInstance(identifiedPerson.getBirthPlace().getValue().getAddr(), null);
+    private static void initTelecom(PersonalData res, List<TEL> telecomList) {
+        for( TEL telecom : telecomList) {
+           final String use = telecom.getUse().isEmpty() ? null : telecom.getUse().get(0).name();
+           res.telecoms.add(Telecom.newInstance(telecom.getValue(), use));
         }
-        res.birthPlace = birthPlace;
+    }
+
+    private static void initDocs(PersonalData res, List<II> id1) {
+        for(II ii : id1) {
+            res.docs.add(Term.newInstance(ii.getExtension(), ii.getRoot()));
+        }
+    }
+
+    private static void initNames(PersonalData res, PNExplicit pn) {
+        for (Serializable object : pn.getContent()) {
+            if (object instanceof JAXBElement) {
+                JAXBElement el = (JAXBElement) object;
+                if (el.getValue() instanceof EnExplicitGiven) {
+                    if (res.given == null) {
+                        res.given = ((EnExplicitGiven)el.getValue()).getContent();
+                    } else {
+                        res.middleName = ((EnExplicitGiven)el.getValue()).getContent();
+                    }
+                } else if (el.getValue() instanceof EnExplicitFamily) {
+                    res.family = ((EnExplicitGiven)el.getValue()).getContent();
+                }
+            }
+        }
+    }
+
+    public static PersonalData newInstance(PRPAIN101305UV02 prm) {
+        PersonalData res = new PersonalData();
+        final PRPAMT101306UV02ParameterList parameterList = prm.getControlActProcess().getQueryByParameter().getValue().getParameterList();
+        List<PRPAMT101306UV02PersonName> personNames = parameterList.getPersonName();
+        if (!personNames.isEmpty() && !personNames.get(0).getValue().isEmpty()) { // если задаано ФИО персоны
+            initNames(res, personNames.get(0).getValue().get(0));
+        }
+        final List<PRPAMT101306UV02PersonAdministrativeGender> personAdministrativeGender = parameterList.getPersonAdministrativeGender();
+        if ( !personAdministrativeGender.isEmpty() &&
+             !personAdministrativeGender.get(0).getValue().isEmpty()) { //если задан пол персоны
+            CV genderCode = personAdministrativeGender.get(0).getValue().get(0);
+            res.gender = genderCode == null ? null : Term.newInstance(genderCode.getCode(), genderCode.getCodeSystem());
+        }
+        for ( PRPAMT101306UV02OtherIDsScopingOrganization otherId : parameterList.getOtherIDsScopingOrganization()) {
+            initDocs(res, otherId.getValue());
+        }
+
+        for(PRPAMT101306UV02IdentifiedPersonTelecom telecom : parameterList.getIdentifiedPersonTelecom()) {
+           initTelecom(res, telecom.getValue());
+        }
+
+        for(PRPAMT101306UV02IdentifiedPersonAddress address :  parameterList.getIdentifiedPersonAddress() ) {
+            initAddr(res, address.getValue());
+        }
+        List<PRPAMT101306UV02PersonBirthPlaceAddress> birthPlaceAddressList = parameterList.getPersonBirthPlaceAddress();
+        if(!birthPlaceAddressList.isEmpty() &&
+           !birthPlaceAddressList.get(0).getValue().isEmpty()) {
+            res.birthPlace = Addr.newInstance(birthPlaceAddressList.get(0).getValue().get(0), null);
+        }
+
         return res;
     }
-    
+
+
     public String getId() {
 		return id;
 	}

@@ -10,6 +10,9 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import ru.korus.tmis.pdm.ws.*;
 
+import java.util.List;
+import java.util.Vector;
+
 /**
  * Author: Sergey A. Zagrebelny <br>
  * Date: 02.07.2013, 12:07:21 <br>
@@ -59,8 +62,56 @@ public class PDManagerImpl implements PDManager {
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/findCandidates")
     @WebResult(name = "PRPA_IN101306UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
     public PRPAIN101306UV02 findCandidates(PRPAIN101305UV02 parameters) {
-        // TODO Auto-generated method stub
-        return null;
+        final PersonalData person = PersonalData.newInstance(parameters);
+        final List<PersonalData> personalDataList = findPerson(person);
+        return getPRPAIN101306UV02(personalDataList);
+    }
+
+    private List<PersonalData> findPerson(PersonalData person) {
+        String query = "";
+        query += addFindPrm("given", person.getGiven());
+        query += addFindPrm("middleName", person.getMiddleName());
+        query += addFindPrm("family", person.getFamily());
+        if(person.getGender() != null ) {
+            final String genderQuery = addFindPrm("code", person.getGender().getCode()) + addFindPrm("codeSystem", person.getGender().getCodeSystem());
+            query += addFindPrm("gender", newLevel(genderQuery));
+        }
+        query += addFindPrm("birthData", person.getBirthData());
+
+        //db.users.find({$or: [ {given:"aaa"}, { "docs": { $elemMatch: { "codeSystem":"3.0.0.2" } }},{"docs":{$elemMatch:{"codeSystem":"3.0.0.1"}}}]})
+        String docsQuery = "";
+        for(PersonalData.Term doc : person.getDocs()) {
+            String cur = addFindPrm("code", doc.getCode());
+            cur += addFindPrm("codeSystem", doc.getCodeSystem());
+            docsQuery +=  "docs:{ $elemMatch:" + cur + "},";
+        }
+        query = mongoOr(query, docsQuery);
+        BasicQuery basicQuery = new BasicQuery(query);
+        return mongoOperation.find(basicQuery, PersonalData.class);
+    }
+
+    private String mongoOr(String... values) {
+        String res = "{$or[";
+        for(String val : values) {
+            if( val != null && !val.isEmpty()) {
+                res = "{" + val + "},";
+            }
+        }
+        return res + "]}";
+    }
+
+    private String newLevel(String s) {
+        if(s == null && "".equals(s)) {
+            return "";
+        }
+        return String.format("{ %s }  ", s);
+    }
+
+    private String addFindPrm(String name, String value) {
+        if(value == null && "".equals(value)) {
+            return "";
+        }
+        return String.format("%s: '%s' ", name, value);
     }
 
     /*
@@ -99,6 +150,25 @@ public class PDManagerImpl implements PDManager {
         person.getId().add(ii);
 		return res;
 	}
+
+    private PRPAIN101306UV02 getPRPAIN101306UV02(List<PersonalData> personalDataList) {
+        PRPAIN101306UV02 res = factory.createPRPAIN101306UV02();
+        PRPAIN101306UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101306UV02MFMIMT700711UV01ControlActProcess();
+        res.setControlActProcess(controlActProcess);
+        PRPAIN101306UV02MFMIMT700711UV01Subject1 subject = factory.createPRPAIN101306UV02MFMIMT700711UV01Subject1();
+        controlActProcess.getSubject().add(subject);
+        PRPAIN101306UV02MFMIMT700711UV01RegistrationEvent event = factory.createPRPAIN101306UV02MFMIMT700711UV01RegistrationEvent();
+        subject.setRegistrationEvent(event);
+        final PRPAIN101306UV02MFMIMT700711UV01Subject2 subject2 = factory.createPRPAIN101306UV02MFMIMT700711UV01Subject2();
+        event.setSubject1(subject2);
+        for (PersonalData personalData : personalDataList) {
+            final PRPAMT101310UV02IdentifiedPerson person = factory.createPRPAMT101310UV02IdentifiedPerson();
+            subject2.setIdentifiedPerson(person);
+            II ii = createPdmII(personalData.getId());
+            person.getId().add(ii);
+        }
+        return res;
+    }
 
     private PRPAIN101308UV02 getPRPAIN101308UV02(PersonalData personalData) {
 

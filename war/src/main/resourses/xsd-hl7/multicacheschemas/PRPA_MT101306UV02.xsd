@@ -282,7 +282,7 @@ StaticMifToXsd.xsl version 2.0</xs:documentation>
    <xs:complexType name="PRPA_MT101306UV02.PersonName">
       <xs:sequence>
          <xs:group ref="InfrastructureRootElements"/>
-         <xs:element name="value" type="PN" minOccurs="1" maxOccurs="unbounded"/>
+         <xs:element name="value" type="PN_explicit" minOccurs="1" maxOccurs="unbounded"/>
          <xs:element name="semanticsText" type="ST" minOccurs="1" maxOccurs="1"/>
       </xs:sequence>
       <xs:attributeGroup ref="InfrastructureRootAttributes"/>

@@ -38,11 +38,22 @@ public class PDManagerTest {
         EnGiven giv = factory.createEnGiven();
         giv.getContent().add("Ivan");
         name.getContent().add(factory.createENGiven(giv));
+
+        EnGiven mn = factory.createEnGiven();
+        mn.getContent().add("Ivanovich");
+        name.getContent().add(factory.createENGiven(mn));
         person.getName().add(name);
         person.getAsOtherIDs().add(new PRPAMT101301UV02OtherIDs() );
         person.getAsOtherIDs().get(0).getId().add(new II());
         person.getAsOtherIDs().get(0).getId().get(0).setRoot("3.0.0.1");
         person.getAsOtherIDs().get(0).getId().get(0).setExtension(UUID.randomUUID().toString());
+        person.getAsOtherIDs().get(0).getId().add(new II());
+        person.getAsOtherIDs().get(0).getId().get(1).setRoot("3.0.0.2");
+        person.getAsOtherIDs().get(0).getId().get(1).setExtension(UUID.randomUUID().toString());
+
+        final CE ce = factory.createCE();
+        ce.setCode("M");
+        person.setAdministrativeGenderCode(ce);
 
         PRPAIN101312UV02 res = pdManager.add(prm);
         String root = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().
@@ -71,6 +82,31 @@ public class PDManagerTest {
         ii.setRoot("521de96e1462e75663ae98ea");
 
         PRPAIN101308UV02 res = pdManager.getDemographics(prm);
+        String root = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getId().get(0).getRoot();
+        assertEquals(root, "3.0.0.0");
+    }
+
+    @Test
+    public void findByPersonInfo() {
+        ObjectFactory factory = new ObjectFactory();
+        PDManagerService serv = new PDManagerService();
+        PDManager pdManager = serv.getPDManagerSOAP();
+        PRPAIN101305UV02 prm = factory.createPRPAIN101305UV02();
+        final PRPAIN101305UV02QUQIMT021001UV01ControlActProcess controlActProcess = factory.createPRPAIN101305UV02QUQIMT021001UV01ControlActProcess();
+        prm.setControlActProcess(controlActProcess);
+        final PRPAMT101306UV02QueryByParameter query = factory.createPRPAMT101306UV02QueryByParameter();
+        final JAXBElement<PRPAMT101306UV02QueryByParameter> queryPrm = factory.createPRPAIN101305UV02QUQIMT021001UV01ControlActProcessQueryByParameter(query);
+        controlActProcess.setQueryByParameter(queryPrm);
+        final PRPAMT101306UV02ParameterList prmList = factory.createPRPAMT101306UV02ParameterList();
+        query.setParameterList(prmList);
+        final PRPAMT101306UV02PersonName personName = factory.createPRPAMT101306UV02PersonName();
+        prmList.getPersonName().add(personName);
+        final PN pn = factory.createPN();
+        personName.getValue().add(pn);
+        EnGiven giv = factory.createEnGiven();
+        giv.getContent().add("Ivan");
+        pn.getContent().add(factory.createENGiven(giv));
+        PRPAIN101306UV02 res = pdManager.findCandidates(prm);
         String root = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getId().get(0).getRoot();
         assertEquals(root, "3.0.0.0");
     }
