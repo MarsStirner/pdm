@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -51,6 +52,10 @@ import javax.xml.bind.annotation.XmlType;
     "birthTime",
     "addr",
     "languageCommunication"
+})
+@XmlSeeAlso({
+    PRPAMT101302UV02GuardianGuardianPerson.class,
+    PRPAMT101302UV02ContactPartyContactPerson.class
 })
 public class COCTMT030207UV07Person {
 

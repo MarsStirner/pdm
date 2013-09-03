@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.query.BasicQuery;
 import ru.korus.tmis.pdm.ws.*;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 
 /**
  * Author: Sergey A. Zagrebelny <br>
@@ -24,9 +24,8 @@ import java.util.Vector;
         serviceName = "tmis-pdm", portName = "portPdm", name = "PDManager")
 @HandlerChain(file="../../../../../handler-chain.xml")
 public class PDManagerImpl implements PDManager {
-    public static final String OID_PDM = "3.0.0.0";
-	
-	@Resource 
+
+    @Resource
 	WebServiceContext wsContext;
 	
 	static private ApplicationContext ctx = null;
@@ -80,9 +79,9 @@ public class PDManagerImpl implements PDManager {
 
         //db.users.find({$or: [ {given:"aaa"}, { "docs": { $elemMatch: { "codeSystem":"3.0.0.2" } }},{"docs":{$elemMatch:{"codeSystem":"3.0.0.1"}}}]})
         String docsQuery = "";
-        for(PersonalData.Term doc : person.getDocs()) {
-            String cur = addFindPrm("code", doc.getCode());
-            cur += addFindPrm("codeSystem", doc.getCodeSystem());
+        for(Map.Entry<String, String> doc : person.getDocs().entrySet()) {
+            String cur = addFindPrm("code", doc.getKey());
+            cur += addFindPrm("codeSystem", doc.getValue());
             docsQuery +=  "docs:{ $elemMatch:" + cur + "},";
         }
         query = mongoOr(query, docsQuery);
@@ -135,7 +134,46 @@ public class PDManagerImpl implements PDManager {
         final PersonalData personalData = findById(id);
         return getPRPAIN101308UV02(personalData);
     }
-    
+
+    @Override
+    public PRPAIN101315UV02 update(@WebParam(name = "PRPA_IN101314UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters") PRPAIN101314UV02 parameters) {
+
+        for ( PRPAMT101302UV02PersonAsOtherIDs cur :
+                parameters.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getAsOtherIDs() ){
+            for(II ii  : cur.getId()) {
+               if(PersonalData.OID_PDM.equals(ii.getRoot()) ){
+                   final PersonalData personalData = findById(ii.getExtension());
+                   mongoOperation.save((personalData.update(parameters)));
+                   return  getPRPAIN101315UV02(ii.getExtension());
+               }
+            }
+
+        }
+        throw new RuntimeException("The PDM ID is not set");
+    }
+
+    private PRPAIN101315UV02 getPRPAIN101315UV02(String id) {
+        PRPAIN101315UV02 res =  factory.createPRPAIN101315UV02();
+
+        final PRPAMT101303UV02IdentifiedPerson identifiedPerson = factory.createPRPAMT101303UV02IdentifiedPerson();
+        final PRPAIN101315UV02MFMIMT700701UV01Subject2 subject2 = factory.createPRPAIN101315UV02MFMIMT700701UV01Subject2();
+        final PRPAMT101303UV02Person person = factory.createPRPAMT101303UV02Person();
+
+        final PRPAIN101315UV02MFMIMT700701UV01ControlActProcess controlActProcess = factory.createPRPAIN101315UV02MFMIMT700701UV01ControlActProcess();
+        res.setControlActProcess(controlActProcess);
+        final PRPAIN101315UV02MFMIMT700701UV01Subject1 subject1 = factory.createPRPAIN101315UV02MFMIMT700701UV01Subject1();
+        controlActProcess.getSubject().add(subject1);
+        final PRPAIN101315UV02MFMIMT700701UV01RegistrationEvent registrationEvent = factory.createPRPAIN101315UV02MFMIMT700701UV01RegistrationEvent();
+        subject1.setRegistrationEvent(registrationEvent);
+        registrationEvent.setSubject1(subject2);
+        subject2.setIdentifiedPerson(identifiedPerson);
+        identifiedPerson.setIdentifiedPerson(person);
+        II ii = createPdmII(id);
+        person.getId().add(ii);
+        return res;
+    }
+
+
     private PRPAIN101312UV02 getPRPAIN101312UV02(String id) {
 		PRPAIN101312UV02 res =  factory.createPRPAIN101312UV02();
 		
@@ -197,8 +235,8 @@ public class PDManagerImpl implements PDManager {
         person.getIdentifiedPerson().getName().add(getHL7Name(personalData));
         person.getIdentifiedPerson().setAdministrativeGenderCode(getHL7Gender(personalData));
         person.getIdentifiedPerson().setBirthTime(getHL7BirthDate(personalData));
-        
-        for(PersonalData.Term doc : personalData.getDocs()) {
+
+        for(Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
             PRPAMT101303UV02OtherIDs otherId = factory.createPRPAMT101303UV02OtherIDs();
             otherId.getId().add(createII(doc));
             person.getIdentifiedPerson().getAsOtherIDs().add(otherId);
@@ -313,19 +351,21 @@ public class PDManagerImpl implements PDManager {
     private TEL getHL7Telecom(PersonalData.Telecom telecom) {
         TEL res = factory.createTEL();
         res.setValue(telecom.getValue());
-        res.getUse().add(TelecommunicationAddressUse.fromValue(telecom.getUse()));
+        if ( telecom.getUse() != null) {
+            res.getUse().add(TelecommunicationAddressUse.fromValue(telecom.getUse()));
+        }
         return res;
     }
 
-    private II createII(PersonalData.Term doc) {
-        return  createII(doc.getCode(), doc.getCodeSystem());
+    private II createII(Map.Entry<String, String> doc) {
+        return  createII(doc.getValue(), doc.getKey());
     }
 
 
     private String save(PersonalData personalData) {
-        for(PersonalData.Term doc : personalData.getDocs()) {
-            BasicQuery query = new BasicQuery(String.format("{docs: { $elemMatch: {code:'%s' , codeSystem : '%s'}}}", doc.getCode(), doc.getCodeSystem()));
-            if (!mongoOperation.find(query, PersonalData.class).isEmpty() ){
+        for(Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
+            BasicQuery query = new BasicQuery(String.format("{docs: { $elemMatch: {code:'%s' , codeSystem : '%s'}}}", doc.getValue(), doc.getKey()));
+            if (!mongoOperation.find(query, PersonalData.class).isEmpty()){
                 throw new RuntimeException("The person already added");
             }
         }
@@ -342,7 +382,7 @@ public class PDManagerImpl implements PDManager {
     }
 
     private II createPdmII(String id) {
-        return createII(id, OID_PDM);
+        return createII(id, PersonalData.OID_PDM);
     }
 
     private II createII(String extension, String root) {
@@ -364,7 +404,7 @@ public class PDManagerImpl implements PDManager {
         name.getContent().add(factory.createENExplicitGiven(middleName));
         
         EnExplicitFamily family = factory.createEnExplicitFamily();
-        middleName.setContent(personalData.getFamily());
+        family.setContent(personalData.getFamily());
         name.getContent().add(factory.createENExplicitFamily(family));
      
         return name;

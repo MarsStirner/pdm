@@ -1,7 +1,9 @@
 package ru.korus.tmis.pdm;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 
@@ -25,6 +27,9 @@ import ru.korus.tmis.pdm.ws.*;
  */
 @Document(collection = "users")
 public class PersonalData {
+
+
+    public static final String OID_PDM = "3.0.0.0";
 
     public static class Term {
         private String code;
@@ -315,7 +320,7 @@ public class PersonalData {
      * Документ, удостоверяющий временную нетрудоспособность; 
      * Документ об образовании  
      */
-    private Vector<Term> docs = new Vector<Term>();
+    private Map<String, String> docs = new HashMap<String, String>();
     
     /**
      * Контактные телефоны и электронные адреса
@@ -368,15 +373,52 @@ public class PersonalData {
         return res;
     }
 
-    private static void initAddr(PersonalData res, List<AD> addrList) {
-        for(AD addr : addrList) {
+    public PersonalData update(PRPAIN101314UV02 prm) {
+
+        PRPAMT101302UV02IdentifiedPersonIdentifiedPerson identifiedPerson = prm.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson();
+        List<PRPAMT101302UV02PersonName> names = identifiedPerson.getName();
+        if (!names.isEmpty()) {
+            initNames(this, names.get(0));
+        }
+        CE genderCode = identifiedPerson.getAdministrativeGenderCode();
+        gender = genderCode == null ? null : Term.newInstance(genderCode.getCode(), genderCode.getCodeSystem());
+        TS birthTime = identifiedPerson.getBirthTime();
+        birthData = birthTime == null ? null : birthTime.getValue();
+
+        initTelecom(this, identifiedPerson.getTelecom());
+
+        for ( PRPAMT101302UV02PersonAsOtherIDs cur :
+                identifiedPerson.getAsOtherIDs() ){
+            for(II ii  : cur.getId()) {
+                if( !OID_PDM.equals(ii.getRoot()) ){
+                    this.docs.put(ii.getRoot(), ii.getExtension());
+                }
+            }
+
+        }
+
+        initAddr(this, identifiedPerson.getAddr());
+
+        if (identifiedPerson.getBirthPlace() instanceof JAXBElement &&
+            identifiedPerson.getBirthPlace().getValue() instanceof PRPAMT101302UV02PersonBirthPlace ){
+            this.birthPlace = Addr.newInstance(identifiedPerson.getBirthPlace().getValue().getAddr(), null);
+        }
+
+        return this;
+
+    }
+
+    private static <A> void initAddr(PersonalData res, List<A> addrList) {
+        for(A a : addrList) {
+            AD addr = (AD)a;
             final String use = addr.getUse().isEmpty() ? null : addr.getUse().get(0).name();
             res.address.add(Addr.newInstance(addr, use));
         }
     }
 
-    private static void initTelecom(PersonalData res, List<TEL> telecomList) {
-        for( TEL telecom : telecomList) {
+    private static <T> void initTelecom(PersonalData res, List<T> telecomList) {
+        for( T t : telecomList) {
+           final  TEL telecom = (TEL)t;
            final String use = telecom.getUse().isEmpty() ? null : telecom.getUse().get(0).name();
            res.telecoms.add(Telecom.newInstance(telecom.getValue(), use));
         }
@@ -384,7 +426,7 @@ public class PersonalData {
 
     private static void initDocs(PersonalData res, List<II> id1) {
         for(II ii : id1) {
-            res.docs.add(Term.newInstance(ii.getExtension(), ii.getRoot()));
+            res.docs.put(ii.getRoot(), ii.getExtension());
         }
     }
 
@@ -467,7 +509,7 @@ public class PersonalData {
         return birthData;
     }
 
-    public Vector<Term> getDocs() {
+    public Map<String, String> getDocs() {
         return docs;
     }
 

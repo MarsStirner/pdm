@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -45,6 +46,12 @@ import javax.xml.bind.annotation.XmlType;
     "code",
     "name",
     "contactParty"
+})
+@XmlSeeAlso({
+    PRPAMT101302UV02StudentSchoolOrganization.class,
+    PRPAMT101302UV02GuardianGuardianOrganization.class,
+    PRPAMT101302UV02EmployeeEmployerOrganization.class,
+    PRPAMT101302UV02ContactPartyContactOrganization.class
 })
 public class COCTMT150007UVOrganization {
 

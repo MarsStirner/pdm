@@ -17,4 +17,5 @@ mvn clean install
 3. Установка
    3.1 Установить Glassfish 3.1.2 и создать домен.
    3.2 Установить mongodb в соответствии с инструкцией http://docs.mongodb.org/manual/tutorial/install-mongodb-on-linux/
-   3.3 Продеплоить pdm-ear-<M>.<N>.<K>.ear в домен сервера Glassfish 3.1.2.
+   3.3 Запустить mongod коммандой mongodb/bin/mongod  --dbpath data/db --fork --logpath data/log/mongodb.log --smallfiles
+   3.4 Продеплоить pdm-ear-<M>.<N>.<K>.ear в домен сервера Glassfish 3.1.2.

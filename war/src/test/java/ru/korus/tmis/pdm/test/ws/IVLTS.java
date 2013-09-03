@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -49,15 +50,25 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "IVL_TS", propOrder = {
     "rest"
 })
+@XmlSeeAlso({
+    PRPAMT101302UV02IdentifiedPersonEffectiveTime.class,
+    PRPAMT101302UV02StudentEffectiveTime.class,
+    PRPAMT101302UV02GuardianEffectiveTime.class,
+    PRPAMT101302UV02CitizenEffectiveTime.class,
+    PRPAMT101302UV02OtherIDsEffectiveTime.class,
+    PRPAMT101302UV02EmployeeEffectiveTime.class,
+    PRPAMT101302UV02ContactPartyEffectiveTime.class,
+    PRPAMT101302UV02PersonalRelationshipEffectiveTime.class
+})
 public class IVLTS
     extends SXCMTS
 {
 
     @XmlElementRefs({
-        @XmlElementRef(name = "width", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "high", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "center", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "low", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false)
+        @XmlElementRef(name = "width", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "low", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "center", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false)
     })
     protected List<JAXBElement<? extends QTY>> rest;
 
@@ -67,8 +78,8 @@ public class IVLTS
      * <p>
      * You are getting this "catch-all" property because of the following reason: 
      * The field name "High" is used by two different parts of a schema. See: 
-     * line 1758 of file:/C:/Project/person-reg/war/src/main/resourses/xsd-hl7/coreschemas/datatypes-base.xsd
-     * line 1749 of file:/C:/Project/person-reg/war/src/main/resourses/xsd-hl7/coreschemas/datatypes-base.xsd
+     * line 1758 of file:/C:/Project/PDM/war/src/test/resourses/xsd-hl7/coreschemas/datatypes-base.xsd
+     * line 1749 of file:/C:/Project/PDM/war/src/test/resourses/xsd-hl7/coreschemas/datatypes-base.xsd
      * <p>
      * To get rid of this property, apply a property customization to one 
      * of both of the following declarations to change their names: 
@@ -91,8 +102,8 @@ public class IVLTS
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link PQ }{@code >}
      * {@link JAXBElement }{@code <}{@link IVXBTS }{@code >}
-     * {@link JAXBElement }{@code <}{@link TS }{@code >}
      * {@link JAXBElement }{@code <}{@link IVXBTS }{@code >}
+     * {@link JAXBElement }{@code <}{@link TS }{@code >}
      * 
      * 
      */

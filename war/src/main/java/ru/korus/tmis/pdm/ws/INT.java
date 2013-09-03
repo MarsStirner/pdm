@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "INT")
 @XmlSeeAlso({
+    PRPAMT101302UV02PersonMultipleBirthOrderNumber.class,
     SXCMINT.class,
     IVXBINT.class
 })

@@ -35,9 +35,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "TS")
 @XmlSeeAlso({
     UVPTS.class,
+    PRPAMT101302UV02PersonBirthTime.class,
     IVXBTS.class,
-    SXCMTS.class,
-    PPDTS.class
+    PRPAMT101302UV02PersonDeceasedTime.class,
+    PPDTS.class,
+    SXCMTS.class
 })
 public class TS
     extends QTY

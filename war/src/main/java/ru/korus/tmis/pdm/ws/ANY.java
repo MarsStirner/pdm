@@ -36,17 +36,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ANY")
 @XmlSeeAlso({
-    II.class,
-    BL.class,
     SLISTPQ.class,
     CR.class,
     SLISTTS.class,
     ANYNonNull.class,
+    II.class,
+    BL.class,
     GLISTTS.class,
     URL.class,
     CD.class,
-    QTY.class,
     GLISTPQ.class,
+    QTY.class,
     BIN.class
 })
 public abstract class ANY {

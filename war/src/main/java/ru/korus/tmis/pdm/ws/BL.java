@@ -4,6 +4,7 @@ package ru.korus.tmis.pdm.ws;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -32,6 +33,15 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BL")
+@XmlSeeAlso({
+    PRPAMT101302UV02PersonOrganDonorInd.class,
+    PRPAMT101302UV02GuardianNegationInd.class,
+    PRPAMT101302UV02EmployeeNegationInd.class,
+    PRPAMT101302UV02ContactPartyNegationInd.class,
+    PRPAMT101302UV02PersonalRelationshipNegationInd.class,
+    PRPAMT101302UV02PersonMultipleBirthInd.class,
+    PRPAMT101302UV02PersonDeceasedInd.class
+})
 public class BL
     extends ANY
 {

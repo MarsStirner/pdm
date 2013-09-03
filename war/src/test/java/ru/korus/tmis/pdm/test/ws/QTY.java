@@ -39,10 +39,10 @@ import javax.xml.bind.annotation.XmlType;
     RTOMOPQ.class,
     PQ.class,
     MO.class,
-    TS.class,
     INT.class,
     REAL.class,
-    RTOQTYQTY.class
+    RTOQTYQTY.class,
+    TS.class
 })
 public abstract class QTY
     extends ANY

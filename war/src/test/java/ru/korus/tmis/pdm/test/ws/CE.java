@@ -43,9 +43,19 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CE")
 @XmlSeeAlso({
+    PRPAMT101302UV02GuardianCode.class,
+    PRPAMT101302UV02PersonAdministrativeGenderCode.class,
+    PRPAMT101302UV02ContactPartyCode.class,
+    PRPAMT101302UV02CitizenCode.class,
     HXITCE.class,
+    PRPAMT101302UV02EmployeeOccupationCode.class,
+    PRPAMT101302UV02EmployeeJobClassCode.class,
+    PRPAMT101302UV02IdentifiedPersonConfidentialityCode.class,
+    PRPAMT101302UV02PersonalRelationshipCode.class,
+    PRPAMT101302UV02EmployeeCode.class,
+    EIVLEvent.class,
     CV.class,
-    EIVLEvent.class
+    PRPAMT101302UV02PersonMaritalStatusCode.class
 })
 public class CE
     extends CD

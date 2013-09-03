@@ -54,6 +54,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "thumbnail"
 })
 @XmlSeeAlso({
+    PRPAMT101302UV02PersonDesc.class,
+    PRPAMT101302UV02GuardianCertificateText.class,
     Thumbnail.class,
     ST.class
 })
