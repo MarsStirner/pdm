@@ -30,6 +30,7 @@ public class PersonalData {
 
 
     public static final String OID_PDM = "3.0.0.0";
+    public static final char DOT_CH = '_';
 
     public static class Term {
         private String code;
@@ -101,7 +102,7 @@ public class PersonalData {
         private String state;
         private String city;
 
-        static public Addr newInstance(AD addr, String use) {
+        static public Addr newInstance(ADExplicit addr, String use) {
             Addr res = new Addr();
             res.use = use;
 
@@ -110,7 +111,7 @@ public class PersonalData {
                     JAXBElement el = (JAXBElement) object;
                     if (el.getValue() instanceof ADXPExplicit) {
                         final String value =  ((ADXPExplicit)el.getValue()).getContent();
-                        if (el.getValue() instanceof AdxpExplicitCountry) {
+                        if (el.getValue() instanceof ADXPExplicit) {
                             res.country = value;
                         } else if (el.getValue() instanceof AdxpExplicitStreetAddressLine) {
                             res.streetAddressLine = value;
@@ -130,7 +131,7 @@ public class PersonalData {
                             res.postalCode = value;
                         } else if (el.getValue() instanceof AdxpExplicitDeliveryAddressLine)  {
                             res.deliveryAddressLine = value;
-                        } else if (el.getValue() instanceof AdxpExplicitStreetName)  {
+                        } else if (el.getValue() instanceof AdxpStreetName)  {
                             res.streetName = value;
                         } else if (el.getValue() instanceof AdxpExplicitUnitID)  {
                             res.unitID = value;
@@ -320,6 +321,7 @@ public class PersonalData {
      * Документ, удостоверяющий временную нетрудоспособность; 
      * Документ об образовании  
      */
+    //TODO fix: javax.xml.ws.soap.SOAPFaultException: Map key 3.0.0.2 contains dots but no replacement was configured!
     private Map<String, String> docs = new HashMap<String, String>();
     
     /**
@@ -363,8 +365,7 @@ public class PersonalData {
             initDocs(res, ids.getId());
         }
 
-        final List<AD> addrList = identifiedPerson.getAddr();
-        initAddr(res, addrList);
+        initAddr(res, identifiedPerson.getAddr());
 
         if (identifiedPerson.getBirthPlace() instanceof JAXBElement &&
             identifiedPerson.getBirthPlace().getValue() instanceof PRPAMT101301UV02BirthPlace ){
@@ -391,7 +392,7 @@ public class PersonalData {
                 identifiedPerson.getAsOtherIDs() ){
             for(II ii  : cur.getId()) {
                 if( !OID_PDM.equals(ii.getRoot()) ){
-                    this.docs.put(ii.getRoot(), ii.getExtension());
+                    this.docs.put(ii.getRoot().replace('.', DOT_CH), ii.getExtension());
                 }
             }
 
@@ -410,7 +411,7 @@ public class PersonalData {
 
     private static <A> void initAddr(PersonalData res, List<A> addrList) {
         for(A a : addrList) {
-            AD addr = (AD)a;
+            ADExplicit addr = (ADExplicit)a;
             final String use = addr.getUse().isEmpty() ? null : addr.getUse().get(0).name();
             res.address.add(Addr.newInstance(addr, use));
         }
@@ -426,7 +427,10 @@ public class PersonalData {
 
     private static void initDocs(PersonalData res, List<II> id1) {
         for(II ii : id1) {
-            res.docs.put(ii.getRoot(), ii.getExtension());
+            final String root = ii.getRoot();
+            if(root != null) {
+                 res.docs.put(root.replace('.', DOT_CH), ii.getExtension());
+            }
         }
     }
 
@@ -441,7 +445,7 @@ public class PersonalData {
                         res.middleName = ((EnExplicitGiven)el.getValue()).getContent();
                     }
                 } else if (el.getValue() instanceof EnExplicitFamily) {
-                    res.family = ((EnExplicitGiven)el.getValue()).getContent();
+                    res.family = ((EnExplicitFamily)el.getValue()).getContent();
                 }
             }
         }

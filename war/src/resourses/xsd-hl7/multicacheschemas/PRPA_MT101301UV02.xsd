@@ -79,7 +79,7 @@ StaticMifToXsd.xsl version 2.0</xs:documentation>
    <xs:complexType name="PRPA_MT101301UV02.BirthPlace">
       <xs:sequence>
          <xs:group ref="InfrastructureRootElements"/>
-         <xs:element name="addr" type="AD" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="addr" type="AD_explicit" minOccurs="0" maxOccurs="1"/>
          <xs:element name="birthplace" type="COCT_MT710007UV07.Place" nillable="true" minOccurs="0"
                      maxOccurs="1"/>
          <xs:element name="subjectOf" type="PRPA_MT101301UV02.Subject2" nillable="true"
@@ -341,7 +341,7 @@ StaticMifToXsd.xsl version 2.0</xs:documentation>
          <xs:element name="multipleBirthInd" type="BL" minOccurs="0" maxOccurs="1"/>
          <xs:element name="multipleBirthOrderNumber" type="INT" minOccurs="0" maxOccurs="1"/>
          <xs:element name="organDonorInd" type="BL" minOccurs="0" maxOccurs="1"/>
-         <xs:element name="addr" type="AD" minOccurs="0" maxOccurs="unbounded"/>
+         <xs:element name="addr" type="AD_explicit" minOccurs="0" maxOccurs="unbounded"/>
          <xs:element name="maritalStatusCode" type="CE" minOccurs="0" maxOccurs="1"/>
          <xs:element name="asEmployee" type="PRPA_MT101301UV02.Employee" nillable="true"
                      minOccurs="0"

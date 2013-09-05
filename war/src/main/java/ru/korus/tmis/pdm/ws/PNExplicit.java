@@ -97,10 +97,10 @@ public class PNExplicit {
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link EnExplicitSuffix }{@code >}
      * {@link JAXBElement }{@code <}{@link EnExplicitDelimiter }{@code >}
-     * {@link JAXBElement }{@code <}{@link EnExplicitPrefix }{@code >}
-     * {@link JAXBElement }{@code <}{@link EnExplicitGiven }{@code >}
      * {@link JAXBElement }{@code <}{@link EnExplicitFamily }{@code >}
+     * {@link JAXBElement }{@code <}{@link EnExplicitPrefix }{@code >}
      * {@link String }
+     * {@link JAXBElement }{@code <}{@link EnExplicitGiven }{@code >}
      * 
      * 
      */

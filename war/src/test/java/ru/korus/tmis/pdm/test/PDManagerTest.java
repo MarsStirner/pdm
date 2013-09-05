@@ -47,9 +47,16 @@ public class PDManagerTest {
         person.getAsOtherIDs().get(0).getId().add(new II());
         person.getAsOtherIDs().get(0).getId().get(0).setRoot("3.0.0.1");
         person.getAsOtherIDs().get(0).getId().get(0).setExtension(UUID.randomUUID().toString());
-        person.getAsOtherIDs().get(0).getId().add(new II());
-        person.getAsOtherIDs().get(0).getId().get(1).setRoot("3.0.0.2");
-        person.getAsOtherIDs().get(0).getId().get(1).setExtension(UUID.randomUUID().toString());
+        person.getAsOtherIDs().add(new PRPAMT101301UV02OtherIDs() );
+        person.getAsOtherIDs().get(1).getId().add(new II());
+        person.getAsOtherIDs().get(1).getId().get(0).setRoot("3.0.0.2");
+        person.getAsOtherIDs().get(1).getId().get(0).setExtension(UUID.randomUUID().toString());
+
+        final AD addr = factory.createAD();
+        person.getAddr().add(addr);
+        AdxpStreetName street = factory.createAdxpStreetName();
+        street.getContent().add("TestStreet");
+        addr.getContent().add(factory.createADStreetName(street));
 
         final CE ce = factory.createCE();
         ce.setCode("M");
@@ -112,7 +119,7 @@ public class PDManagerTest {
     }
 
 
-   /* @Test
+    @Test
     public void update() {
         ObjectFactory factory = new ObjectFactory();
         PDManagerService serv = new PDManagerService();
@@ -120,6 +127,6 @@ public class PDManagerTest {
         final PRPAIN101315UV02 res = pdManager.update(factory.createPRPAIN101314UV02());
         String root = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getId().get(0).getRoot();
         assertEquals(root, "3.0.0.0");
-    }*/
+    }
 
 }

@@ -93,7 +93,7 @@ StaticMifToXsd.xsl version 2.0</xs:documentation>
    </xs:complexType>
    <xs:complexType name="PRPA_MT101302UV02.BirthPlace.addr" mixed="true">
       <xs:complexContent>
-         <xs:extension base="AD">
+         <xs:extension base="AD_explicit">
             <xs:attribute name="updateMode" type="PRPA_MT101302UV02.BirthPlace.addr.updateMode"/>
          </xs:extension>
       </xs:complexContent>

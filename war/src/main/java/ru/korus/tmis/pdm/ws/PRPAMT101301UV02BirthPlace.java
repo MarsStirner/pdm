@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;group ref="{urn:hl7-org:v3}InfrastructureRootElements"/>
- *         &lt;element name="addr" type="{urn:hl7-org:v3}AD" minOccurs="0"/>
+ *         &lt;element name="addr" type="{urn:hl7-org:v3}AD_explicit" minOccurs="0"/>
  *         &lt;element name="birthplace" type="{urn:hl7-org:v3}COCT_MT710007UV07.Place" minOccurs="0"/>
  *         &lt;element name="subjectOf" type="{urn:hl7-org:v3}PRPA_MT101301UV02.Subject2" minOccurs="0"/>
  *       &lt;/sequence>
@@ -50,7 +50,7 @@ public class PRPAMT101301UV02BirthPlace {
     protected List<CS> realmCode;
     protected II typeId;
     protected List<II> templateId;
-    protected AD addr;
+    protected ADExplicit addr;
     @XmlElementRef(name = "birthplace", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false)
     protected JAXBElement<COCTMT710007UV07Place> birthplace;
     @XmlElementRef(name = "subjectOf", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false)
@@ -147,10 +147,10 @@ public class PRPAMT101301UV02BirthPlace {
      * 
      * @return
      *     possible object is
-     *     {@link AD }
+     *     {@link ADExplicit }
      *     
      */
-    public AD getAddr() {
+    public ADExplicit getAddr() {
         return addr;
     }
 
@@ -159,10 +159,10 @@ public class PRPAMT101301UV02BirthPlace {
      * 
      * @param value
      *     allowed object is
-     *     {@link AD }
+     *     {@link ADExplicit }
      *     
      */
-    public void setAddr(AD value) {
+    public void setAddr(ADExplicit value) {
         this.addr = value;
     }
 

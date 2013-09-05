@@ -12,6 +12,7 @@ import ru.korus.tmis.pdm.ws.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 /**
  * Author: Sergey A. Zagrebelny <br>
@@ -80,9 +81,7 @@ public class PDManagerImpl implements PDManager {
         //db.users.find({$or: [ {given:"aaa"}, { "docs": { $elemMatch: { "codeSystem":"3.0.0.2" } }},{"docs":{$elemMatch:{"codeSystem":"3.0.0.1"}}}]})
         String docsQuery = "";
         for(Map.Entry<String, String> doc : person.getDocs().entrySet()) {
-            String cur = addFindPrm("code", doc.getKey());
-            cur += addFindPrm("codeSystem", doc.getValue());
-            docsQuery +=  "docs:{ $elemMatch:" + cur + "},";
+            docsQuery +=  "docs:{ $elemMatch:" + addFindPrm(doc.getKey(), doc.getValue()) + "},";
         }
         query = mongoOr(query, docsQuery);
         System.out.println("findPerson mogo query: " + query);
@@ -129,10 +128,15 @@ public class PDManagerImpl implements PDManager {
     @WebResult(name = "PRPA_IN101308UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
     public PRPAIN101308UV02 getDemographics(PRPAIN101307UV02 parameters) {
         //TODO add verification
-        final String id = parameters.getControlActProcess().getQueryByParameter().getValue().
-                getParameterList().getIdentifiedPersonIdentifier().get(0).getValue().get(0).getRoot();
-        final PersonalData personalData = findById(id);
-        return getPRPAIN101308UV02(personalData);
+        final List<PRPAMT101307UV02IdentifiedPersonIdentifier> identifiedPersons = parameters.getControlActProcess().getQueryByParameter().getValue().
+                getParameterList().getIdentifiedPersonIdentifier();
+
+        List<PersonalData> personalDataList = new Vector<PersonalData>(identifiedPersons.size());
+        for(PRPAMT101307UV02IdentifiedPersonIdentifier curPerson : identifiedPersons) {
+            final String id = curPerson.getValue().get(0).getRoot();
+            personalDataList.add(findById(id));
+        }
+        return getPRPAIN101308UV02(personalDataList);
     }
 
     @Override
@@ -214,7 +218,7 @@ public class PDManagerImpl implements PDManager {
         return res;
     }
 
-    private PRPAIN101308UV02 getPRPAIN101308UV02(PersonalData personalData) {
+    private PRPAIN101308UV02 getPRPAIN101308UV02(List<PersonalData> personalDataList) {
 
         PRPAIN101308UV02 res = factory.createPRPAIN101308UV02();
         final PRPAIN101308UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101308UV02MFMIMT700711UV01ControlActProcess();
@@ -225,35 +229,37 @@ public class PDManagerImpl implements PDManager {
         subject1.setRegistrationEvent(registrationEvent);
         final PRPAIN101308UV02MFMIMT700711UV01Subject2 subject2 = factory.createPRPAIN101308UV02MFMIMT700711UV01Subject2();
         registrationEvent.setSubject1(subject2);
-        final PRPAMT101303UV02IdentifiedPerson person = factory.createPRPAMT101303UV02IdentifiedPerson();
-        subject2.setIdentifiedPerson(person);
-        II ii = createPdmII(personalData.getId());
-        person.getId().add(ii);
-        person.setStatusCode(factory.createCS());
-        person.getStatusCode().setCode("active");
-        person.setIdentifiedPerson(factory.createPRPAMT101303UV02Person());
-        person.getIdentifiedPerson().getName().add(getHL7Name(personalData));
-        person.getIdentifiedPerson().setAdministrativeGenderCode(getHL7Gender(personalData));
-        person.getIdentifiedPerson().setBirthTime(getHL7BirthDate(personalData));
+        for(PersonalData personalData : personalDataList) {
+            final PRPAMT101303UV02IdentifiedPerson person = factory.createPRPAMT101303UV02IdentifiedPerson();
+            subject2.setIdentifiedPerson(person);
+            II ii = createPdmII(personalData.getId());
+            person.getId().add(ii);
+            person.setStatusCode(factory.createCS());
+            person.getStatusCode().setCode("active");
+            person.setIdentifiedPerson(factory.createPRPAMT101303UV02Person());
+            person.getIdentifiedPerson().getName().add(getHL7Name(personalData));
+            person.getIdentifiedPerson().setAdministrativeGenderCode(getHL7Gender(personalData));
+            person.getIdentifiedPerson().setBirthTime(getHL7BirthDate(personalData));
 
-        for(Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
-            PRPAMT101303UV02OtherIDs otherId = factory.createPRPAMT101303UV02OtherIDs();
-            otherId.getId().add(createII(doc));
-            person.getIdentifiedPerson().getAsOtherIDs().add(otherId);
-        }
-        
-        for(PersonalData.Telecom telecom : personalData.getTelecoms()) {
-            person.getIdentifiedPerson().getTelecom().add(getHL7Telecom(telecom));
-        }
-        
-        for(PersonalData.Addr addr: personalData.getAddress()) {
-            person.getIdentifiedPerson().getAddr().add(getHL7Addr(addr));
-        }
+            for(Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
+                PRPAMT101303UV02OtherIDs otherId = factory.createPRPAMT101303UV02OtherIDs();
+                otherId.getId().add(createII(doc));
+                person.getIdentifiedPerson().getAsOtherIDs().add(otherId);
+            }
 
-        if (personalData.getBirthPlace() != null) {
-            PRPAMT101303UV02BirthPlace birthPlace = factory.createPRPAMT101303UV02BirthPlace();
-            birthPlace.setAddr(getHL7Addr(personalData.getBirthPlace()));
-            person.getIdentifiedPerson().setBirthPlace(factory.createPRPAMT101303UV02PersonBirthPlace(birthPlace));
+            for(PersonalData.Telecom telecom : personalData.getTelecoms()) {
+                person.getIdentifiedPerson().getTelecom().add(getHL7Telecom(telecom));
+            }
+
+            for(PersonalData.Addr addr: personalData.getAddress()) {
+                person.getIdentifiedPerson().getAddr().add(getHL7Addr(addr));
+            }
+
+            if (personalData.getBirthPlace() != null) {
+                PRPAMT101303UV02BirthPlace birthPlace = factory.createPRPAMT101303UV02BirthPlace();
+                birthPlace.setAddr(getHL7Addr(personalData.getBirthPlace()));
+                person.getIdentifiedPerson().setBirthPlace(factory.createPRPAMT101303UV02PersonBirthPlace(birthPlace));
+            }
         }
 
         return res;
@@ -388,7 +394,7 @@ public class PDManagerImpl implements PDManager {
     private II createII(String extension, String root) {
         II ii = factory.createII();
         ii.setExtension(extension);
-        ii.setRoot(root);
+        ii.setRoot(root.replace(PersonalData.DOT_CH, '.'));
         return ii;
     }
 

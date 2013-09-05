@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="code" type="{urn:hl7-org:v3}CE" minOccurs="0"/>
  *         &lt;element name="name" type="{urn:hl7-org:v3}EN" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="desc" type="{urn:hl7-org:v3}ED" minOccurs="0"/>
- *         &lt;element name="addr" type="{urn:hl7-org:v3}AD" minOccurs="0"/>
+ *         &lt;element name="addr" type="{urn:hl7-org:v3}AD_explicit" minOccurs="0"/>
  *         &lt;element name="directionsText" type="{urn:hl7-org:v3}ED" minOccurs="0"/>
  *         &lt;element name="positionText" type="{urn:hl7-org:v3}ED" minOccurs="0"/>
  *         &lt;element name="locatedEntity" type="{urn:hl7-org:v3}COCT_MT710007UV07.LocatedEntity" minOccurs="0"/>
@@ -64,7 +64,7 @@ public class COCTMT710007UV07Place {
     protected CE code;
     protected List<EN> name;
     protected ED desc;
-    protected AD addr;
+    protected ADExplicit addr;
     protected ED directionsText;
     protected ED positionText;
     @XmlElementRef(name = "locatedEntity", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false)
@@ -267,10 +267,10 @@ public class COCTMT710007UV07Place {
      * 
      * @return
      *     possible object is
-     *     {@link AD }
+     *     {@link ADExplicit }
      *     
      */
-    public AD getAddr() {
+    public ADExplicit getAddr() {
         return addr;
     }
 
@@ -279,10 +279,10 @@ public class COCTMT710007UV07Place {
      * 
      * @param value
      *     allowed object is
-     *     {@link AD }
+     *     {@link ADExplicit }
      *     
      */
-    public void setAddr(AD value) {
+    public void setAddr(ADExplicit value) {
         this.addr = value;
     }
 
