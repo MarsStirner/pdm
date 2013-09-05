@@ -111,7 +111,7 @@ public class PersonalData {
                     JAXBElement el = (JAXBElement) object;
                     if (el.getValue() instanceof ADXPExplicit) {
                         final String value =  ((ADXPExplicit)el.getValue()).getContent();
-                        if (el.getValue() instanceof ADXPExplicit) {
+                        if (el.getValue() instanceof AdxpExplicitCountry) {
                             res.country = value;
                         } else if (el.getValue() instanceof AdxpExplicitStreetAddressLine) {
                             res.streetAddressLine = value;
@@ -131,7 +131,7 @@ public class PersonalData {
                             res.postalCode = value;
                         } else if (el.getValue() instanceof AdxpExplicitDeliveryAddressLine)  {
                             res.deliveryAddressLine = value;
-                        } else if (el.getValue() instanceof AdxpStreetName)  {
+                        } else if (el.getValue() instanceof AdxpExplicitStreetName)  {
                             res.streetName = value;
                         } else if (el.getValue() instanceof AdxpExplicitUnitID)  {
                             res.unitID = value;
