@@ -73,8 +73,9 @@ public class PDManagerImpl implements PDManager {
         query += addFindPrm("middleName", person.getMiddleName());
         query += addFindPrm("family", person.getFamily());
         if(person.getGender() != null ) {
-            final String genderQuery = addFindPrm("code", person.getGender().getCode()) + addFindPrm("codeSystem", person.getGender().getCodeSystem());
-            query += addFindPrm("gender", newLevel(genderQuery));
+            //TODO add codeSystem check
+            final String genderQuery = addFindPrm("code", person.getGender().getCode());
+            query += "gender:" + newLevel(genderQuery);
         }
         query += addFindPrm("birthData", person.getBirthData());
 
@@ -223,13 +224,13 @@ public class PDManagerImpl implements PDManager {
         PRPAIN101308UV02 res = factory.createPRPAIN101308UV02();
         final PRPAIN101308UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101308UV02MFMIMT700711UV01ControlActProcess();
         res.setControlActProcess(controlActProcess);
-        final PRPAIN101308UV02MFMIMT700711UV01Subject1 subject1 = factory.createPRPAIN101308UV02MFMIMT700711UV01Subject1();
-        controlActProcess.getSubject().add(subject1);
-        final PRPAIN101308UV02MFMIMT700711UV01RegistrationEvent registrationEvent = factory.createPRPAIN101308UV02MFMIMT700711UV01RegistrationEvent();
-        subject1.setRegistrationEvent(registrationEvent);
-        final PRPAIN101308UV02MFMIMT700711UV01Subject2 subject2 = factory.createPRPAIN101308UV02MFMIMT700711UV01Subject2();
-        registrationEvent.setSubject1(subject2);
         for(PersonalData personalData : personalDataList) {
+            final PRPAIN101308UV02MFMIMT700711UV01Subject1 subject1 = factory.createPRPAIN101308UV02MFMIMT700711UV01Subject1();
+            controlActProcess.getSubject().add(subject1);
+            final PRPAIN101308UV02MFMIMT700711UV01RegistrationEvent registrationEvent = factory.createPRPAIN101308UV02MFMIMT700711UV01RegistrationEvent();
+            subject1.setRegistrationEvent(registrationEvent);
+            final PRPAIN101308UV02MFMIMT700711UV01Subject2 subject2 = factory.createPRPAIN101308UV02MFMIMT700711UV01Subject2();
+            registrationEvent.setSubject1(subject2);
             final PRPAMT101303UV02IdentifiedPerson person = factory.createPRPAMT101303UV02IdentifiedPerson();
             subject2.setIdentifiedPerson(person);
             II ii = createPdmII(personalData.getId());
