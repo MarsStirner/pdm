@@ -38,11 +38,10 @@ public class PDManagerImpl implements PDManager {
 	}
 
     private ObjectFactory factory = new ObjectFactory();
-    /*
-    * (non-Javadoc)
-    *
-    * @see ru.korus.tmis.pdm.ws.PDManager#add(ru.korus.tmis.pdm.ws.PRPAIN101311UV02)
-    */
+    /**
+     *
+     * @see ru.korus.tmis.pdm.ws.PDManager#add(ru.korus.tmis.pdm.ws.PRPAIN101311UV02)
+     */
     @Override
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/new")
     @WebResult(name = "PRPA_IN101312UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters")
@@ -53,11 +52,10 @@ public class PDManagerImpl implements PDManager {
         return  getPRPAIN101312UV02(id);
     }
 
-    /*
-         * (non-Javadoc)
-         *
-         * @see ru.korus.tmis.pdm.ws.PDManager#findCandidates(ru.korus.tmis.pdm.ws.PRPAIN101305UV02)
-         */
+    /**
+     *
+     * @see ru.korus.tmis.pdm.ws.PDManager#findCandidates(ru.korus.tmis.pdm.ws.PRPAIN101305UV02)
+     */
     @Override
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/findCandidates")
     @WebResult(name = "PRPA_IN101306UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
@@ -67,6 +65,48 @@ public class PDManagerImpl implements PDManager {
         return getPRPAIN101306UV02(personalDataList);
     }
 
+    /**
+     * @see ru.korus.tmis.pdm.ws.PDManager#getDemographics(ru.korus.tmis.pdm.ws.PRPAIN101307UV02)
+     */
+    @Override
+    @WebMethod(action = "http://www.korusconsulting.ru/PDManager/getDemographics")
+    @WebResult(name = "PRPA_IN101308UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
+    public PRPAIN101308UV02 getDemographics(PRPAIN101307UV02 parameters) {
+        //TODO add verification
+        final List<PRPAMT101307UV02IdentifiedPersonIdentifier> identifiedPersons = parameters.getControlActProcess().getQueryByParameter().getValue().
+                getParameterList().getIdentifiedPersonIdentifier();
+
+        List<PersonalData> personalDataList = new Vector<PersonalData>(identifiedPersons.size());
+        for(PRPAMT101307UV02IdentifiedPersonIdentifier curPerson : identifiedPersons) {
+            final String id = curPerson.getValue().get(0).getRoot();
+            personalDataList.add(findById(id));
+        }
+        return getPRPAIN101308UV02(personalDataList);
+    }
+
+    /**
+     *  @see ru.korus.tmis.pdm.ws.PDManager#update(ru.korus.tmis.pdm.ws.PRPAIN101314UV02)
+     */
+    @Override
+    @WebMethod(action = "http://www.korusconsulting.ru/PDManager/new")
+    @WebResult(name = "PRPA_IN101315UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
+    public PRPAIN101315UV02 update(@WebParam(name = "PRPA_IN101314UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters") PRPAIN101314UV02 parameters) {
+
+        for ( PRPAMT101302UV02PersonAsOtherIDs cur :
+                parameters.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getAsOtherIDs() ){
+            for(II ii  : cur.getId()) {
+                if(PersonalData.OID_PDM.equals(ii.getRoot()) ){
+                    final PersonalData personalData = findById(ii.getExtension());
+                    mongoOperation.save((personalData.update(parameters)));
+                    return  getPRPAIN101315UV02(ii.getExtension());
+                }
+            }
+
+        }
+        throw new RuntimeException("The PDM ID is not set");
+    }
+
+
     private List<PersonalData> findPerson(PersonalData person) {
         String query = "";
         query += addFindPrm("given", person.getGiven());
@@ -74,15 +114,23 @@ public class PDManagerImpl implements PDManager {
         query += addFindPrm("family", person.getFamily());
         if(person.getGender() != null ) {
             //TODO add codeSystem check
-            final String genderQuery = addFindPrm("code", person.getGender().getCode());
-            query += "gender:" + newLevel(genderQuery);
+           query +=  addFindPrm("gender.code", person.getGender().getCode());
         }
         query += addFindPrm("birthData", person.getBirthData());
 
-        //db.users.find({$or: [ {given:"aaa"}, { "docs": { $elemMatch: { "codeSystem":"3.0.0.2" } }},{"docs":{$elemMatch:{"codeSystem":"3.0.0.1"}}}]})
+        //db.users.find({
+        //                $or: [
+        //                       {given:"aaa"},
+        //                       {
+        //                         "docs.3.0.0.2":"c4d5e42c-1394-4704-ad88-7bccfec085d2",
+        //                         "docs.3.0.0.1":""b41f28da-1eb5-418a-85db-4339f7f213c5",
+        //                       }
+        //                     ]
+        //              })
+
         String docsQuery = "";
         for(Map.Entry<String, String> doc : person.getDocs().entrySet()) {
-            docsQuery +=  "docs:{ $elemMatch:" + addFindPrm(doc.getKey(), doc.getValue()) + "},";
+            docsQuery +=  addFindPrm("docs." + doc.getKey(), doc.getValue());
         }
         query = mongoOr(query, docsQuery);
         System.out.println("findPerson mogo query: " + query);
@@ -116,45 +164,7 @@ public class PDManagerImpl implements PDManager {
         if(value == null || "".equals(value)) {
             return "";
         }
-        return String.format("%s: '%s', ", name, value);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ru.korus.tmis.pdm.ws.PDManager#getDemographics(ru.korus.tmis.pdm.ws.PRPAIN101307UV02)
-     */
-    @Override
-    @WebMethod(action = "http://www.korusconsulting.ru/PDManager/getDemographics")
-    @WebResult(name = "PRPA_IN101308UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
-    public PRPAIN101308UV02 getDemographics(PRPAIN101307UV02 parameters) {
-        //TODO add verification
-        final List<PRPAMT101307UV02IdentifiedPersonIdentifier> identifiedPersons = parameters.getControlActProcess().getQueryByParameter().getValue().
-                getParameterList().getIdentifiedPersonIdentifier();
-
-        List<PersonalData> personalDataList = new Vector<PersonalData>(identifiedPersons.size());
-        for(PRPAMT101307UV02IdentifiedPersonIdentifier curPerson : identifiedPersons) {
-            final String id = curPerson.getValue().get(0).getRoot();
-            personalDataList.add(findById(id));
-        }
-        return getPRPAIN101308UV02(personalDataList);
-    }
-
-    @Override
-    public PRPAIN101315UV02 update(@WebParam(name = "PRPA_IN101314UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters") PRPAIN101314UV02 parameters) {
-
-        for ( PRPAMT101302UV02PersonAsOtherIDs cur :
-                parameters.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getAsOtherIDs() ){
-            for(II ii  : cur.getId()) {
-               if(PersonalData.OID_PDM.equals(ii.getRoot()) ){
-                   final PersonalData personalData = findById(ii.getExtension());
-                   mongoOperation.save((personalData.update(parameters)));
-                   return  getPRPAIN101315UV02(ii.getExtension());
-               }
-            }
-
-        }
-        throw new RuntimeException("The PDM ID is not set");
+        return String.format("'%s': '%s', ", name, value);
     }
 
     private PRPAIN101315UV02 getPRPAIN101315UV02(String id) {
@@ -177,7 +187,6 @@ public class PDManagerImpl implements PDManager {
         person.getId().add(ii);
         return res;
     }
-
 
     private PRPAIN101312UV02 getPRPAIN101312UV02(String id) {
 		PRPAIN101312UV02 res =  factory.createPRPAIN101312UV02();
@@ -352,6 +361,11 @@ public class PDManagerImpl implements PDManager {
         res.getContent().add(factory.createADExplicitState(state));
         res.getContent().add(factory.createADExplicitCity(city));
 
+        final String addrType = addr.getUse();
+        if(addrType != null) {
+            res.getUse().add(PostalAddressUse.fromValue(addrType));
+        }
+
         return res;
     }
 
@@ -365,7 +379,7 @@ public class PDManagerImpl implements PDManager {
     }
 
     private II createII(Map.Entry<String, String> doc) {
-        return  createII(doc.getValue(), doc.getKey());
+        return  createII(doc.getValue(), PersonalData.decodeOID(doc.getKey()));
     }
 
 
@@ -395,7 +409,7 @@ public class PDManagerImpl implements PDManager {
     private II createII(String extension, String root) {
         II ii = factory.createII();
         ii.setExtension(extension);
-        ii.setRoot(root.replace(PersonalData.DOT_CH, '.'));
+        ii.setRoot(root);
         return ii;
     }
 

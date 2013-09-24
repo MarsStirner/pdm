@@ -2,18 +2,26 @@ package ru.korus.tmis.pdm.test;
 
 import org.testng.annotations.Test;
 
+import ru.korus.tmis.pdm.PersonalData;
 import ru.korus.tmis.pdm.test.ws.*;
 
 import javax.xml.bind.JAXBElement;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.testng.Assert.*;
 
 public class PDManagerTest {
 
-    private String newId = "111";
-    private String newDocId = "222";
+    private static final String IVAN = "Ivan";
+    private static final String IVANOVICH = "Ivanovich";
+    private static final String IVANOV = "Ivanov";
+    private static final String TEST_STREET = "TestStreet";
+    private String newId = "5240172396004e5123a975ce";
+    private Map<String, String> newDocId =  new HashMap<String, String>();
 
     @Test
     public void addNewPerson() {
@@ -37,30 +45,36 @@ public class PDManagerTest {
 
         ObjectFactory factory = new ObjectFactory();
         PN name = factory.createPN();
-        
+
         EnGiven giv = factory.createEnGiven();
-        giv.getContent().add("Ivan");
+        giv.getContent().add(IVAN);
         name.getContent().add(factory.createENGiven(giv));
 
         EnGiven mn = factory.createEnGiven();
-        mn.getContent().add("Ivanovich");
+        mn.getContent().add(IVANOVICH);
         name.getContent().add(factory.createENGiven(mn));
+
+        EnFamily family = factory.createEnFamily();
+        family.getContent().add(IVANOV);
+        name.getContent().add(factory.createENFamily(family));
+
         person.getName().add(name);
-        person.getAsOtherIDs().add(new PRPAMT101301UV02OtherIDs() );
-        person.getAsOtherIDs().get(0).getId().add(new II());
-        person.getAsOtherIDs().get(0).getId().get(0).setRoot("3.0.0.1");
-        newDocId = UUID.randomUUID().toString();
-        person.getAsOtherIDs().get(0).getId().get(0).setExtension(newDocId);
-        person.getAsOtherIDs().add(new PRPAMT101301UV02OtherIDs() );
-        person.getAsOtherIDs().get(1).getId().add(new II());
-        person.getAsOtherIDs().get(1).getId().get(0).setRoot("3.0.0.2");
-        person.getAsOtherIDs().get(1).getId().get(0).setExtension(UUID.randomUUID().toString());
+        newDocId.put("3.0.0.1", UUID.randomUUID().toString());
+        newDocId.put("3.0.0.2", UUID.randomUUID().toString());
+        for(Map.Entry<String, String> id : newDocId.entrySet()) {
+            final PRPAMT101301UV02OtherIDs otherId = new PRPAMT101301UV02OtherIDs();
+            otherId.getId().add(new II());
+            otherId.getId().get(0).setRoot(id.getKey());
+            otherId.getId().get(0).setExtension(id.getValue());
+            person.getAsOtherIDs().add(otherId);
+        }
 
         final AD addr = factory.createAD();
         person.getAddr().add(addr);
         AdxpStreetName street = factory.createAdxpStreetName();
-        street.getContent().add("TestStreet");
+        street.getContent().add(TEST_STREET);
         addr.getContent().add(factory.createADStreetName(street));
+        addr.getUse().add(PostalAddressUse.HP);
 
         final CE ce = factory.createCE();
         ce.setCode("M");
@@ -95,8 +109,36 @@ public class PDManagerTest {
         ii.setRoot(newId);
 
         PRPAIN101308UV02 res = pdManager.getDemographics(prm);
-        String root = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getId().get(0).getRoot();
-        assertEquals(root, "3.0.0.0");
+        final PRPAMT101303UV02IdentifiedPerson identifiedPerson = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson();
+        final II personId = identifiedPerson.getId().get(0);
+        assertEquals(personId.getRoot(), "3.0.0.0");
+        assertEquals(personId.getExtension(), newId);
+        final List<PN> name = identifiedPerson.getIdentifiedPerson().getName();
+        assertEquals(name.size(), 1);
+        EnGiven giv = (EnGiven)((JAXBElement)(name.get(0).getContent().get(0))).getValue();
+        assertEquals(giv.getContent().size(), 1);
+        assertEquals((String)giv.getContent().get(0), IVAN);
+        EnGiven mn = (EnGiven)((JAXBElement)(name.get(0).getContent().get(1))).getValue();
+        assertEquals(mn.getContent().size(), 1);
+        assertEquals((String)mn.getContent().get(0), IVANOVICH);
+        EnFamily family = (EnFamily)((JAXBElement)(name.get(0).getContent().get(2))).getValue();
+        assertEquals(family.getContent().size(), 1);
+        assertEquals((String)family.getContent().get(0), IVANOV);
+        assertEquals(identifiedPerson.getIdentifiedPerson().getAdministrativeGenderCode().getCode(), "M");
+        assertEquals(identifiedPerson.getIdentifiedPerson().getAddr().size(), 1);
+        AD homeAddress = identifiedPerson.getIdentifiedPerson().getAddr().get(0);
+        assertEquals(homeAddress.getUse().get(0), PostalAddressUse.HP);
+        final int countOfAddrElements = 27;
+        assertEquals(homeAddress.getContent().size(), countOfAddrElements);
+        final int indexOfStreetAddr = 10;
+        AdxpStreetName streetName = (AdxpStreetName)((JAXBElement)(homeAddress.getContent().get(indexOfStreetAddr))).getValue();
+        assertEquals(streetName.getContent().get(0), TEST_STREET);
+        List<PRPAMT101303UV02OtherIDs> asOtherId = identifiedPerson.getIdentifiedPerson().getAsOtherIDs();
+        assertEquals(asOtherId.size(), newDocId.size());
+        for(int index = 0; index < newDocId.size(); ++index) {
+            final String root = asOtherId.get(index).getId().get(0).getRoot();
+            assertEquals(asOtherId.get(index).getId().get(0).getExtension(), newDocId.get(root));
+        }
     }
 
     @Test
@@ -160,14 +202,18 @@ public class PDManagerTest {
 
         final PRPAMT101306UV02OtherIDsScopingOrganization otherId = factory.createPRPAMT101306UV02OtherIDsScopingOrganization();
         final II ii = factory.createII();
-        ii.setRoot("3.0.0.1");
-        ii.setExtension(newDocId);
+        final String rootDoc = "3.0.0.1";
+        ii.setRoot(rootDoc);
+        ii.setExtension(newDocId.get(rootDoc));
         otherId.getValue().add(ii);
         prmList.getOtherIDsScopingOrganization().add(otherId);
 
         PRPAIN101306UV02 res = pdManager.findCandidates(prm);
-        String root = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getId().get(0).getRoot();
-        assertEquals(root, "3.0.0.0");
+        final List<II> listId = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getId();
+        assertFalse(listId.isEmpty());
+        final II personId = listId.get(0);
+        assertEquals(personId.getRoot(), "3.0.0.0");
+        assertEquals(personId.getExtension().length(), "52405a4d960030f25fb91713".length());
     }
 
 
@@ -176,8 +222,41 @@ public class PDManagerTest {
         ObjectFactory factory = new ObjectFactory();
         PDManagerService serv = new PDManagerService();
         PDManager pdManager = serv.getPDManagerSOAP();
-        final PRPAIN101315UV02 res = pdManager.update(factory.createPRPAIN101314UV02());
-        String root = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getId().get(0).getRoot();
+        final PRPAIN101314UV02 prm = factory.createPRPAIN101314UV02();
+        final PRPAIN101314UV02MFMIMT700721UV01ControlActProcess controlActProcess = factory.createPRPAIN101314UV02MFMIMT700721UV01ControlActProcess();
+        prm.setControlActProcess(controlActProcess);
+        final PRPAIN101314UV02MFMIMT700721UV01Subject1 subject1 = factory.createPRPAIN101314UV02MFMIMT700721UV01Subject1();
+        controlActProcess.setSubject(subject1);
+        final PRPAIN101314UV02MFMIMT700721UV01RegistrationRequest regRequest = factory.createPRPAIN101314UV02MFMIMT700721UV01RegistrationRequest();
+        subject1.setRegistrationRequest(regRequest);
+        final PRPAIN101314UV02MFMIMT700721UV01Subject2 subject2 = factory.createPRPAIN101314UV02MFMIMT700721UV01Subject2();
+        regRequest.setSubject1(subject2);
+        final PRPAMT101302UV02IdentifiedPerson identifiedPerson = factory.createPRPAMT101302UV02IdentifiedPerson();
+        subject2.setIdentifiedPerson(identifiedPerson);
+        final PRPAMT101302UV02IdentifiedPersonIdentifiedPerson person = factory.createPRPAMT101302UV02IdentifiedPersonIdentifiedPerson();
+        identifiedPerson.setIdentifiedPerson(person);
+        final PRPAMT101302UV02PersonAsOtherIDs otherId = factory.createPRPAMT101302UV02PersonAsOtherIDs();
+        person.getAsOtherIDs().add(otherId);
+        final PRPAMT101302UV02OtherIDsId id = factory.createPRPAMT101302UV02OtherIDsId();
+        otherId.getId().add(id);
+        id.setRoot(PersonalData.OID_PDM);
+        id.setExtension(newId);
+
+        final PRPAMT101302UV02PersonName pn = factory.createPRPAMT101302UV02PersonName();
+        person.getName().add(pn);
+        EnFamily family = factory.createEnFamily();
+        family.getContent().add("Petrov");
+        pn.getContent().add(factory.createENFamily(family));
+
+        final PRPAMT101302UV02PersonTelecom telecom = factory.createPRPAMT101302UV02PersonTelecom();
+        person.getTelecom().add(telecom);
+        telecom.setValue("tel:+7 (495) 229-53-70");
+        telecom.getUse().add(TelecommunicationAddressUse.HP);
+
+
+        final PRPAIN101315UV02 res = pdManager.update(prm);
+        final List<II> listId = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getId();
+        String root = listId.get(0).getRoot();
         assertEquals(root, "3.0.0.0");
     }
 

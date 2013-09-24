@@ -30,6 +30,7 @@ public class PersonalData {
 
 
     public static final String OID_PDM = "3.0.0.0";
+    public static final String OID_PREFIX = "OID";
     public static final char DOT_CH = '_';
 
     public static class Term {
@@ -73,7 +74,6 @@ public class PersonalData {
     
     public static class Addr {
         private String use;
-        
         private String country;
         private String streetAddressLine;
         private String direction;
@@ -279,6 +279,10 @@ public class PersonalData {
         public String getCity() {
             return city;
         }
+
+        public String getUse() {
+            return use;
+        }
         
     }
     
@@ -391,8 +395,9 @@ public class PersonalData {
         for ( PRPAMT101302UV02PersonAsOtherIDs cur :
                 identifiedPerson.getAsOtherIDs() ){
             for(II ii  : cur.getId()) {
-                if( !OID_PDM.equals(ii.getRoot()) ){
-                    this.docs.put(ii.getRoot().replace('.', DOT_CH), ii.getExtension());
+                final String root = ii.getRoot();
+                if( !OID_PDM.equals(root) ){
+                    this.docs.put(codeOID(root), ii.getExtension());
                 }
             }
 
@@ -429,7 +434,7 @@ public class PersonalData {
         for(II ii : id1) {
             final String root = ii.getRoot();
             if(root != null) {
-                 res.docs.put(root.replace('.', DOT_CH), ii.getExtension());
+                 res.docs.put(codeOID(root), ii.getExtension());
             }
         }
     }
@@ -528,4 +533,13 @@ public class PersonalData {
     public Addr getBirthPlace() {
         return birthPlace;
     }
+
+    static public String decodeOID(String root) {
+        return root.replace(PersonalData.DOT_CH, '.').substring(OID_PREFIX.length());
+    }
+
+    private static String codeOID(String root) {
+        return OID_PREFIX + root.replace('.', DOT_CH);
+    }
+
 }

@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;group ref="{urn:hl7-org:v3}InfrastructureRootElements"/>
- *         &lt;element name="value" type="{urn:hl7-org:v3}AD" maxOccurs="unbounded"/>
+ *         &lt;element name="value" type="{urn:hl7-org:v3}AD_explicit" maxOccurs="unbounded"/>
  *         &lt;element name="semanticsText" type="{urn:hl7-org:v3}ST"/>
  *       &lt;/sequence>
  *       &lt;attGroup ref="{urn:hl7-org:v3}InfrastructureRootAttributes"/>
@@ -47,7 +47,7 @@ public class PRPAMT101306UV02IdentifiedPersonAddress {
     protected II typeId;
     protected List<II> templateId;
     @XmlElement(required = true)
-    protected List<AD> value;
+    protected List<ADExplicit> value;
     @XmlElement(required = true)
     protected ST semanticsText;
     @XmlAttribute(name = "nullFlavor")
@@ -153,13 +153,13 @@ public class PRPAMT101306UV02IdentifiedPersonAddress {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link AD }
+     * {@link ADExplicit }
      * 
      * 
      */
-    public List<AD> getValue() {
+    public List<ADExplicit> getValue() {
         if (value == null) {
-            value = new ArrayList<AD>();
+            value = new ArrayList<ADExplicit>();
         }
         return this.value;
     }

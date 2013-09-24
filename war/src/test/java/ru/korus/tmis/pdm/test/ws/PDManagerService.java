@@ -30,7 +30,8 @@ public class PDManagerService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8080/pdm-war/tmis-pdm?wsdl"/*"http://10.1.2.191:9090/pdm-war/tmis-pdm?wsdl"*/);
+            final String urlAddr = System.getProperty("pdmUrl", "http://localhost:8080/pdm-war/tmis-pdm?wsdl"/*"http://10.1.2.191:9090/pdm-war/tmis-pdm?wsdl"*/);
+            url = new URL(urlAddr);
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
