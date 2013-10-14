@@ -248,6 +248,14 @@ public class PDManagerTest {
         family.getContent().add("Petrov");
         pn.getContent().add(factory.createENFamily(family));
 
+        EnGiven given = factory.createEnGiven();
+        given.getContent().add("Peter");
+        pn.getContent().add(factory.createENGiven(given));
+
+        EnGiven middleName = factory.createEnGiven();
+        middleName.getContent().add("Peterovich");
+        pn.getContent().add(factory.createENGiven(middleName));
+
         final PRPAMT101302UV02PersonTelecom telecom = factory.createPRPAMT101302UV02PersonTelecom();
         person.getTelecom().add(telecom);
         telecom.setValue("tel:+7 (495) 229-53-70");

@@ -440,12 +440,14 @@ public class PersonalData {
     }
 
     private static void initNames(PersonalData res, PNExplicit pn) {
+        boolean isName = true;
         for (Serializable object : pn.getContent()) {
             if (object instanceof JAXBElement) {
                 JAXBElement el = (JAXBElement) object;
                 if (el.getValue() instanceof EnExplicitGiven) {
-                    if (res.given == null) {
+                    if (isName) {
                         res.given = ((EnExplicitGiven)el.getValue()).getContent();
+                        isName = false;
                     } else {
                         res.middleName = ((EnExplicitGiven)el.getValue()).getContent();
                     }
