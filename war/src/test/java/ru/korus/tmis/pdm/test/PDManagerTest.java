@@ -253,11 +253,32 @@ public class PDManagerTest {
         telecom.setValue("tel:+7 (495) 229-53-70");
         telecom.getUse().add(TelecommunicationAddressUse.HP);
 
+        final PRPAMT101302UV02PersonAddr personAddr = factory.createPRPAMT101302UV02PersonAddr();
+        person.getAddr().add(personAddr);
+        AdxpStreetAddressLine strAdrLine = factory.createAdxpStreetAddressLine();
+        strAdrLine.getContent().add("Update address line");
+        personAddr.getContent().add(factory.createADStreetAddressLine(strAdrLine));
+
+        final PRPAMT101302UV02PersonAsOtherIDs passportOtherIDs = factory.createPRPAMT101302UV02PersonAsOtherIDs();
+        person.getAsOtherIDs().add(passportOtherIDs);
+        final PRPAMT101302UV02OtherIDsId passportId = factory.createPRPAMT101302UV02OtherIDsId();
+        passportOtherIDs.getId().add(passportId);
+        passportId.setRoot("99.99.99.99");
+        passportId.setExtension("1234578987654321");
+
+        final PRPAMT101302UV02PersonAsOtherIDs snilsOtherIDs = factory.createPRPAMT101302UV02PersonAsOtherIDs();
+        person.getAsOtherIDs().add(snilsOtherIDs);
+        final PRPAMT101302UV02OtherIDsId snilsId = factory.createPRPAMT101302UV02OtherIDsId();
+        passportOtherIDs.getId().add(snilsId);
+        snilsId.setRoot("3.0.0.2");
+        snilsId.setExtension("12345789876543210123456789");
 
         final PRPAIN101315UV02 res = pdManager.update(prm);
         final List<II> listId = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getId();
         String root = listId.get(0).getRoot();
         assertEquals(root, "3.0.0.0");
     }
+
+
 
 }

@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="PRPA_MT101302UV02.Person.addr">
  *   &lt;complexContent>
- *     &lt;extension base="{urn:hl7-org:v3}AD">
+ *     &lt;extension base="{urn:hl7-org:v3}AD_explicit">
  *       &lt;attribute name="updateMode" type="{urn:hl7-org:v3}PRPA_MT101302UV02.Person.addr.updateMode" />
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PRPA_MT101302UV02.Person.addr")
 public class PRPAMT101302UV02PersonAddr
-    extends AD
+    extends ADExplicit
 {
 
     @XmlAttribute(name = "updateMode")

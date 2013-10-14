@@ -65,8 +65,8 @@ public class IVLTS
 {
 
     @XmlElementRefs({
-        @XmlElementRef(name = "center", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "high", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "center", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "width", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "low", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false)
     })
@@ -100,9 +100,9 @@ public class IVLTS
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link IVXBTS }{@code >}
+     * {@link JAXBElement }{@code <}{@link IVXBTS }{@code >}
      * {@link JAXBElement }{@code <}{@link TS }{@code >}
-     * {@link JAXBElement }{@code <}{@link IVXBTS }{@code >}
-     * {@link JAXBElement }{@code <}{@link IVXBTS }{@code >}
      * {@link JAXBElement }{@code <}{@link PQ }{@code >}
      * 
      * 

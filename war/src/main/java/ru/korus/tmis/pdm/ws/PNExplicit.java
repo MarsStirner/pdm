@@ -59,11 +59,11 @@ import javax.xml.bind.annotation.XmlType;
 public class PNExplicit {
 
     @XmlElementRefs({
+        @XmlElementRef(name = "family", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "suffix", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "prefix", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "given", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "family", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "delimiter", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "suffix", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false)
+        @XmlElementRef(name = "delimiter", namespace = "urn:hl7-org:v3", type = JAXBElement.class, required = false)
     })
     @XmlMixed
     protected List<Serializable> content;
@@ -95,12 +95,12 @@ public class PNExplicit {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link EnExplicitFamily }{@code >}
-     * {@link String }
+     * {@link JAXBElement }{@code <}{@link EnExplicitSuffix }{@code >}
+     * {@link JAXBElement }{@code <}{@link EnExplicitPrefix }{@code >}
      * {@link JAXBElement }{@code <}{@link EnExplicitDelimiter }{@code >}
      * {@link JAXBElement }{@code <}{@link EnExplicitGiven }{@code >}
-     * {@link JAXBElement }{@code <}{@link EnExplicitPrefix }{@code >}
-     * {@link JAXBElement }{@code <}{@link EnExplicitSuffix }{@code >}
+     * {@link String }
+     * {@link JAXBElement }{@code <}{@link EnExplicitFamily }{@code >}
      * 
      * 
      */
