@@ -26,15 +26,14 @@ import java.util.Vector;
 @HandlerChain(file="../../../../../handler-chain.xml")
 public class PDManagerImpl implements PDManager {
 
-    @Resource
-	WebServiceContext wsContext;
-	
-	static private ApplicationContext ctx = null;
-	static private MongoOperations mongoOperation = null;
-	
+	private static StorageOperations storageOperations = null;
+
 	static {
-		 ctx = new AnnotationConfigApplicationContext(SpringMongoConfig.class);
-		 mongoOperation = (MongoOperations) ctx.getBean("mongoTemplate");
+        if (System.getProperty("PDM.ExtSystem", "").equals("alee") ){
+            storageOperations = new AleePdmOperations();
+        } else {
+            storageOperations = new MongoPdmOperations();
+        }
 	}
 
     private ObjectFactory factory = new ObjectFactory();
@@ -97,7 +96,8 @@ public class PDManagerImpl implements PDManager {
             for(II ii  : cur.getId()) {
                 if(PersonalData.OID_PDM.equals(ii.getRoot()) ){
                     final PersonalData personalData = findById(ii.getExtension());
-                    mongoOperation.save((personalData.update(parameters)));
+                    final PersonalData personalDataNew = personalData.update(parameters);
+                    savePerson(personalDataNew);
                     return  getPRPAIN101315UV02(ii.getExtension());
                 }
             }
@@ -106,66 +106,16 @@ public class PDManagerImpl implements PDManager {
         throw new RuntimeException("The PDM ID is not set");
     }
 
+    private void savePerson(PersonalData personalDataNew) {
+        storageOperations.save(personalDataNew);
+    }
+
 
     private List<PersonalData> findPerson(PersonalData person) {
-        String query = "";
-        query += addFindPrm("given", person.getGiven());
-        query += addFindPrm("middleName", person.getMiddleName());
-        query += addFindPrm("family", person.getFamily());
-        if(person.getGender() != null ) {
-            //TODO add codeSystem check
-           query +=  addFindPrm("gender.code", person.getGender().getCode());
-        }
-        query += addFindPrm("birthData", person.getBirthData());
-
-        //db.users.find({
-        //                $or: [
-        //                       {given:"aaa"},
-        //                       {
-        //                         "docs.3.0.0.2":"c4d5e42c-1394-4704-ad88-7bccfec085d2",
-        //                         "docs.3.0.0.1":""b41f28da-1eb5-418a-85db-4339f7f213c5",
-        //                       }
-        //                     ]
-        //              })
-
-        String docsQuery = "";
-        for(Map.Entry<String, String> doc : person.getDocs().entrySet()) {
-            docsQuery +=  addFindPrm("docs." + doc.getKey(), doc.getValue());
-        }
-        query = mongoOr(query, docsQuery);
-        System.out.println("findPerson mogo query: " + query);
-        BasicQuery basicQuery = new BasicQuery(query);
-        return mongoOperation.find(basicQuery, PersonalData.class);
+        return storageOperations.find(person);
     }
 
-    private String mongoOr(String... values) {
-        String res = "{$or:[";
-        boolean isAdded = false;
-        for(String val : values) {
-            if( val != null && !val.isEmpty()) {
-                res += "{" + val + "},";
-                isAdded = true;
-            }
-        }
-        if (isAdded) {
-            res = res.substring(0,res.length() - 1);
-        }
-        return res + "]}";
-    }
 
-    private String newLevel(String s) {
-        if(s == null || "".equals(s)) {
-            return "";
-        }
-        return String.format("{ %s }  ", s);
-    }
-
-    private String addFindPrm(String name, String value) {
-        if(value == null || "".equals(value)) {
-            return "";
-        }
-        return String.format("'%s': '%s', ", name, value);
-    }
 
     private PRPAIN101315UV02 getPRPAIN101315UV02(String id) {
         PRPAIN101315UV02 res =  factory.createPRPAIN101315UV02();
@@ -385,21 +335,18 @@ public class PDManagerImpl implements PDManager {
 
     private String save(PersonalData personalData) {
         for(Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
-            BasicQuery query = new BasicQuery(String.format("{docs: { $elemMatch: {code:'%s' , codeSystem : '%s'}}}", doc.getValue(), doc.getKey()));
-            if (!mongoOperation.find(query, PersonalData.class).isEmpty()){
-                throw new RuntimeException("The person already added");
-            }
+            find(doc);
         }
-        mongoOperation.save(personalData);
+        storageOperations.save(personalData);
 		return personalData.getId();
 	}
 
+    private void find(Map.Entry<String, String> doc) {
+        storageOperations.find(doc);
+    }
+
     private PersonalData findById(String id) {
-        PersonalData person = mongoOperation.findById(id, PersonalData.class);
-        if( person == null ) {
-            throw new RuntimeException("The person with id'" + id + "' not found");
-        }
-        return person;    
+        return storageOperations.findById(id);
     }
 
     private II createPdmII(String id) {
