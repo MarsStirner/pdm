@@ -258,7 +258,7 @@ public class PDManagerTest {
 
         final PRPAMT101302UV02PersonTelecom telecom = factory.createPRPAMT101302UV02PersonTelecom();
         person.getTelecom().add(telecom);
-        telecom.setValue("tel:+7 (495) 229-53-70");
+        telecom.setValue("tel:+7 (495) 999-99-99");
         telecom.getUse().add(TelecommunicationAddressUse.HP);
 
         final PRPAMT101302UV02PersonAddr personAddr = factory.createPRPAMT101302UV02PersonAddr();
