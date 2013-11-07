@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.BasicQuery;
+import ru.korus.tmis.pdm.alee.AleePdmOperations;
 import ru.korus.tmis.pdm.ws.*;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class PDManagerImpl implements PDManager {
 	private static StorageOperations storageOperations = null;
 
 	static {
-        if (System.getProperty("PDM.ExtSystem", "").equals("alee") ){
+        if (System.getProperty("pdm.StorageType", "").equals("alee") ){
             storageOperations = new AleePdmOperations();
         } else {
             storageOperations = new MongoPdmOperations();

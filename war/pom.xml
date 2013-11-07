@@ -1,90 +1,117 @@
 <project>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>pdm-war</artifactId>
-	<packaging>war</packaging>
-	<version>0.0.0</version>
-	<name>PDManager WebApp</name>
-	<parent>
-		<groupId>ru.korus.tmis.pdm</groupId>
-		<artifactId>PDManager</artifactId>
-		<version>0.0.0</version>
-	</parent>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.1.1</version>
-				<configuration>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<encoding>UTF-8</encoding>
-					<debug>false</debug>
-					<showDeprecation>true</showDeprecation>
-					<showWarnings>true</showWarnings>
-					<fork>true</fork>
-					<meminitial>128m</meminitial>
-					<maxmem>768m</maxmem>
-				</configuration>
-			</plugin>
-		</plugins>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>pdm-war</artifactId>
+    <packaging>war</packaging>
+    <version>0.0.0</version>
+    <name>PDManager WebApp</name>
+    <parent>
+        <groupId>ru.korus.tmis.pdm</groupId>
+        <artifactId>PDManager</artifactId>
+        <version>0.0.0</version>
+    </parent>
 
-	</build>
-<dependencies>
- 
-		<!-- Spring framework -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>3.2.2.RELEASE</version>
-		</dependency>
- 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>3.2.2.RELEASE</version>
-		</dependency>
- 
-		<!-- mongodb java driver -->
-		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongo-java-driver</artifactId>
-			<version>2.11.0</version>
-		</dependency>
- 
-		<!-- Spring data mongodb -->
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-mongodb</artifactId>
-			<version>1.2.0.RELEASE</version>
-		</dependency>
- 
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-			<version>2.2.2</version>
-		</dependency>
-    <dependency>
-        <groupId>javax</groupId>
-        <artifactId>javaee-web-api</artifactId>
-      <version>6.0</version>
-      <type>jar</type>
-    </dependency>
-</dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>UTF-8</encoding>
+                    <debug>true</debug>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <fork>true</fork>
+                    <meminitial>128m</meminitial>
+                    <maxmem>768m</maxmem>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
+    <dependencies>
+
+        <!-- Spring framework -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>3.2.2.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>3.2.2.RELEASE</version>
+        </dependency>
+
+        <!-- mongodb java driver -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+
+        <!-- Spring data mongodb -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <version>1.2.0.RELEASE</version>
+        </dependency>
+
+
+        <!-- Json parser -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.4</version>
+        </dependency>
+
+        <!-- -->
+<!--
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>1.17.1</version>
+        </dependency>
+-->
+
+
+        <!-- <dependency>
+             <groupId>javax</groupId>
+             <artifactId>javaee-web-api</artifactId>
+             <version>6.0</version>
+             <type>jar</type>
+         </dependency>
+
+         <dependency>
+             <groupId>org.jboss.resteasy</groupId>
+             <artifactId>resteasy-client</artifactId>
+             <version>3.0.4.Final</version>
+         </dependency>-->
+
+    </dependencies>
 </project>

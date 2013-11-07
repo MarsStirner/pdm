@@ -20,16 +20,30 @@ public class PDManagerTest {
     private static final String IVANOVICH = "Ivanovich";
     private static final String IVANOV = "Ivanov";
     private static final String TEST_STREET = "TestStreet";
+    private static final String SENDER_ID ="4.0.0.0";
     private String newId = "5240172396004e5123a975ce";
     private Map<String, String> newDocId =  new HashMap<String, String>();
 
+    /**
+     * Проверка допавления новой персоны в ЗХПД
+     */
     @Test
     public void addNewPerson() {
+        ObjectFactory factory = new ObjectFactory();
         PDManagerService serv = new PDManagerService();
         PDManager pdManager = serv.getPDManagerSOAP();
 
-        PRPAIN101311UV02 prm = new PRPAIN101311UV02();
-        PRPAIN101311UV02MFMIMT700721UV01ControlActProcess controlActProcess = new PRPAIN101311UV02MFMIMT700721UV01ControlActProcess();
+        PRPAIN101311UV02 prm = factory.createPRPAIN101311UV02();
+
+        final MCCIMT000100UV01Sender sender = factory.createMCCIMT000100UV01Sender();
+        final MCCIMT000100UV01Device device = factory.createMCCIMT000100UV01Device();
+        final II senderId = factory.createII();
+        senderId.setRoot(SENDER_ID);
+        device.getId().add(senderId);
+        sender.setDevice(device);
+        prm.setSender(sender);
+
+        PRPAIN101311UV02MFMIMT700721UV01ControlActProcess controlActProcess = factory.createPRPAIN101311UV02MFMIMT700721UV01ControlActProcess();
         PRPAIN101311UV02MFMIMT700721UV01Subject1 subject1 = new PRPAIN101311UV02MFMIMT700721UV01Subject1();
         PRPAIN101311UV02MFMIMT700721UV01RegistrationRequest registrationRequest = new PRPAIN101311UV02MFMIMT700721UV01RegistrationRequest();
         PRPAMT101301UV02IdentifiedPerson identifiedPerson = new PRPAMT101301UV02IdentifiedPerson();
@@ -43,7 +57,6 @@ public class PDManagerTest {
         subject2.setIdentifiedPerson(identifiedPerson);
         identifiedPerson.setIdentifiedPerson(person);
 
-        ObjectFactory factory = new ObjectFactory();
         PN name = factory.createPN();
 
         EnGiven giv = factory.createEnGiven();
@@ -59,8 +72,8 @@ public class PDManagerTest {
         name.getContent().add(factory.createENFamily(family));
 
         person.getName().add(name);
-        newDocId.put("3.0.0.1", UUID.randomUUID().toString());
-        newDocId.put("3.0.0.2", UUID.randomUUID().toString());
+        newDocId.put(PersonalData.OID_DOC_PASSPORTNUMBER, UUID.randomUUID().toString());
+        newDocId.put(PersonalData.OID_DOC_PASSPORT_DATE, "1800.100000.1987");
         for(Map.Entry<String, String> id : newDocId.entrySet()) {
             final PRPAMT101301UV02OtherIDs otherId = new PRPAMT101301UV02OtherIDs();
             otherId.getId().add(new II());
@@ -141,7 +154,7 @@ public class PDManagerTest {
         }
     }
 
-    @Test
+    //@Test
     public void findByPersonInfo() {
         ObjectFactory factory = new ObjectFactory();
         PDManagerService serv = new PDManagerService();
@@ -217,7 +230,7 @@ public class PDManagerTest {
     }
 
 
-    @Test
+    //@Test
     public void update() {
         ObjectFactory factory = new ObjectFactory();
         PDManagerService serv = new PDManagerService();

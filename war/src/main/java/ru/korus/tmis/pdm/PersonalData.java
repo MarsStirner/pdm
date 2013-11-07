@@ -1,5 +1,7 @@
 package ru.korus.tmis.pdm;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.korus.tmis.pdm.ws.*;
@@ -24,16 +26,28 @@ import java.util.Vector;
 @Document(collection = "users")
 public class PersonalData {
 
-
     public static final String OID_PDM = "3.0.0.0";
     public static final String OID_PREFIX = "OID";
     public static final char DOT_CH = '_';
+    public static final String OID_DOC_PASSPORTNUMBER = "3.0.0.1";
+    public static final String OID_DOC_PASSPORT_DATE = "3.0.0.2";
+    public static final String OID_DOC_PASSPORT_CREATER = "3.0.0.3";
+    public static final String OID_DOC_ACTBIRTH_NUMBER = "3.0.0.4";
+    public static final String OID_DOC_ACTBIRTH_DATE = "3.0.0.5";
+    public static final String OID_DOC_INN = "3.0.0.6";
+    public static final String OID_DOC_SNILS = "3.0.0.7";
+    public static final String OID_DOC_INSURANCE_ID = "3.0.0.8";
+    public static final String OID_DOC_INSURANCE_ID_EXT = "3.0.0.9";
+    public static final String OID_DOC_INSURANCE_END_DATE = "3.0.0.10";
+    public static final String OID_DOC_INSURANCE_BEG_DATE = "3.0.0.11";
+    public static final String OID_DOC_INSURANCE_COMPANY = "3.0.0.12";
+    public static final String OID_DEFAULT_GENDER_CODE_SYSTEM = "2.16.840.1.113883.5.1";
 
     public static class Term {
         private String code;
         private String codeSystem;
 
-        static private Term newInstance(String code, String codeSystem) {
+        static public Term newInstance(String code, String codeSystem) {
             Term res = new Term();
             res.code = code;
             res.codeSystem = codeSystem;
@@ -109,6 +123,16 @@ public class PersonalData {
         private String state;
         private String city;
 
+        static public Addr fromJson(String json) {
+            try {
+                return (new Gson()).fromJson(json, Addr.class);
+            } catch (JsonSyntaxException ex) {
+                Addr res = new Addr();
+                res.streetAddressLine = json;
+                return res;
+            }
+        }
+
         static public Addr newInstance(ADExplicit addr, String use) {
             Addr res = new Addr();
             res.setUse(use);
@@ -178,7 +202,7 @@ public class PersonalData {
             }
             return res;
         }
-        
+
         public void set(Addr addr) {
             this.country = addr.country;
             this.streetAddressLine = addr.streetAddressLine;
@@ -317,6 +341,9 @@ public class PersonalData {
             return city;
         }
 
+        public String toJson() {
+            return (new Gson()).toJson(this);
+        }
     }
 
     /**
@@ -452,7 +479,7 @@ public class PersonalData {
             final String use = addr.getUse().isEmpty() ? null : addr.getUse().get(0).name();
 
             final Addr addrInfo = findByUseAttr(res.address, use);
-            if( addrInfo == null) {
+            if (addrInfo == null) {
                 res.address.add(Addr.newInstance(addr, use));
             } else {
                 addrInfo.set(Addr.newInstance(addr, use));
@@ -476,11 +503,11 @@ public class PersonalData {
     private static <T> T findByUseAttr(List<T> list, String use) {
         for (T obj : list) {
             final String useCur = ((Use) obj).getUse();
-            if(useCur == null && use == null) {
-                return (T)obj;
+            if (useCur == null && use == null) {
+                return (T) obj;
             }
             if (useCur.equals(use)) {
-                return (T)obj;
+                return (T) obj;
             }
         }
         return null;
@@ -581,10 +608,16 @@ public class PersonalData {
     }
 
     public Vector<Telecom> getTelecoms() {
+        if(telecoms == null) {
+            telecoms = new Vector<Telecom>();
+        }
         return telecoms;
     }
 
     public Vector<Addr> getAddress() {
+        if(address == null) {
+            address = new Vector<Addr>();
+        }
         return address;
     }
 
@@ -600,4 +633,37 @@ public class PersonalData {
         return OID_PREFIX + root.replace('.', DOT_CH);
     }
 
+    public String toCreateParamList() {
+        StringBuilder res = new StringBuilder("?");
+        return res.toString();
+    }
+
+    public void setGiven(String given) {
+        this.given = given;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public void setFamily(String family) {
+        this.family = family;
+    }
+
+    public void setGender(Term gender) {
+        this.gender = gender;
+    }
+
+    public void setBirthData(String birthData) {
+        this.birthData = birthData;
+    }
+
+    public void setDocs(Map<String, String> docs) {
+        this.docs = docs;
+    }
+
+
+    public void setBirthPlace(Addr birthPlace) {
+        this.birthPlace = birthPlace;
+    }
 }
