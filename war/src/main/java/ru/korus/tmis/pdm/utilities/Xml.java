@@ -2,6 +2,7 @@ package ru.korus.tmis.pdm.utilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -13,14 +14,18 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.springframework.util.xml.SimpleNamespaceContext;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -41,7 +46,6 @@ public class Xml {
     static public Document load(String fileName) {
         DocumentBuilderFactory documentBuilderFactory;
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        documentBuilderFactory.setNamespaceAware(false);
         try {
             return documentBuilderFactory.newDocumentBuilder().parse(new File(fileName));
         } catch (ParserConfigurationException e) {
@@ -54,6 +58,23 @@ public class Xml {
         return null;
     }
 
+    static public Document loadString(String data) {
+        DocumentBuilderFactory documentBuilderFactory;
+        documentBuilderFactory = DocumentBuilderFactory.newInstance();        
+        InputSource inputSource = new InputSource(new StringReader(data));
+        try {
+            return documentBuilderFactory.newDocumentBuilder().parse(inputSource);
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    
     public static Document docCopy(Document docTpl) throws TransformerException {
         Transformer transformer = transformerFactory.newTransformer();
         DOMResult result = new DOMResult();
@@ -84,7 +105,7 @@ public class Xml {
      * @throws XPathExpressionException
      */
     public static Attr setAttrValue(Document doc, String xpath, String value) throws XPathExpressionException {
-        Attr res = getAttr(doc, xpath);
+        Attr res = (Attr)getNode(doc, xpath);
         res.setValue(value);
         return res;
     }
@@ -95,12 +116,11 @@ public class Xml {
      * @return
      * @throws XPathExpressionException
      */
-    public static Attr getAttr(Document doc, String xpath) throws XPathExpressionException {
-        return (Attr) xPathFactory.newXPath().evaluate(xpath, new DOMSource(doc), XPathConstants.NODE);
-    }
 
-    public static Element getElement(Document doc, String xpath) throws XPathExpressionException {
-        return (Element) xPathFactory.newXPath().evaluate(xpath, new DOMSource(doc), XPathConstants.NODE);
+
+    public static Node getNode(Document doc, String xpath) throws XPathExpressionException {
+        final XPath xPath = xPathFactory.newXPath();
+        return (Node) xPath.compile(xpath).evaluate(doc, XPathConstants.NODE);
     }
 
     /**
@@ -110,19 +130,37 @@ public class Xml {
      */
     public static String getAttrValue(Document doc, String xpath) {
         String res = null;
+        doc.lookupNamespaceURI(null);
         try {
-            Attr attr = getAttr(doc, xpath);
+            Attr attr = (Attr)getNode(doc, xpath);
             if (attr != null) {
                 res = attr.getValue();
             }
         } catch (XPathExpressionException e) {
+            e.printStackTrace();
+            res = null;
+        }
+        return res;
+    }
+
+    public static String getElementValue(Document doc, String xpath) {
+        String res = null;
+        doc.lookupNamespaceURI(null);
+        try {
+            Element el = (Element)getNode(doc, xpath);
+            if (el != null) {
+                res = el.getTextContent();
+            }
+        } catch (XPathExpressionException e) {
+            System.out.println("Issue in Xml.getElementValue, xpath = " + xpath);
+            e.printStackTrace();
             res = null;
         }
         return res;
     }
 
     public static void setTextValue(Document doc, String def, String value) throws DOMException, XPathExpressionException {
-        Xml.getElement(doc, "//hl7:*[text()='" + def + "']").setTextContent(value);
+        Xml.getNode(doc, "//hl7:*[text()='" + def + "']").setTextContent(value);
     }
 
 }

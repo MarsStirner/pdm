@@ -91,7 +91,6 @@ public class PDManagerImpl implements PDManager {
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/new")
     @WebResult(name = "PRPA_IN101315UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
     public PRPAIN101315UV02 update(@WebParam(name = "PRPA_IN101314UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters") PRPAIN101314UV02 parameters) {
-
         for ( PRPAMT101302UV02PersonAsOtherIDs cur :
                 parameters.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getAsOtherIDs() ){
             for(II ii  : cur.getId()) {
@@ -102,7 +101,6 @@ public class PDManagerImpl implements PDManager {
                     return  getPRPAIN101315UV02(ii.getExtension());
                 }
             }
-
         }
         throw new RuntimeException("The PDM ID is not set");
     }

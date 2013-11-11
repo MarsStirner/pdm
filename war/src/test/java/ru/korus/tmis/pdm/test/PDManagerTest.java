@@ -35,6 +35,7 @@ public class PDManagerTest {
 
         PRPAIN101311UV02 prm = factory.createPRPAIN101311UV02();
 
+        /* Идентификатор отправителя */
         final MCCIMT000100UV01Sender sender = factory.createMCCIMT000100UV01Sender();
         final MCCIMT000100UV01Device device = factory.createMCCIMT000100UV01Device();
         final II senderId = factory.createII();
@@ -43,6 +44,7 @@ public class PDManagerTest {
         sender.setDevice(device);
         prm.setSender(sender);
 
+        /* Заголовок HL7 */
         PRPAIN101311UV02MFMIMT700721UV01ControlActProcess controlActProcess = factory.createPRPAIN101311UV02MFMIMT700721UV01ControlActProcess();
         PRPAIN101311UV02MFMIMT700721UV01Subject1 subject1 = new PRPAIN101311UV02MFMIMT700721UV01Subject1();
         PRPAIN101311UV02MFMIMT700721UV01RegistrationRequest registrationRequest = new PRPAIN101311UV02MFMIMT700721UV01RegistrationRequest();
@@ -57,20 +59,25 @@ public class PDManagerTest {
         subject2.setIdentifiedPerson(identifiedPerson);
         identifiedPerson.setIdentifiedPerson(person);
 
+        /* ФИО персоны */
         PN name = factory.createPN();
 
+        /* Имя (первое значение given) */
         EnGiven giv = factory.createEnGiven();
         giv.getContent().add(IVAN);
         name.getContent().add(factory.createENGiven(giv));
 
+        /* Отчество (первое значение given) */
         EnGiven mn = factory.createEnGiven();
         mn.getContent().add(IVANOVICH);
         name.getContent().add(factory.createENGiven(mn));
 
+        /* Фамилия */
         EnFamily family = factory.createEnFamily();
         family.getContent().add(IVANOV);
         name.getContent().add(factory.createENFamily(family));
 
+        /* Паспорт */
         person.getName().add(name);
         newDocId.put(PersonalData.OID_DOC_PASSPORTNUMBER, UUID.randomUUID().toString());
         newDocId.put(PersonalData.OID_DOC_PASSPORT_DATE, "1800.100000.1987");
@@ -82,17 +89,20 @@ public class PDManagerTest {
             person.getAsOtherIDs().add(otherId);
         }
 
+        /* Домашний адрес */
         final AD addr = factory.createAD();
         person.getAddr().add(addr);
         AdxpStreetName street = factory.createAdxpStreetName();
         street.getContent().add(TEST_STREET);
         addr.getContent().add(factory.createADStreetName(street));
-        addr.getUse().add(PostalAddressUse.HP);
+        addr.getUse().add(PostalAddressUse.HP);// признак - "домашний"
 
+        /* Пол персоны */
         final CE ce = factory.createCE();
         ce.setCode("M");
         person.setAdministrativeGenderCode(ce);
 
+        /* Ресгистрация новой персоны в ЗХПД */
         PRPAIN101312UV02 res = pdManager.add(prm);
         final II ii = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().
                 getIdentifiedPerson().getId().get(0);
@@ -230,7 +240,7 @@ public class PDManagerTest {
     }
 
 
-    //@Test
+    @Test
     public void update() {
         ObjectFactory factory = new ObjectFactory();
         PDManagerService serv = new PDManagerService();
@@ -269,7 +279,7 @@ public class PDManagerTest {
         middleName.getContent().add("Peterovich");
         pn.getContent().add(factory.createENGiven(middleName));
 
-        final PRPAMT101302UV02PersonTelecom telecom = factory.createPRPAMT101302UV02PersonTelecom();
+      /*  final PRPAMT101302UV02PersonTelecom telecom = factory.createPRPAMT101302UV02PersonTelecom();
         person.getTelecom().add(telecom);
         telecom.setValue("tel:+7 (495) 999-99-99");
         telecom.getUse().add(TelecommunicationAddressUse.HP);
@@ -279,20 +289,21 @@ public class PDManagerTest {
         AdxpStreetAddressLine strAdrLine = factory.createAdxpStreetAddressLine();
         strAdrLine.getContent().add("Update address line");
         personAddr.getContent().add(factory.createADStreetAddressLine(strAdrLine));
+        personAddr.getUse().add(PostalAddressUse.HP);
 
         final PRPAMT101302UV02PersonAsOtherIDs passportOtherIDs = factory.createPRPAMT101302UV02PersonAsOtherIDs();
         person.getAsOtherIDs().add(passportOtherIDs);
         final PRPAMT101302UV02OtherIDsId passportId = factory.createPRPAMT101302UV02OtherIDsId();
         passportOtherIDs.getId().add(passportId);
-        passportId.setRoot("99.99.99.99");
+        passportId.setRoot(PersonalData.OID_DOC_PASSPORT_CREATER);
         passportId.setExtension("1234578987654321");
 
         final PRPAMT101302UV02PersonAsOtherIDs snilsOtherIDs = factory.createPRPAMT101302UV02PersonAsOtherIDs();
         person.getAsOtherIDs().add(snilsOtherIDs);
         final PRPAMT101302UV02OtherIDsId snilsId = factory.createPRPAMT101302UV02OtherIDsId();
         passportOtherIDs.getId().add(snilsId);
-        snilsId.setRoot("3.0.0.2");
-        snilsId.setExtension("12345789876543210123456789");
+        snilsId.setRoot(PersonalData.OID_DOC_PASSPORT_DATE);
+        snilsId.setExtension("1313.1313.1980");*/
 
         final PRPAIN101315UV02 res = pdManager.update(prm);
         final List<II> listId = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getId();

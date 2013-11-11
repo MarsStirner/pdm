@@ -625,11 +625,11 @@ public class PersonalData {
         return birthPlace;
     }
 
-    static public String decodeOID(String root) {
+    public static String decodeOID(String root) {
         return root.replace(PersonalData.DOT_CH, '.').substring(OID_PREFIX.length());
     }
 
-    private static String codeOID(String root) {
+    public static String codeOID(String root) {
         return OID_PREFIX + root.replace('.', DOT_CH);
     }
 

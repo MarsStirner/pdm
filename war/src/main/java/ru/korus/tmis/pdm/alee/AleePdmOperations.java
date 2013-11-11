@@ -1,6 +1,5 @@
 package ru.korus.tmis.pdm.alee;
 
-import com.google.gson.Gson;
 import org.w3c.dom.Document;
 import ru.korus.tmis.pdm.PersonalData;
 import ru.korus.tmis.pdm.StorageOperations;
@@ -35,10 +34,10 @@ public class AleePdmOperations implements StorageOperations {
     private static final String TMIS_SID = "sid=1";
     private static final String START_PRM = "?";
     private static final String REQ_CREATE_OBJECT = "/create/object";
+    private static final String REQ_UPDATE_OBJECT = "/update/object";
     private static final String REQ_OBTAIN = "/obtain";
     private static final String ROOT_EL = "root";
     private static final String XPATH_CARD = "/" + ROOT_EL + "/card/";
-    private static final String XPATH_ATTR = XPATH_CARD + "/attrinutes/attribute/";
 
     private AttrMap config = null;
 
@@ -50,9 +49,17 @@ public class AleePdmOperations implements StorageOperations {
     public void save(PersonalData personalData) {
         try {
             final String queryParamList = toCreateParamList(personalData);
-            HttpURLConnection conn = (HttpURLConnection) (new URL(createBaseUrl(REQ_CREATE_OBJECT) + queryParamList)).openConnection();
+            final String req = personalData.getId() == null ? REQ_CREATE_OBJECT : REQ_UPDATE_OBJECT;
+            final String requestUrl = createBaseUrl(req) + queryParamList;
+            final URL url = new URL(requestUrl);
+            final String path = url.getPath();
+            final String query = url.getQuery();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            System.out.println("Create/Update person request: " + requestUrl);
             String res = getResponse(conn);
-            personalData.setId(getId(res));
+            if(personalData.getId() == null) {
+                personalData.setId(getId(res));
+            }
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
@@ -62,10 +69,12 @@ public class AleePdmOperations implements StorageOperations {
     @Override
     public PersonalData findById(String id) {
         try {
-            String queryParamList = String.format("attributes=true&id=%s");
-            HttpURLConnection conn = (HttpURLConnection) (new URL(createBaseUrl(REQ_OBTAIN) + queryParamList)).openConnection();
+            String queryParamList = String.format("attributes=true&id=%s", id);
+            final String requestUrl = createBaseUrl(REQ_OBTAIN) + queryParamList;
+            HttpURLConnection conn = (HttpURLConnection) (new URL(requestUrl)).openConnection();
+            System.out.println("Find person by id request: " + requestUrl);
             String res = String.format("<?xml version='1.0' encoding='UTF-8'?><%s>%s</%s>", ROOT_EL, getResponse(conn), ROOT_EL);
-            return createPersonalData(Xml.load(res));
+            return createPersonalData(Xml.loadString(res));
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
@@ -74,7 +83,7 @@ public class AleePdmOperations implements StorageOperations {
 
     @Override
     public void find(Map.Entry<String, String> doc) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        //TODO Does it need to add a check that the document is already registered? (see MongoPdmOperations.find(Map.Entry<String, String> doc))
     }
 
     @Override
@@ -95,7 +104,7 @@ public class AleePdmOperations implements StorageOperations {
     }
 
     private String createBaseUrl(String reqType) {
-        return BASE_URL + API_V1 + reqType + START_PRM + TMIS_SID;
+        return BASE_URL + API_V1 + reqType + START_PRM + TMIS_SID + "&";
     }
 
     private String getId(String res) {
@@ -105,13 +114,13 @@ public class AleePdmOperations implements StorageOperations {
         if (resTrim.startsWith(begStr) && resTrim.endsWith(endStr)) {
             return resTrim.substring(begStr.length(), resTrim.length() - endStr.length());
         }
-        throw new RuntimeException("Cannot create new object: " + res);
+        throw new RuntimeException("Cannot create new person. Wrong response format: " + res);
     }
 
 
     private PersonalData createPersonalData(final Document aleeDoc) {
         PersonalData res = new PersonalData();
-        res.setId(Xml.getAttrValue(aleeDoc, XPATH_CARD + "id"));
+        res.setId(Xml.getElementValue(aleeDoc, XPATH_CARD + "id"));
         initAttrs(aleeDoc, res);
         initDocs(aleeDoc, res);
         initAddrs(aleeDoc, res);
@@ -121,8 +130,8 @@ public class AleePdmOperations implements StorageOperations {
 
     private void initTelecoms(Document aleeDoc, PersonalData res) {
         for (Map.Entry<TelecommunicationAddressUse, String> telCode : config.getTelecomMap().entrySet()) {
-            String value = Xml.getAttrValue(aleeDoc, XPATH_ATTR + telCode.getValue());
-            if(value != null) {
+            String value = Xml.getElementValue(aleeDoc, getXpathForPrm(telCode.getValue()));
+            if (value != null) {
                 PersonalData.Telecom tel = new PersonalData.Telecom();
                 tel.setValue(value);
                 tel.setUse(telCode.getKey().name());
@@ -133,8 +142,8 @@ public class AleePdmOperations implements StorageOperations {
 
     private void initAddrs(Document aleeDoc, PersonalData res) {
         for (Map.Entry<PostalAddressUse, String> addrCode : config.getAddrMap().entrySet()) {
-            String value = Xml.getAttrValue(aleeDoc, XPATH_ATTR + addrCode.getValue());
-            if(value != null) {
+            String value = Xml.getElementValue(aleeDoc, getXpathForPrm(addrCode.getValue()));
+            if (value != null) {
                 res.getAddress().add(PersonalData.Addr.fromJson(value));
                 res.getAddress().lastElement().setUse(addrCode.getKey().name());
             }
@@ -143,34 +152,38 @@ public class AleePdmOperations implements StorageOperations {
 
     private void initDocs(Document aleeDoc, PersonalData res) {
         for (Map.Entry<String, String> docCode : config.getDocsMap().entrySet()) {
-            String value = Xml.getAttrValue(aleeDoc, XPATH_ATTR + docCode.getValue());
-            if(value != null) {
-                res.getDocs().put(docCode.getKey(), value);
+            String value = Xml.getElementValue(aleeDoc, getXpathForPrm(docCode.getValue()));
+            if (value != null) {
+                res.getDocs().put(PersonalData.codeOID(docCode.getKey()), value);
             }
         }
     }
 
     private void initAttrs(Document aleeDoc, final PersonalData res) {
-        final String xpathBase = XPATH_ATTR;
-        res.setGiven(Xml.getAttrValue(aleeDoc, XPATH_ATTR + config.getGivenCode()));
-        res.setMiddleName(Xml.getAttrValue(aleeDoc, XPATH_ATTR + config.getMiddleNameCode()));
-        res.setFamily(Xml.getAttrValue(aleeDoc, XPATH_ATTR + config.getFamilyCode()));
-        String genderCode = Xml.getAttrValue(aleeDoc, XPATH_ATTR + config.getGenderCode());
-        if(genderCode != null) {
-            res.setGender(PersonalData.Term.newInstance(genderCode,PersonalData.OID_DEFAULT_GENDER_CODE_SYSTEM));
+        res.setGiven(Xml.getElementValue(aleeDoc, getXpathForPrm(config.getGivenCode())));
+        res.setMiddleName(Xml.getElementValue(aleeDoc, getXpathForPrm(config.getMiddleNameCode())));
+        res.setFamily(Xml.getElementValue(aleeDoc, getXpathForPrm(config.getFamilyCode())));
+        String genderCode = Xml.getElementValue(aleeDoc, getXpathForPrm(config.getGenderCode()));
+        if (genderCode != null) {
+            res.setGender(PersonalData.Term.newInstance(genderCode, PersonalData.OID_DEFAULT_GENDER_CODE_SYSTEM));
         }
-        res.setBirthData(Xml.getAttrValue(aleeDoc, XPATH_ATTR + config.getBirthDataCode()));
-        final String addrJson = Xml.getAttrValue(aleeDoc, XPATH_ATTR + config.getBirthPlaceCode());
-        if(addrJson != null) {
+        res.setBirthData(Xml.getElementValue(aleeDoc, getXpathForPrm(config.getBirthDataCode())));
+        final String addrJson = Xml.getElementValue(aleeDoc, getXpathForPrm(config.getBirthPlaceCode()));
+        if (addrJson != null) {
             res.setBirthPlace(PersonalData.Addr.fromJson(addrJson));
         }
 
-        String email = Xml.getAttrValue(aleeDoc, XPATH_ATTR + config.getEmailCode());
-        if(email != null) {
+        String email = Xml.getElementValue(aleeDoc, getXpathForPrm(config.getEmailCode()));
+        if (email != null) {
             PersonalData.Telecom telecomEmail = new PersonalData.Telecom();
             telecomEmail.setValue("mailto:" + email);
             res.getTelecoms().add(telecomEmail);
         }
+    }
+
+    private String getXpathForPrm(String code) {
+        final String xpathAttrTpl = XPATH_CARD + "attributes/attribute/type[text()='%s']/parent::node()/value";
+        return String.format(xpathAttrTpl, code);
     }
 
 
@@ -235,6 +248,9 @@ public class AleePdmOperations implements StorageOperations {
 
     private void addAddrs(StringBuilder res, PersonalData personalData) {
         for (PersonalData.Addr addr : personalData.getAddress()) {
+            if (addr.getUse() == null) {
+                throw new RuntimeException("The address type is null! address: " + addr.toJson());
+            }
             String code = config.getAddrMap().get(PostalAddressUse.valueOf(addr.getUse()));
             if (code == null) {
                 throw new RuntimeException("The Alee code not found for address type: " + addr.getUse());
@@ -254,6 +270,7 @@ public class AleePdmOperations implements StorageOperations {
     }
 
     private void addAttrs(StringBuilder res, PersonalData personalData) {
+        addPrm(res, "id", personalData.getId());
         addPrm(res, config.getGivenCode(), personalData.getGiven());
         addPrm(res, config.getMiddleNameCode(), personalData.getMiddleName());
         addPrm(res, config.getFamilyCode(), personalData.getFamily());
