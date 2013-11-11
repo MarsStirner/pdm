@@ -7,6 +7,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import ru.korus.tmis.pdm.PersonalData;
 import ru.korus.tmis.pdm.StorageOperations;
 import ru.korus.tmis.pdm.utilities.Xml;
@@ -18,6 +20,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.*;
 import java.net.*;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -39,7 +42,8 @@ public class AleePdmOperations implements StorageOperations {
     private static final String REQ_SEARCH_SELECTED = "/search/selected";
     private static final String REQ_OBTAIN = "/obtain";
     private static final String ROOT_EL = "root";
-    private static final String XPATH_CARD = "/" + ROOT_EL + "/card/";
+    private static final String XPATH_CARD = "/" + ROOT_EL + "/card";
+    private static final String XPATH_CARDS = "/" + ROOT_EL + "/cards";
 
     private AttrMap config = null;
 
@@ -79,7 +83,7 @@ public class AleePdmOperations implements StorageOperations {
             final URI uri = uriBuilder.build();
             System.out.println("Find person by id request: " + uri);
             String res = getXmlResponse(uri);
-            return createPersonalData(Xml.loadString(res));
+            return createPersonalData(Xml.loadString(res), null);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
@@ -101,10 +105,10 @@ public class AleePdmOperations implements StorageOperations {
     @Override
     public List<PersonalData> find(PersonalData person) {
         try {
-            URIBuilder uriBuilder = createBaseUrl(new URIBuilder(), REQ_OBTAIN)
+            URIBuilder uriBuilder = createBaseUrl(new URIBuilder(), REQ_SEARCH_SELECTED)
                     .addParameter("attributes", "true");
-            final URI uri = uriBuilder.build();
             uriBuilder = toCreateParamList(uriBuilder, person, "eq");
+            final URI uri = uriBuilder.build();
             System.out.println("Find person by personal information: " + uri);
             String res = getXmlResponse(uri);
             return createPersonalDataList(Xml.loadString(res));
@@ -151,23 +155,33 @@ public class AleePdmOperations implements StorageOperations {
     }
 
     private List<PersonalData> createPersonalDataList(Document document) {
-        //TODO ....
-        return null;
-    }
+        List<PersonalData> res = new LinkedList<PersonalData>();
+        Element cards = (Element)document.getDocumentElement().getFirstChild();
+        final NodeList cardList = cards.getElementsByTagName("card");
+        for(Integer i = 0; i < cardList.getLength(); ++i) {
+            Element card = (Element)cardList.item(i);
+            final NodeList idList = card.getElementsByTagName("id");
+            if(idList.getLength() > 0) {
+                res.add(createPersonalData(document, idList.item(0).getTextContent()));
+            }
 
-    private PersonalData createPersonalData(final Document aleeDoc) {
-        PersonalData res = new PersonalData();
-        res.setId(Xml.getElementValue(aleeDoc, XPATH_CARD + "id"));
-        initAttrs(aleeDoc, res);
-        initDocs(aleeDoc, res);
-        initAddrs(aleeDoc, res);
-        initTelecoms(aleeDoc, res);
+        }
         return res;
     }
 
-    private void initTelecoms(Document aleeDoc, PersonalData res) {
+    private PersonalData createPersonalData(final Document aleeDoc, String id) {
+        PersonalData res = new PersonalData();
+        res.setId(Xml.getElementValue(aleeDoc, XPATH_CARD + "/id"));
+        initAttrs(aleeDoc, res, id);
+        initDocs(aleeDoc, res, id);
+        initAddrs(aleeDoc, res, id);
+        initTelecoms(aleeDoc, res, id);
+        return res;
+    }
+
+    private void initTelecoms(Document aleeDoc, PersonalData res, String id) {
         for (Map.Entry<TelecommunicationAddressUse, String> telCode : config.getTelecomMap().entrySet()) {
-            String value = Xml.getElementValue(aleeDoc, getXpathForPrm(telCode.getValue()));
+            String value = Xml.getElementValue(aleeDoc, getXpathForPrm(telCode.getValue(), id));
             if (value != null) {
                 PersonalData.Telecom tel = new PersonalData.Telecom();
                 tel.setValue(value);
@@ -177,9 +191,9 @@ public class AleePdmOperations implements StorageOperations {
         }
     }
 
-    private void initAddrs(Document aleeDoc, PersonalData res) {
+    private void initAddrs(Document aleeDoc, PersonalData res, String id) {
         for (Map.Entry<PostalAddressUse, String> addrCode : config.getAddrMap().entrySet()) {
-            String value = Xml.getElementValue(aleeDoc, getXpathForPrm(addrCode.getValue()));
+            String value = Xml.getElementValue(aleeDoc, getXpathForPrm(addrCode.getValue(), id));
             if (value != null) {
                 res.getAddress().add(PersonalData.Addr.fromJson(value));
                 res.getAddress().lastElement().setUse(addrCode.getKey().name());
@@ -187,30 +201,30 @@ public class AleePdmOperations implements StorageOperations {
         }
     }
 
-    private void initDocs(Document aleeDoc, PersonalData res) {
+    private void initDocs(Document aleeDoc, PersonalData res, String id) {
         for (Map.Entry<String, String> docCode : config.getDocsMap().entrySet()) {
-            String value = Xml.getElementValue(aleeDoc, getXpathForPrm(docCode.getValue()));
+            String value = Xml.getElementValue(aleeDoc, getXpathForPrm(docCode.getValue(), id));
             if (value != null) {
                 res.getDocs().put(PersonalData.codeOID(docCode.getKey()), value);
             }
         }
     }
 
-    private void initAttrs(Document aleeDoc, final PersonalData res) {
-        res.setGiven(Xml.getElementValue(aleeDoc, getXpathForPrm(config.getGivenCode())));
-        res.setMiddleName(Xml.getElementValue(aleeDoc, getXpathForPrm(config.getMiddleNameCode())));
-        res.setFamily(Xml.getElementValue(aleeDoc, getXpathForPrm(config.getFamilyCode())));
-        String genderCode = Xml.getElementValue(aleeDoc, getXpathForPrm(config.getGenderCode()));
+    private void initAttrs(Document aleeDoc, final PersonalData res, String id) {
+        res.setGiven(Xml.getElementValue(aleeDoc, getXpathForPrm(config.getGivenCode(), id)));
+        res.setMiddleName(Xml.getElementValue(aleeDoc, getXpathForPrm(config.getMiddleNameCode(), id)));
+        res.setFamily(Xml.getElementValue(aleeDoc, getXpathForPrm(config.getFamilyCode(), id)));
+        String genderCode = Xml.getElementValue(aleeDoc, getXpathForPrm(config.getGenderCode(), id));
         if (genderCode != null) {
             res.setGender(PersonalData.Term.newInstance(genderCode, PersonalData.OID_DEFAULT_GENDER_CODE_SYSTEM));
         }
-        res.setBirthData(Xml.getElementValue(aleeDoc, getXpathForPrm(config.getBirthDataCode())));
-        final String addrJson = Xml.getElementValue(aleeDoc, getXpathForPrm(config.getBirthPlaceCode()));
+        res.setBirthData(Xml.getElementValue(aleeDoc, getXpathForPrm(config.getBirthDataCode(), id)));
+        final String addrJson = Xml.getElementValue(aleeDoc, getXpathForPrm(config.getBirthPlaceCode(), id));
         if (addrJson != null) {
             res.setBirthPlace(PersonalData.Addr.fromJson(addrJson));
         }
 
-        String email = Xml.getElementValue(aleeDoc, getXpathForPrm(config.getEmailCode()));
+        String email = Xml.getElementValue(aleeDoc, getXpathForPrm(config.getEmailCode(), id));
         if (email != null) {
             PersonalData.Telecom telecomEmail = new PersonalData.Telecom();
             telecomEmail.setValue("mailto:" + email);
@@ -218,9 +232,14 @@ public class AleePdmOperations implements StorageOperations {
         }
     }
 
-    private String getXpathForPrm(String code) {
-        final String xpathAttrTpl = XPATH_CARD + "attributes/attribute/type[text()='%s']/parent::node()/value";
-        return String.format(xpathAttrTpl, code);
+    private String getXpathForPrm(String code, String id) {
+        final String pathToValue = "/attributes/attribute/type[text()='%s']/parent::node()/value";
+        if (id == null) {
+            final String xpathAttrTpl = XPATH_CARD + pathToValue;
+            return String.format(xpathAttrTpl, code);
+        }
+        final String xpathAttrTpl = XPATH_CARDS + "/card/id[text()='%s']/parent::node()" + pathToValue;
+        return String.format(xpathAttrTpl, id, code);
     }
 
 
