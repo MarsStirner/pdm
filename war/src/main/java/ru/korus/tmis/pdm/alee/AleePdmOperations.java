@@ -1,5 +1,11 @@
 package ru.korus.tmis.pdm.alee;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import ru.korus.tmis.pdm.PersonalData;
 import ru.korus.tmis.pdm.StorageOperations;
@@ -11,9 +17,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -27,14 +31,12 @@ import java.util.Vector;
  */
 public class AleePdmOperations implements StorageOperations {
 
-    private static final String BASE_URL = "http://10.129.188.20";
+    private static final String BASE_URL = "10.129.188.20";
 
-    private static final String API_V1 = "/api/v1";
-    private static final String BASE_URL_CREATE = API_V1 + "/create/object";
-    private static final String TMIS_SID = "sid=1";
-    private static final String START_PRM = "?";
+    private static final String TMIS_SID = "1";
     private static final String REQ_CREATE_OBJECT = "/create/object";
     private static final String REQ_UPDATE_OBJECT = "/update/object";
+    private static final String REQ_SEARCH_SELECTED = "/search/selected";
     private static final String REQ_OBTAIN = "/obtain";
     private static final String ROOT_EL = "root";
     private static final String XPATH_CARD = "/" + ROOT_EL + "/card/";
@@ -48,18 +50,20 @@ public class AleePdmOperations implements StorageOperations {
     @Override
     public void save(PersonalData personalData) {
         try {
-            final String queryParamList = toCreateParamList(personalData);
             final String req = personalData.getId() == null ? REQ_CREATE_OBJECT : REQ_UPDATE_OBJECT;
-            final String requestUrl = createBaseUrl(req) + queryParamList;
-            final URL url = new URL(requestUrl);
-            final String path = url.getPath();
-            final String query = url.getQuery();
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            System.out.println("Create/Update person request: " + requestUrl);
-            String res = getResponse(conn);
+            URIBuilder uriBuilder = createBaseUrl(new URIBuilder(), req);
+            uriBuilder = toCreateParamList(uriBuilder, personalData, null);
+            final URI uri = uriBuilder.build();
+            final String path =  uri.getPath();
+            final String query = uri.getQuery();
+            System.out.println("Create/Update person request: " + uri);
+            String res = getResponse(uri);
             if(personalData.getId() == null) {
                 personalData.setId(getId(res));
             }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
@@ -69,16 +73,24 @@ public class AleePdmOperations implements StorageOperations {
     @Override
     public PersonalData findById(String id) {
         try {
-            String queryParamList = String.format("attributes=true&id=%s", id);
-            final String requestUrl = createBaseUrl(REQ_OBTAIN) + queryParamList;
-            HttpURLConnection conn = (HttpURLConnection) (new URL(requestUrl)).openConnection();
-            System.out.println("Find person by id request: " + requestUrl);
-            String res = String.format("<?xml version='1.0' encoding='UTF-8'?><%s>%s</%s>", ROOT_EL, getResponse(conn), ROOT_EL);
+            URIBuilder uriBuilder = createBaseUrl(new URIBuilder(), REQ_OBTAIN)
+                    .addParameter("attributes", "true")
+                    .addParameter("id", id);
+            final URI uri = uriBuilder.build();
+            System.out.println("Find person by id request: " + uri);
+            String res = getXmlResponse(uri);
             return createPersonalData(Xml.loadString(res));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    private String getXmlResponse(URI uri) throws IOException {
+        return String.format("<?xml version='1.0' encoding='UTF-8'?><%s>%s</%s>", ROOT_EL, getResponse(uri), ROOT_EL);
     }
 
     @Override
@@ -88,23 +100,44 @@ public class AleePdmOperations implements StorageOperations {
 
     @Override
     public List<PersonalData> find(PersonalData person) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    private String getResponse(HttpURLConnection conn) throws IOException {
-        conn.setDoOutput(true);
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-Type", "text/plain");
-        int responseCode = conn.getResponseCode();
-        String res = getResponseData(conn, conn.getResponseCode());
-        if (responseCode != HttpURLConnection.HTTP_OK) {
-            throw new RuntimeException("Bad http status code: " + responseCode + "; http response: " + res);
+        try {
+            URIBuilder uriBuilder = createBaseUrl(new URIBuilder(), REQ_OBTAIN)
+                    .addParameter("attributes", "true");
+            final URI uri = uriBuilder.build();
+            uriBuilder = toCreateParamList(uriBuilder, person, "eq");
+            System.out.println("Find person by personal information: " + uri);
+            String res = getXmlResponse(uri);
+            return createPersonalDataList(Xml.loadString(res));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
-        return res;
     }
 
-    private String createBaseUrl(String reqType) {
-        return BASE_URL + API_V1 + reqType + START_PRM + TMIS_SID + "&";
+
+    private String getResponse(URI uri) throws IOException {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpGet httpget = new HttpGet(uri);
+        httpget.setHeader("Content-Type", "text/plain");
+        CloseableHttpResponse response = httpclient.execute(httpget);
+        try {
+            int responseCode = response.getStatusLine().getStatusCode();
+            String res = getResponseData(response);
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                throw new RuntimeException("Bad http status code: " + responseCode + "; http response: " + res);
+            }
+            return res;
+
+        } finally {
+            response.close();
+        }
+    }
+
+    private URIBuilder  createBaseUrl(URIBuilder uriBuilder, String reqType) {
+        return uriBuilder.setScheme("http").setHost(BASE_URL).setPath("/api/v1" + reqType).setParameter("sid", TMIS_SID);
     }
 
     private String getId(String res) {
@@ -117,6 +150,10 @@ public class AleePdmOperations implements StorageOperations {
         throw new RuntimeException("Cannot create new person. Wrong response format: " + res);
     }
 
+    private List<PersonalData> createPersonalDataList(Document document) {
+        //TODO ....
+        return null;
+    }
 
     private PersonalData createPersonalData(final Document aleeDoc) {
         PersonalData res = new PersonalData();
@@ -187,18 +224,10 @@ public class AleePdmOperations implements StorageOperations {
     }
 
 
-    private String getResponseData(HttpURLConnection conn, int code) throws IOException {
-        final InputStream inputStream = code == 200 ? conn.getInputStream() : conn.getErrorStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-
-        String output;
-        System.out.println("Output from Server .... \n");
-        String res = "";
-        while ((output = br.readLine()) != null) {
-            System.out.println(output);
-            res += output;
-        }
-        br.close();
+    private String getResponseData(CloseableHttpResponse response) throws IOException {
+        System.out.println("Output from Server ...");
+        final String res = EntityUtils.toString(response.getEntity());
+        System.out.println(res);
         return res;
     }
 
@@ -219,16 +248,15 @@ public class AleePdmOperations implements StorageOperations {
         }
     }
 
-    private String toCreateParamList(PersonalData personalData) {
-        StringBuilder res = new StringBuilder();
-        addAttrs(res, personalData);
-        addDocs(res, personalData);
-        addAddrs(res, personalData);
-        addTelecoms(res, personalData);
-        return res.toString();
+    private URIBuilder toCreateParamList(URIBuilder uriBuilder, PersonalData personalData, String compareType) {
+        addAttrs(uriBuilder, personalData, compareType);
+        addDocs(uriBuilder, personalData, compareType);
+        addAddrs(uriBuilder, personalData, compareType);
+        addTelecoms(uriBuilder, personalData, compareType);
+        return uriBuilder;
     }
 
-    private void addTelecoms(StringBuilder res, PersonalData personalData) {
+    private void addTelecoms(URIBuilder uriBuilder, PersonalData personalData, String compareType) {
         for (PersonalData.Telecom tel : personalData.getTelecoms()) {
             try {
                 URL uri = new URL(tel.getValue());
@@ -237,7 +265,7 @@ public class AleePdmOperations implements StorageOperations {
                     if (code == null) {
                         throw new RuntimeException("The Alee code not found for telecom type: " + tel.getUse());
                     }
-                    addPrm(res, code, uri.getPath());
+                    addPrm(uriBuilder, code, uri.getPath(), compareType);
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -246,7 +274,7 @@ public class AleePdmOperations implements StorageOperations {
     }
 
 
-    private void addAddrs(StringBuilder res, PersonalData personalData) {
+    private void addAddrs(URIBuilder uriBuilder, PersonalData personalData, String compareType) {
         for (PersonalData.Addr addr : personalData.getAddress()) {
             if (addr.getUse() == null) {
                 throw new RuntimeException("The address type is null! address: " + addr.toJson());
@@ -255,35 +283,35 @@ public class AleePdmOperations implements StorageOperations {
             if (code == null) {
                 throw new RuntimeException("The Alee code not found for address type: " + addr.getUse());
             }
-            addPrm(res, code, addr.toJson());
+            addPrm(uriBuilder, code, addr.toJson(), compareType);
         }
     }
 
-    private void addDocs(StringBuilder res, PersonalData personalData) {
+    private void addDocs(URIBuilder res, PersonalData personalData, String compareType) {
         for (Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
             final String code = config.getDocsMap().get(PersonalData.decodeOID(doc.getKey()));
             if (code == null) {
                 throw new RuntimeException("The Alee code not found for document OID: " + doc.getKey());
             }
-            addPrm(res, code, doc.getValue());
+            addPrm(res, code, doc.getValue(), compareType);
         }
     }
 
-    private void addAttrs(StringBuilder res, PersonalData personalData) {
-        addPrm(res, "id", personalData.getId());
-        addPrm(res, config.getGivenCode(), personalData.getGiven());
-        addPrm(res, config.getMiddleNameCode(), personalData.getMiddleName());
-        addPrm(res, config.getFamilyCode(), personalData.getFamily());
+    private void addAttrs(URIBuilder uriBuilder, PersonalData personalData, String compareType) {
+        addPrm(uriBuilder, "id", personalData.getId(), compareType);
+        addPrm(uriBuilder, config.getGivenCode(), personalData.getGiven(), compareType);
+        addPrm(uriBuilder, config.getMiddleNameCode(), personalData.getMiddleName(), compareType);
+        addPrm(uriBuilder, config.getFamilyCode(), personalData.getFamily(), compareType);
         final PersonalData.Term gender = personalData.getGender();
         if (gender != null) {
-            addPrm(res, config.getGenderCode(), gender.getCode());
+            addPrm(uriBuilder, config.getGenderCode(), gender.getCode(), compareType);
         }
-        addPrm(res, config.getBirthDataCode(), personalData.getBirthData());
+        addPrm(uriBuilder, config.getBirthDataCode(), personalData.getBirthData(), compareType);
         final PersonalData.Addr birthPlace = personalData.getBirthPlace();
         if (birthPlace != null) {
-            addPrm(res, config.getBirthPlaceCode(), birthPlace.toJson());
+            addPrm(uriBuilder, config.getBirthPlaceCode(), birthPlace.toJson(), compareType);
         }
-        addPrm(res, config.getEmailCode(), getEmail(personalData.getTelecoms()));
+        addPrm(uriBuilder, config.getEmailCode(), getEmail(personalData.getTelecoms()), compareType);
     }
 
     private String getEmail(Vector<PersonalData.Telecom> telecoms) {
@@ -300,9 +328,9 @@ public class AleePdmOperations implements StorageOperations {
         return null;
     }
 
-    private void addPrm(StringBuilder res, String code, String value) {
-        if (value != null && code != null) {
-            res.append(String.format("%s%s=%s", res.length() > 0 ? "&" : "", code, value));
+    private void addPrm(URIBuilder uriBuilder, String param, String value, String compareType) {
+        if (value != null && param != null) {
+            uriBuilder.setParameter(param, compareType == null ? value : String.format("%s[%s]", compareType, value));
         }
     }
 

@@ -164,7 +164,7 @@ public class PDManagerTest {
         }
     }
 
-    //@Test
+    @Test
     public void findByPersonInfo() {
         ObjectFactory factory = new ObjectFactory();
         PDManagerService serv = new PDManagerService();
@@ -279,7 +279,7 @@ public class PDManagerTest {
         middleName.getContent().add("Peterovich");
         pn.getContent().add(factory.createENGiven(middleName));
 
-      /*  final PRPAMT101302UV02PersonTelecom telecom = factory.createPRPAMT101302UV02PersonTelecom();
+       final PRPAMT101302UV02PersonTelecom telecom = factory.createPRPAMT101302UV02PersonTelecom();
         person.getTelecom().add(telecom);
         telecom.setValue("tel:+7 (495) 999-99-99");
         telecom.getUse().add(TelecommunicationAddressUse.HP);
@@ -303,7 +303,7 @@ public class PDManagerTest {
         final PRPAMT101302UV02OtherIDsId snilsId = factory.createPRPAMT101302UV02OtherIDsId();
         passportOtherIDs.getId().add(snilsId);
         snilsId.setRoot(PersonalData.OID_DOC_PASSPORT_DATE);
-        snilsId.setExtension("1313.1313.1980");*/
+        snilsId.setExtension("1313.1313.1980");
 
         final PRPAIN101315UV02 res = pdManager.update(prm);
         final List<II> listId = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getId();
