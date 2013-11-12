@@ -1,16 +1,9 @@
 package ru.korus.tmis.pdm;
 
-import javax.annotation.Resource;
-import javax.jws.*;
-import javax.xml.ws.WebServiceContext;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.BasicQuery;
 import ru.korus.tmis.pdm.alee.AleePdmOperations;
 import ru.korus.tmis.pdm.ws.*;
 
+import javax.jws.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -24,22 +17,22 @@ import java.util.Vector;
 
 @WebService(endpointInterface = "ru.korus.tmis.pdm.ws.PDManager", targetNamespace = "http://www.korusconsulting.ru/PDManager/",
         serviceName = "tmis-pdm", portName = "portPdm", name = "PDManager")
-@HandlerChain(file="../../../../../handler-chain.xml")
+@HandlerChain(file = "../../../../../handler-chain.xml")
 public class PDManagerImpl implements PDManager {
 
-	private static StorageOperations storageOperations = null;
+    private static StorageOperations storageOperations = null;
 
-	static {
-        if (System.getProperty("pdm.StorageType", "").equals("alee") ){
+    static {
+        if (System.getProperty("pdm.StorageType", "").equals("alee")) {
             storageOperations = new AleePdmOperations();
         } else {
             storageOperations = new MongoPdmOperations();
         }
-	}
+    }
 
     private ObjectFactory factory = new ObjectFactory();
+
     /**
-     *
      * @see ru.korus.tmis.pdm.ws.PDManager#add(ru.korus.tmis.pdm.ws.PRPAIN101311UV02)
      */
     @Override
@@ -49,11 +42,10 @@ public class PDManagerImpl implements PDManager {
 
         final PersonalData personalData = PersonalData.newInstance(parameters);
         final String id = save(personalData);
-        return  getPRPAIN101312UV02(id);
+        return getPRPAIN101312UV02(id);
     }
 
     /**
-     *
      * @see ru.korus.tmis.pdm.ws.PDManager#findCandidates(ru.korus.tmis.pdm.ws.PRPAIN101305UV02)
      */
     @Override
@@ -77,7 +69,7 @@ public class PDManagerImpl implements PDManager {
                 getParameterList().getIdentifiedPersonIdentifier();
 
         List<PersonalData> personalDataList = new Vector<PersonalData>(identifiedPersons.size());
-        for(PRPAMT101307UV02IdentifiedPersonIdentifier curPerson : identifiedPersons) {
+        for (PRPAMT101307UV02IdentifiedPersonIdentifier curPerson : identifiedPersons) {
             final String id = curPerson.getValue().get(0).getRoot();
             personalDataList.add(findById(id));
         }
@@ -85,20 +77,20 @@ public class PDManagerImpl implements PDManager {
     }
 
     /**
-     *  @see ru.korus.tmis.pdm.ws.PDManager#update(ru.korus.tmis.pdm.ws.PRPAIN101314UV02)
+     * @see ru.korus.tmis.pdm.ws.PDManager#update(ru.korus.tmis.pdm.ws.PRPAIN101314UV02)
      */
     @Override
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/new")
     @WebResult(name = "PRPA_IN101315UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
     public PRPAIN101315UV02 update(@WebParam(name = "PRPA_IN101314UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters") PRPAIN101314UV02 parameters) {
-        for ( PRPAMT101302UV02PersonAsOtherIDs cur :
-                parameters.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getAsOtherIDs() ){
-            for(II ii  : cur.getId()) {
-                if(PersonalData.OID_PDM.equals(ii.getRoot()) ){
+        for (PRPAMT101302UV02PersonAsOtherIDs cur :
+                parameters.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getAsOtherIDs()) {
+            for (II ii : cur.getId()) {
+                if (PersonalData.OID_PDM.equals(ii.getRoot())) {
                     final PersonalData personalData = findById(ii.getExtension());
                     final PersonalData personalDataNew = personalData.update(parameters);
                     savePerson(personalDataNew);
-                    return  getPRPAIN101315UV02(ii.getExtension());
+                    return getPRPAIN101315UV02(ii.getExtension());
                 }
             }
         }
@@ -115,9 +107,8 @@ public class PDManagerImpl implements PDManager {
     }
 
 
-
     private PRPAIN101315UV02 getPRPAIN101315UV02(String id) {
-        PRPAIN101315UV02 res =  factory.createPRPAIN101315UV02();
+        PRPAIN101315UV02 res = factory.createPRPAIN101315UV02();
 
         final PRPAMT101303UV02IdentifiedPerson identifiedPerson = factory.createPRPAMT101303UV02IdentifiedPerson();
         final PRPAIN101315UV02MFMIMT700701UV01Subject2 subject2 = factory.createPRPAIN101315UV02MFMIMT700701UV01Subject2();
@@ -138,25 +129,25 @@ public class PDManagerImpl implements PDManager {
     }
 
     private PRPAIN101312UV02 getPRPAIN101312UV02(String id) {
-		PRPAIN101312UV02 res =  factory.createPRPAIN101312UV02();
-		
+        PRPAIN101312UV02 res = factory.createPRPAIN101312UV02();
+
         final PRPAIN101312UV02MFMIMT700701UV01ControlActProcess controlActProcess = factory.createPRPAIN101312UV02MFMIMT700701UV01ControlActProcess();
         final PRPAIN101312UV02MFMIMT700701UV01Subject1 subject1 = factory.createPRPAIN101312UV02MFMIMT700701UV01Subject1();
         final PRPAIN101312UV02MFMIMT700701UV01RegistrationEvent registrationEvent = factory.createPRPAIN101312UV02MFMIMT700701UV01RegistrationEvent();
-		final PRPAMT101304UV02IdentifiedPerson identifiedPerson = factory.createPRPAMT101304UV02IdentifiedPerson();
-		final PRPAIN101312UV02MFMIMT700701UV01Subject2 subject2 = factory.createPRPAIN101312UV02MFMIMT700701UV01Subject2();
-		final PRPAMT101304UV02Person person = factory.createPRPAMT101304UV02Person();
-		
+        final PRPAMT101304UV02IdentifiedPerson identifiedPerson = factory.createPRPAMT101304UV02IdentifiedPerson();
+        final PRPAIN101312UV02MFMIMT700701UV01Subject2 subject2 = factory.createPRPAIN101312UV02MFMIMT700701UV01Subject2();
+        final PRPAMT101304UV02Person person = factory.createPRPAMT101304UV02Person();
+
         res.setControlActProcess(controlActProcess);
-		controlActProcess.getSubject().add(subject1);
-		subject1.setRegistrationEvent(registrationEvent);
-		registrationEvent.setSubject1(subject2);
-		subject2.setIdentifiedPerson(identifiedPerson);
-		identifiedPerson.setIdentifiedPerson(person);
+        controlActProcess.getSubject().add(subject1);
+        subject1.setRegistrationEvent(registrationEvent);
+        registrationEvent.setSubject1(subject2);
+        subject2.setIdentifiedPerson(identifiedPerson);
+        identifiedPerson.setIdentifiedPerson(person);
         II ii = createPdmII(id);
         person.getId().add(ii);
-		return res;
-	}
+        return res;
+    }
 
     private PRPAIN101306UV02 getPRPAIN101306UV02(List<PersonalData> personalDataList) {
         PRPAIN101306UV02 res = factory.createPRPAIN101306UV02();
@@ -168,21 +159,54 @@ public class PDManagerImpl implements PDManager {
             PRPAIN101306UV02MFMIMT700711UV01RegistrationEvent event = factory.createPRPAIN101306UV02MFMIMT700711UV01RegistrationEvent();
             subject.setRegistrationEvent(event);
             final PRPAIN101306UV02MFMIMT700711UV01Subject2 subject2 = factory.createPRPAIN101306UV02MFMIMT700711UV01Subject2();
-        event.setSubject1(subject2);
+            event.setSubject1(subject2);
             final PRPAMT101310UV02IdentifiedPerson person = factory.createPRPAMT101310UV02IdentifiedPerson();
             subject2.setIdentifiedPerson(person);
             II ii = createPdmII(personalData.getId());
             person.getId().add(ii);
+            person.setStatusCode(factory.createCS());
+            person.getStatusCode().setCode("active");
+            person.setIdentifiedPerson(factory.createPRPAMT101310UV02Person());
+            person.getIdentifiedPerson().getName().add(getHL7Name(personalData));
+            person.getIdentifiedPerson().setAdministrativeGenderCode(getHL7Gender(personalData));
+            person.getIdentifiedPerson().setBirthTime(getHL7BirthDate(personalData));
+
+            for (Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
+                PRPAMT101310UV02OtherIDs otherId = factory.createPRPAMT101310UV02OtherIDs();
+                otherId.getId().add(createII(doc));
+                person.getIdentifiedPerson().getAsOtherIDs().add(otherId);
+            }
+
+            for (PersonalData.Telecom telecom : personalData.getTelecoms()) {
+                person.getIdentifiedPerson().getTelecom().add(getHL7Telecom(telecom));
+            }
+
+            for (PersonalData.Addr addr : personalData.getAddress()) {
+                person.getIdentifiedPerson().getAddr().add(getHL7Addr(addr));
+            }
+
+            if (personalData.getBirthPlace() != null) {
+                PRPAMT101310UV02BirthPlace birthPlace = factory.createPRPAMT101310UV02BirthPlace();
+                birthPlace.setAddr(getHL7Addr(personalData.getBirthPlace()));
+                person.getIdentifiedPerson().setBirthPlace(factory.createPRPAMT101310UV02PersonBirthPlace(birthPlace));
+            }
+
         }
         return res;
     }
 
+    /**
+     * Генерация выходного сообщения HL7 для метода getDemographics
+     *
+     * @param personalDataList - входные персональные данные
+     * @return - сообшение HL7 PRPA_IN101308UV02, содержащее входные персональные данные
+     */
     private PRPAIN101308UV02 getPRPAIN101308UV02(List<PersonalData> personalDataList) {
 
         PRPAIN101308UV02 res = factory.createPRPAIN101308UV02();
         final PRPAIN101308UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101308UV02MFMIMT700711UV01ControlActProcess();
         res.setControlActProcess(controlActProcess);
-        for(PersonalData personalData : personalDataList) {
+        for (PersonalData personalData : personalDataList) {
             final PRPAIN101308UV02MFMIMT700711UV01Subject1 subject1 = factory.createPRPAIN101308UV02MFMIMT700711UV01Subject1();
             controlActProcess.getSubject().add(subject1);
             final PRPAIN101308UV02MFMIMT700711UV01RegistrationEvent registrationEvent = factory.createPRPAIN101308UV02MFMIMT700711UV01RegistrationEvent();
@@ -200,17 +224,17 @@ public class PDManagerImpl implements PDManager {
             person.getIdentifiedPerson().setAdministrativeGenderCode(getHL7Gender(personalData));
             person.getIdentifiedPerson().setBirthTime(getHL7BirthDate(personalData));
 
-            for(Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
+            for (Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
                 PRPAMT101303UV02OtherIDs otherId = factory.createPRPAMT101303UV02OtherIDs();
                 otherId.getId().add(createII(doc));
                 person.getIdentifiedPerson().getAsOtherIDs().add(otherId);
             }
 
-            for(PersonalData.Telecom telecom : personalData.getTelecoms()) {
+            for (PersonalData.Telecom telecom : personalData.getTelecoms()) {
                 person.getIdentifiedPerson().getTelecom().add(getHL7Telecom(telecom));
             }
 
-            for(PersonalData.Addr addr: personalData.getAddress()) {
+            for (PersonalData.Addr addr : personalData.getAddress()) {
                 person.getIdentifiedPerson().getAddr().add(getHL7Addr(addr));
             }
 
@@ -253,7 +277,7 @@ public class PDManagerImpl implements PDManager {
         AdxpExplicitDeliveryInstallationType deliveryInstallationType = factory.createAdxpExplicitDeliveryInstallationType();
         AdxpExplicitState state = factory.createAdxpExplicitState();
         AdxpExplicitCity city = factory.createAdxpExplicitCity();
-        
+
         country.setContent(addr.getCountry());
         addrLine.setContent(addr.getStreetAddressLine());
         direction.setContent(addr.getDirection());
@@ -311,7 +335,7 @@ public class PDManagerImpl implements PDManager {
         res.getContent().add(factory.createADExplicitCity(city));
 
         final String addrType = addr.getUse();
-        if(addrType != null) {
+        if (addrType != null) {
             res.getUse().add(PostalAddressUse.fromValue(addrType));
         }
 
@@ -321,24 +345,24 @@ public class PDManagerImpl implements PDManager {
     private TEL getHL7Telecom(PersonalData.Telecom telecom) {
         TEL res = factory.createTEL();
         res.setValue(telecom.getValue());
-        if ( telecom.getUse() != null) {
+        if (telecom.getUse() != null) {
             res.getUse().add(TelecommunicationAddressUse.fromValue(telecom.getUse()));
         }
         return res;
     }
 
     private II createII(Map.Entry<String, String> doc) {
-        return  createII(doc.getValue(), PersonalData.decodeOID(doc.getKey()));
+        return createII(doc.getValue(), PersonalData.decodeOID(doc.getKey()));
     }
 
 
     private String save(PersonalData personalData) {
-        for(Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
+        for (Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
             find(doc);
         }
         storageOperations.save(personalData);
-		return personalData.getId();
-	}
+        return personalData.getId();
+    }
 
     private void find(Map.Entry<String, String> doc) {
         storageOperations.find(doc);
@@ -361,25 +385,25 @@ public class PDManagerImpl implements PDManager {
 
     private PN getHL7Name(PersonalData personalData) {
         PN name = factory.createPN();
-        
+
         EnExplicitGiven given = factory.createEnExplicitGiven();
         given.setContent(personalData.getGiven());
         name.getContent().add(factory.createENExplicitGiven(given));
-        
+
         EnExplicitGiven middleName = factory.createEnExplicitGiven();
         middleName.setContent(personalData.getMiddleName());
         name.getContent().add(factory.createENExplicitGiven(middleName));
-        
+
         EnExplicitFamily family = factory.createEnExplicitFamily();
         family.setContent(personalData.getFamily());
         name.getContent().add(factory.createENExplicitFamily(family));
-     
+
         return name;
     }
 
     private CE getHL7Gender(PersonalData personalData) {
         PersonalData.Term gender = personalData.getGender();
-        if(gender == null) {
+        if (gender == null) {
             return null;
         }
         CE res = factory.createCE();

@@ -18,7 +18,8 @@ import ru.korus.tmis.pdm.ws.TelecommunicationAddressUse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,11 +59,11 @@ public class AleePdmOperations implements StorageOperations {
             URIBuilder uriBuilder = createBaseUrl(new URIBuilder(), req);
             uriBuilder = toCreateParamList(uriBuilder, personalData, null);
             final URI uri = uriBuilder.build();
-            final String path =  uri.getPath();
+            final String path = uri.getPath();
             final String query = uri.getQuery();
             System.out.println("Create/Update person request: " + uri);
             String res = getResponse(uri);
-            if(personalData.getId() == null) {
+            if (personalData.getId() == null) {
                 personalData.setId(getId(res));
             }
         } catch (URISyntaxException e) {
@@ -140,7 +141,7 @@ public class AleePdmOperations implements StorageOperations {
         }
     }
 
-    private URIBuilder  createBaseUrl(URIBuilder uriBuilder, String reqType) {
+    private URIBuilder createBaseUrl(URIBuilder uriBuilder, String reqType) {
         return uriBuilder.setScheme("http").setHost(BASE_URL).setPath("/api/v1" + reqType).setParameter("sid", TMIS_SID);
     }
 
@@ -156,12 +157,12 @@ public class AleePdmOperations implements StorageOperations {
 
     private List<PersonalData> createPersonalDataList(Document document) {
         List<PersonalData> res = new LinkedList<PersonalData>();
-        Element cards = (Element)document.getDocumentElement().getFirstChild();
+        Element cards = (Element) document.getDocumentElement().getFirstChild();
         final NodeList cardList = cards.getElementsByTagName("card");
-        for(Integer i = 0; i < cardList.getLength(); ++i) {
-            Element card = (Element)cardList.item(i);
+        for (Integer i = 0; i < cardList.getLength(); ++i) {
+            Element card = (Element) cardList.item(i);
             final NodeList idList = card.getElementsByTagName("id");
-            if(idList.getLength() > 0) {
+            if (idList.getLength() > 0) {
                 res.add(createPersonalData(document, idList.item(0).getTextContent()));
             }
 
@@ -171,7 +172,8 @@ public class AleePdmOperations implements StorageOperations {
 
     private PersonalData createPersonalData(final Document aleeDoc, String id) {
         PersonalData res = new PersonalData();
-        res.setId(Xml.getElementValue(aleeDoc, XPATH_CARD + "/id"));
+        final String idFormResponse = Xml.getElementValue(aleeDoc, XPATH_CARD + "/id");
+        res.setId(idFormResponse == null ? id : idFormResponse);
         initAttrs(aleeDoc, res, id);
         initDocs(aleeDoc, res, id);
         initAddrs(aleeDoc, res, id);
@@ -277,17 +279,13 @@ public class AleePdmOperations implements StorageOperations {
 
     private void addTelecoms(URIBuilder uriBuilder, PersonalData personalData, String compareType) {
         for (PersonalData.Telecom tel : personalData.getTelecoms()) {
-            try {
-                URL uri = new URL(tel.getValue());
-                if (uri.getProtocol().equals("tel")) {
-                    String code = config.getTelecomMap().get(TelecommunicationAddressUse.valueOf(tel.getUse()));
-                    if (code == null) {
-                        throw new RuntimeException("The Alee code not found for telecom type: " + tel.getUse());
-                    }
-                    addPrm(uriBuilder, code, uri.getPath(), compareType);
+            if (tel.getValue().startsWith("tel:")) {
+                String code = config.getTelecomMap().get(TelecommunicationAddressUse.valueOf(tel.getUse()));
+                if (code == null) {
+                    throw new RuntimeException("The Alee code not found for telecom type: " + tel.getUse());
                 }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                final String telNumber = tel.getValue().substring("tel:".length());
+                addPrm(uriBuilder, code, telNumber, compareType);
             }
         }
     }
