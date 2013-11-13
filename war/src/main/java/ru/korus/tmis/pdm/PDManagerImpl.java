@@ -1,6 +1,7 @@
 package ru.korus.tmis.pdm;
 
 import ru.korus.tmis.pdm.alee.AleePdmOperations;
+import ru.korus.tmis.pdm.mongo.MongoPdmOperations;
 import ru.korus.tmis.pdm.ws.*;
 
 import javax.jws.*;
@@ -23,7 +24,7 @@ public class PDManagerImpl implements PDManager {
     private static StorageOperations storageOperations = null;
 
     static {
-        if (System.getProperty("pdm.StorageType", "").equals("alee")) {
+        if (PdmSysProperties.getPdmStorageType().equals(PdmSysProperties.Value.STORAGE_TYPE_ALEE)) {
             storageOperations = new AleePdmOperations();
         } else {
             storageOperations = new MongoPdmOperations();

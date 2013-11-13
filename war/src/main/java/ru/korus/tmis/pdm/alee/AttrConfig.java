@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @XmlRootElement(name = "config")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AttrMap {
+public class AttrConfig {
 
     /**
      * Имя
@@ -58,7 +58,7 @@ public class AttrMap {
     /**
      *  OID документа / Код в Алее
      */
-    private  Map<String, String> docsMap = new HashMap<String, String>();
+    private  Map<String, AleeCode> docsMap = new HashMap<String, AleeCode>();
 
     /**
      *  Значение 'use' для телефонов / Код в Алее
@@ -70,19 +70,19 @@ public class AttrMap {
      */
     private  Map<PostalAddressUse, String> addrMap = new HashMap<PostalAddressUse, String>();
 
-    public AttrMap() {
-        docsMap.put(PersonalData.OID_DOC_PASSPORTNUMBER, "passportnumber");
-        docsMap.put(PersonalData.OID_DOC_PASSPORT_DATE, "dateofissue");
-        docsMap.put(PersonalData.OID_DOC_PASSPORT_CREATER, "placeissue");
-        docsMap.put(PersonalData.OID_DOC_ACTBIRTH_NUMBER, "actbirth");
-        docsMap.put(PersonalData.OID_DOC_ACTBIRTH_DATE, "datecertificate");
-        docsMap.put(PersonalData.OID_DOC_INN, "inn");
-        docsMap.put(PersonalData.OID_DOC_SNILS, "snils");
-        docsMap.put(PersonalData.OID_DOC_INSURANCE_ID, "policynumber");
-        docsMap.put(PersonalData.OID_DOC_INSURANCE_ID_EXT, "seriespolicy");
-        docsMap.put(PersonalData.OID_DOC_INSURANCE_END_DATE, "periodfrom");
-        docsMap.put(PersonalData.OID_DOC_INSURANCE_BEG_DATE, "periodupto");
-        docsMap.put(PersonalData.OID_DOC_INSURANCE_COMPANY, "insurancecompany");
+    public AttrConfig() {
+        docsMap.put(PersonalData.OID_DOC_PASSPORTNUMBER, new AleeCode("passportnumber", "Номер и серия паспорта"));
+        docsMap.put(PersonalData.OID_DOC_PASSPORT_DATE, new AleeCode("dateofissue", "Дата выдачи паспорта"));
+        docsMap.put(PersonalData.OID_DOC_PASSPORT_CREATER, new AleeCode("placeissue", "Место выдачи паспорта"));
+        docsMap.put(PersonalData.OID_DOC_ACTBIRTH_NUMBER, new AleeCode("actbirth", "Номер акта свидетельства о рождении"));
+        docsMap.put(PersonalData.OID_DOC_ACTBIRTH_DATE, new AleeCode("datecertificate", "Дата выдачи свидетельства о рождении"));
+        docsMap.put(PersonalData.OID_DOC_INN, new AleeCode("inn", "Номер ИНН"));
+        docsMap.put(PersonalData.OID_DOC_SNILS, new AleeCode("snils", "Номер СНИЛС"));
+        docsMap.put(PersonalData.OID_DOC_INSURANCE_ID, new AleeCode("policynumber", "Номер страхового медицинского полиса"));
+        docsMap.put(PersonalData.OID_DOC_INSURANCE_ID_EXT, new AleeCode("seriespolicy", "Серия страхового медицинского полиса"));
+        docsMap.put(PersonalData.OID_DOC_INSURANCE_END_DATE, new AleeCode("periodfrom", "Срок действия полиса с:"));
+        docsMap.put(PersonalData.OID_DOC_INSURANCE_BEG_DATE, new AleeCode("periodupto", "Срок действия полиса по:"));
+        docsMap.put(PersonalData.OID_DOC_INSURANCE_COMPANY, new AleeCode("insurancecompany", "Страховая компания"));
 
         addrMap.put(PostalAddressUse.HP, "regaddress");
         addrMap.put(PostalAddressUse.H, "realaddress");
@@ -121,7 +121,7 @@ public class AttrMap {
         return emailCode;
     }
 
-    public Map<String, String> getDocsMap() {
+    public Map<String, AleeCode> getDocsMap() {
         return docsMap;
     }
 

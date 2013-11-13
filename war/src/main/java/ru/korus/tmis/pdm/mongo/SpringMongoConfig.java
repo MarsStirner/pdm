@@ -1,4 +1,4 @@
-package ru.korus.tmis.pdm;
+package ru.korus.tmis.pdm.mongo;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -62,6 +62,18 @@
             <version>3.2.2.RELEASE</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>3.2.2.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>3.2.2.RELEASE</version>
+        </dependency>
+
         <!-- mongodb java driver -->
         <dependency>
             <groupId>org.mongodb</groupId>
@@ -76,7 +88,6 @@
             <version>1.2.0.RELEASE</version>
         </dependency>
 
-
         <!-- Json parser -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -84,6 +95,12 @@
             <version>2.2.4</version>
         </dependency>
 
+        <!-- javax -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+        </dependency>
         <!-- -->
 <!--
         <dependency>

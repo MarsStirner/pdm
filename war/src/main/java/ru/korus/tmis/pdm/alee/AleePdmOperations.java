@@ -9,6 +9,7 @@ import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import ru.korus.tmis.pdm.PdmSysProperties;
 import ru.korus.tmis.pdm.PersonalData;
 import ru.korus.tmis.pdm.StorageOperations;
 import ru.korus.tmis.pdm.utilities.Xml;
@@ -35,7 +36,7 @@ import java.util.Vector;
  */
 public class AleePdmOperations implements StorageOperations {
 
-    private static final String BASE_URL = "10.129.188.20";
+    private static final String BASE_URL ;
 
     private static final String TMIS_SID = "1";
     private static final String REQ_CREATE_OBJECT = "/create/object";
@@ -46,7 +47,12 @@ public class AleePdmOperations implements StorageOperations {
     private static final String XPATH_CARD = "/" + ROOT_EL + "/card";
     private static final String XPATH_CARDS = "/" + ROOT_EL + "/cards";
 
-    private AttrMap config = null;
+    private static AttrConfig config = null;
+
+    static {
+        BASE_URL = PdmSysProperties.getAleeUrl();
+    }
+
 
     public AleePdmOperations() {
         loadPrms();
@@ -204,8 +210,8 @@ public class AleePdmOperations implements StorageOperations {
     }
 
     private void initDocs(Document aleeDoc, PersonalData res, String id) {
-        for (Map.Entry<String, String> docCode : config.getDocsMap().entrySet()) {
-            String value = Xml.getElementValue(aleeDoc, getXpathForPrm(docCode.getValue(), id));
+        for (Map.Entry<String, AleeCode> docCode : config.getDocsMap().entrySet()) {
+            String value = Xml.getElementValue(aleeDoc, getXpathForPrm(docCode.getValue().getCode(), id));
             if (value != null) {
                 res.getDocs().put(PersonalData.codeOID(docCode.getKey()), value);
             }
@@ -253,19 +259,19 @@ public class AleePdmOperations implements StorageOperations {
     }
 
 
-    private void loadPrms() {
+    private static void loadPrms() {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(AttrMap.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(AttrConfig.class);
             try {
-                config = (AttrMap) jaxbContext.createUnmarshaller().unmarshal(new File(System.getProperty("pdm.ConfigFile", "pdm_config.xml")));
+                config = (AttrConfig) jaxbContext.createUnmarshaller().unmarshal(new File(PdmSysProperties.getConfigFileName()));
             } catch (JAXBException e) { //если файла настройки нет, то используем параметры по-умолчанию
-                config = new AttrMap();
+                config = new AttrConfig();
             }
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(config, System.out);
         } catch (JAXBException e) { //если файла настройки нет, то используем параметры по-умолчанию
-            config = new AttrMap();
+            config = new AttrConfig();
         }
     }
 
@@ -306,11 +312,11 @@ public class AleePdmOperations implements StorageOperations {
 
     private void addDocs(URIBuilder res, PersonalData personalData, String compareType) {
         for (Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
-            final String code = config.getDocsMap().get(PersonalData.decodeOID(doc.getKey()));
+            final AleeCode code = config.getDocsMap().get(PersonalData.decodeOID(doc.getKey()));
             if (code == null) {
                 throw new RuntimeException("The Alee code not found for document OID: " + doc.getKey());
             }
-            addPrm(res, code, doc.getValue(), compareType);
+            addPrm(res, code.getCode(), doc.getValue(), compareType);
         }
     }
 
@@ -351,4 +357,10 @@ public class AleePdmOperations implements StorageOperations {
         }
     }
 
+    public static AttrConfig getConfig() {
+        if (config == null)  {
+            loadPrms();
+        }
+        return config;
+    }
 }
