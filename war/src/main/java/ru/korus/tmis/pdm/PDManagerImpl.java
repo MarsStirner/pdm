@@ -18,7 +18,6 @@ import java.util.Vector;
 
 @WebService(endpointInterface = "ru.korus.tmis.pdm.ws.PDManager", targetNamespace = "http://www.korusconsulting.ru/PDManager/",
         serviceName = "tmis-pdm", portName = "portPdm", name = "PDManager")
-@HandlerChain(file = "../../../../../handler-chain.xml")
 public class PDManagerImpl implements PDManager {
 
     private static StorageOperations storageOperations = null;

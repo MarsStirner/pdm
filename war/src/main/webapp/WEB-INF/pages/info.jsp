@@ -45,33 +45,33 @@
     </TR>
     <TR>
         <TD>Имя</TD>
-        <TD><%=AleePdmOperations.getConfig().getGivenCode() %>
+        <TD><%=String.format("%s", AleePdmOperations.getConfig().getGivenCode()) %>
         </TD>
     </TR>
     <TR>
         <TD>Отчество</TD>
-        <TD><%=AleePdmOperations.getConfig().getMiddleNameCode()%>
+        <TD><%=String.format("%s", AleePdmOperations.getConfig().getMiddleNameCode())%>
         </TD>
     </TR>
 
     <TR>
         <TD>Фамилия</TD>
-        <TD><%=AleePdmOperations.getConfig().getFamilyCode()%>
+        <TD><%=String.format("%s", AleePdmOperations.getConfig().getFamilyCode())%>
         </TD>
     </TR>
     <TR>
         <TD>Пол</TD>
-        <TD><%=AleePdmOperations.getConfig().getGenderCode()%>
+        <TD><%=String.format("%s", AleePdmOperations.getConfig().getGenderCode())%>
         </TD>
     </TR>
     <TR>
         <TD>Дата рождения</TD>
-        <TD><%=AleePdmOperations.getConfig().getBirthDataCode()%>
+        <TD><%=String.format("%s", AleePdmOperations.getConfig().getBirthDataCode())%>
         </TD>
     </TR>
     <TR>
         <TD>Место рождения</TD>
-        <TD><%=AleePdmOperations.getConfig().getBirthPlaceCode()%>
+        <TD><%=String.format("%s", AleePdmOperations.getConfig().getBirthPlaceCode())%>
         </TD>
     </TR>
     <TR>
