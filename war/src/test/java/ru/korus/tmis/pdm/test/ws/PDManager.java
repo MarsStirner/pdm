@@ -65,9 +65,22 @@ public interface PDManager {
      * @return
      *     returns ru.korus.tmis.pdm.test.ws.PRPAIN101315UV02
      */
-    @WebMethod(action = "http://www.korusconsulting.ru/PDManager/new")
+    @WebMethod(action = "http://www.korusconsulting.ru/PDManager/update")
     @WebResult(name = "PRPA_IN101315UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
     public PRPAIN101315UV02 update(
         @WebParam(name = "PRPA_IN101314UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters")
         PRPAIN101314UV02 parameters);
+
+    /**
+     * 
+     * @param parameters
+     * @return
+     *     returns ru.korus.tmis.pdm.test.ws.PRPAIN101306UV02
+     */
+    @WebMethod(action = "http://www.korusconsulting.ru/PDManager/findLike")
+    @WebResult(name = "PRPA_IN101306UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
+    public PRPAIN101306UV02 findLike(
+        @WebParam(name = "PRPA_IN101305UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters")
+        PRPAIN101305UV02 parameters);
+
 }

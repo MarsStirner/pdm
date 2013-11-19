@@ -66,10 +66,14 @@
 			<wsdl:input message="tns:PRPA_IN101307UV02" />
 			<wsdl:output message="tns:PRPA_IN101308UV02" /> 
 		</wsdl:operation>
-        <wsdl:operation name="update">
-            <wsdl:input message="tns:PRPA_IN101314UV02" />
-            <wsdl:output message="tns:PRPA_IN101315UV02" />
-        </wsdl:operation>
+               <wsdl:operation name="update">
+                        <wsdl:input message="tns:PRPA_IN101314UV02" />
+                        <wsdl:output message="tns:PRPA_IN101315UV02" />
+               </wsdl:operation>
+		<wsdl:operation name="findLike">
+			<wsdl:input message="tns:PRPA_IN101305UV02" />
+			<wsdl:output message="tns:PRPA_IN101306UV02" />
+		</wsdl:operation>
 	</wsdl:portType>
 	<wsdl:binding name="PDManagerSOAP" type="tns:PDManager">
 		<soap:binding style="document"
@@ -101,15 +105,24 @@
 				<soap:body use="literal" />
 			</wsdl:output>
 		</wsdl:operation>
-        <wsdl:operation name="update">
-            <soap:operation soapAction="http://www.korusconsulting.ru/PDManager/new" />
-            <wsdl:input>
-                <soap:body use="literal" />
+                <wsdl:operation name="update">
+                        <soap:operation soapAction="http://www.korusconsulting.ru/PDManager/update" />
+                        <wsdl:input>
+                        <soap:body use="literal" />
             </wsdl:input>
             <wsdl:output>
                 <soap:body use="literal" />
             </wsdl:output>
         </wsdl:operation>
+		<wsdl:operation name="findLike">
+			<soap:operation soapAction="http://www.korusconsulting.ru/PDManager/findLike" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
 	</wsdl:binding>
 	<wsdl:service name="PDManager_Service">
 		<wsdl:port binding="tns:PDManagerSOAP" name="PDManagerSOAP">

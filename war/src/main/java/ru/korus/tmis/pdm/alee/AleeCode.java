@@ -12,9 +12,12 @@ public class AleeCode {
 
     private String description;
 
-    public AleeCode(String code, String description) {
+    private String type;
+
+    public AleeCode(String code, String description, String type) {
         this.code = code;
         this.description = description;
+        this.type = type;
     }
 
     public String getCode() {
@@ -31,5 +34,9 @@ public class AleeCode {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getType() {
+        return type;
     }
 }

@@ -97,6 +97,17 @@ public class PDManagerImpl implements PDManager {
         throw new RuntimeException("The PDM ID is not set");
     }
 
+    @Override
+    public PRPAIN101306UV02 findLike(@WebParam(name = "PRPA_IN101305UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters") PRPAIN101305UV02 parameters) {
+        final PersonalData person = PersonalData.newInstance(parameters);
+        final List<PersonalData> personalDataList = findPersonLike(person);
+        return getPRPAIN101306UV02(personalDataList);
+    }
+
+    private List<PersonalData> findPersonLike(PersonalData person) {
+        return storageOperations.findPersonLike(person);
+    }
+
     private void savePerson(PersonalData personalDataNew) {
         storageOperations.save(personalDataNew);
     }

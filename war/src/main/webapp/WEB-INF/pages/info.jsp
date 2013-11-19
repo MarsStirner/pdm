@@ -3,6 +3,8 @@
 <%@ page import="ru.korus.tmis.pdm.alee.AleeCode" %>
 <%@ page import="ru.korus.tmis.pdm.alee.AleePdmOperations" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="ru.korus.tmis.pdm.ws.PostalAddressUse" %>
+<%@ page import="ru.korus.tmis.pdm.ws.TelecommunicationAddressUse" %>
 <html>
 <head>
     <title>PDM info</title>
@@ -94,6 +96,36 @@
         <TD><%=docCode.getKey()%>
         </TD>
         <TD><%=docCode.getValue().getCode()%>
+        </TD>
+    </TR>
+    <%}%>
+</table>
+<h3>Supported Address Type</h3>
+<table border="1">
+    <TR>
+        <TH>HL7 use code</TH>
+        <TH>Alee code</TH>
+    </TR>
+    <%   for (Map.Entry<PostalAddressUse, String> addrCode : AleePdmOperations.getConfig().getAddrMap().entrySet()) { %>
+    <TR>
+        <TD><%=addrCode.getKey()%>
+        </TD>
+        <TD><%=addrCode.getValue()%>
+        </TD>
+    </TR>
+    <%}%>
+</table>
+<h3>Supported Telecoms Type</h3>
+<table border="1">
+    <TR>
+        <TH>HL7 use code </TH>
+        <TH>Alee code</TH>
+    </TR>
+    <%   for (Map.Entry<TelecommunicationAddressUse, String> telCode : AleePdmOperations.getConfig().getTelecomMap().entrySet()) { %>
+    <TR>
+        <TD><%=telCode.getKey()%>
+        </TD>
+        <TD><%=telCode.getValue()%>
         </TD>
     </TR>
     <%}%>

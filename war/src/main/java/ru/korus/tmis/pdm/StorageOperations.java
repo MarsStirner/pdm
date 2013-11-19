@@ -17,4 +17,6 @@ public interface StorageOperations {
     PersonalData findById(String id);
 
     List<PersonalData> find(PersonalData person);
+
+    List<PersonalData> findPersonLike(PersonalData person);
 }

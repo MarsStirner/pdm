@@ -76,6 +76,11 @@ public class MongoPdmOperations implements StorageOperations {
         return mongoOperation.find(basicQuery, PersonalData.class);
     }
 
+    @Override
+    public List<PersonalData> findPersonLike(PersonalData person) {
+       throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
 
     private String mongoOr(String... values) {
         String res = "{$or:[";

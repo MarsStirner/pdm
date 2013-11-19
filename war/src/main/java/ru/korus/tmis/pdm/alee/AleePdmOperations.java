@@ -36,7 +36,7 @@ import java.util.Vector;
  */
 public class AleePdmOperations implements StorageOperations {
 
-    private static final String BASE_URL ;
+    private static final String BASE_URL;
 
     private static final String TMIS_SID = "1";
     private static final String REQ_CREATE_OBJECT = "/create/object";
@@ -46,6 +46,8 @@ public class AleePdmOperations implements StorageOperations {
     private static final String ROOT_EL = "root";
     private static final String XPATH_CARD = "/" + ROOT_EL + "/card";
     private static final String XPATH_CARDS = "/" + ROOT_EL + "/cards";
+    private static final String ALEE_COMPARE_TYPE_EQ = "eq";
+    private static final String ALEE_COMPARE_TYPE_LIKE = "lk";
 
     private static AttrConfig config = null;
 
@@ -63,7 +65,7 @@ public class AleePdmOperations implements StorageOperations {
         try {
             final String req = personalData.getId() == null ? REQ_CREATE_OBJECT : REQ_UPDATE_OBJECT;
             URIBuilder uriBuilder = createBaseUrl(new URIBuilder(), req);
-            uriBuilder = toCreateParamList(uriBuilder, personalData, null);
+            uriBuilder = toParamList(uriBuilder, personalData, null);
             final URI uri = uriBuilder.build();
             final String path = uri.getPath();
             final String query = uri.getQuery();
@@ -112,13 +114,7 @@ public class AleePdmOperations implements StorageOperations {
     @Override
     public List<PersonalData> find(PersonalData person) {
         try {
-            URIBuilder uriBuilder = createBaseUrl(new URIBuilder(), REQ_SEARCH_SELECTED)
-                    .addParameter("attributes", "true");
-            uriBuilder = toCreateParamList(uriBuilder, person, "eq");
-            final URI uri = uriBuilder.build();
-            System.out.println("Find person by personal information: " + uri);
-            String res = getXmlResponse(uri);
-            return createPersonalDataList(Xml.loadString(res));
+            return findPersonalDatas(person, ALEE_COMPARE_TYPE_EQ);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
@@ -126,6 +122,82 @@ public class AleePdmOperations implements StorageOperations {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    private List<PersonalData> findPersonalDatas(PersonalData person, String compareType) throws URISyntaxException, IOException {
+        URIBuilder uriBuilder = createBaseUrl(new URIBuilder(), REQ_SEARCH_SELECTED)
+                .addParameter("attributes", "true");
+        uriBuilder = toParamList(uriBuilder, person, compareType);
+        final URI uri = uriBuilder.build();
+        System.out.println("Find person by personal information: " + uri);
+        String res = getXmlResponse(uri);
+        return createPersonalDataList(Xml.loadString(res));
+    }
+
+    @Override
+    public List<PersonalData> findPersonLike(PersonalData person) {
+        List<PersonalData> personList = addAttrs(person);
+
+        for (Map.Entry<String, String> doc : person.getDocs().entrySet()) {
+            PersonalData personData = new PersonalData();
+            personData.getDocs().put(doc.getKey(), doc.getValue());
+            personList.add(personData);
+        }
+
+        for (PersonalData.Addr addr : person.getAddress()) {
+            PersonalData personData = new PersonalData();
+            personData.getAddress().add(addr);
+            personList.add(personData);
+        }
+
+        for(PersonalData.Telecom tel :person.getTelecoms() ) {
+            PersonalData personalData = new PersonalData();
+            personalData.getTelecoms().add(tel);
+            personList.add(personalData);
+        }
+
+        List<PersonalData> res = new LinkedList<PersonalData>();
+        for (PersonalData curPerson : personList) {
+            try {
+                res.addAll(findPersonalDatas(curPerson, ALEE_COMPARE_TYPE_LIKE));
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return res;
+
+    }
+
+    private List<PersonalData> addAttrs(PersonalData person) {
+        List<PersonalData> personList = new LinkedList<PersonalData>();
+        if (person.getGiven() != null) {
+            personList.add((new PersonalData()).setGiven(person.getGiven()));
+        }
+        if (person.getMiddleName() != null) {
+            personList.add((new PersonalData()).setMiddleName(person.getMiddleName()));
+        }
+        if (person.getFamily() != null) {
+            personList.add((new PersonalData()).setFamily(person.getFamily()));
+        }
+        if (person.getGender() != null) {
+            personList.add((new PersonalData()).setGender(person.getGender()));
+        }
+        if (person.getBirthData() != null) {
+            personList.add((new PersonalData()).setBirthData(person.getBirthData()));
+        }
+        if (person.getBirthPlace() != null) {
+            personList.add((new PersonalData()).setBirthPlace(person.getBirthPlace()));
+        }
+
+        String email = getEmail(person.getTelecoms());
+        if (email != null) {
+            final PersonalData personalData = new PersonalData();
+            personalData.getTelecoms().addAll(person.getTelecoms());
+            personList.add(personalData);
+        }
+        return personList;
     }
 
 
@@ -275,7 +347,7 @@ public class AleePdmOperations implements StorageOperations {
         }
     }
 
-    private URIBuilder toCreateParamList(URIBuilder uriBuilder, PersonalData personalData, String compareType) {
+    private URIBuilder toParamList(URIBuilder uriBuilder, PersonalData personalData, String compareType) {
         addAttrs(uriBuilder, personalData, compareType);
         addDocs(uriBuilder, personalData, compareType);
         addAddrs(uriBuilder, personalData, compareType);
@@ -316,7 +388,13 @@ public class AleePdmOperations implements StorageOperations {
             if (code == null) {
                 throw new RuntimeException("The Alee code not found for document OID: " + doc.getKey());
             }
-            addPrm(res, code.getCode(), doc.getValue(), compareType);
+            String compare = ALEE_COMPARE_TYPE_EQ; // метод сравнения для не строковых атрибутов - "eq"
+            if(compareType == null) { // если метод сравнение не используетися
+                compare = null;
+            } else if (!code.getType().equals(AttrConfig.ALEE_TYPE_STRING)) { // для строковых атрибута используем переданный метод сравнения
+                compare = compareType;
+            }
+            addPrm(res, code.getCode(), doc.getValue(), compare);
         }
     }
 
@@ -329,7 +407,7 @@ public class AleePdmOperations implements StorageOperations {
         if (gender != null) {
             addPrm(uriBuilder, config.getGenderCode(), gender.getCode(), compareType);
         }
-        addPrm(uriBuilder, config.getBirthDataCode(), personalData.getBirthData(), compareType);
+        addPrm(uriBuilder, config.getBirthDataCode(), personalData.getBirthData(), compareType == null ? null : ALEE_COMPARE_TYPE_EQ);
         final PersonalData.Addr birthPlace = personalData.getBirthPlace();
         if (birthPlace != null) {
             addPrm(uriBuilder, config.getBirthPlaceCode(), birthPlace.toJson(), compareType);
@@ -340,15 +418,24 @@ public class AleePdmOperations implements StorageOperations {
     private String getEmail(Vector<PersonalData.Telecom> telecoms) {
         for (PersonalData.Telecom tel : telecoms) {
             try {
-                URL uri = new URL(tel.getValue());
-                if (uri.getProtocol().equals("mailto")) {
-                    return uri.getPath();
+                String res = emailToString(tel);
+                if (res != null) {
+                    return res;
                 }
             } catch (MalformedURLException e) {
 
             }
         }
         return null;
+    }
+
+    public static String emailToString(PersonalData.Telecom tel) throws MalformedURLException {
+        String res = null;
+        URL uri = new URL(tel.getValue());
+        if (uri.getProtocol().equals("mailto")) {
+            res = uri.getPath();
+        }
+        return res;
     }
 
     private void addPrm(URIBuilder uriBuilder, String param, String value, String compareType) {
@@ -358,7 +445,7 @@ public class AleePdmOperations implements StorageOperations {
     }
 
     public static AttrConfig getConfig() {
-        if (config == null)  {
+        if (config == null) {
             loadPrms();
         }
         return config;

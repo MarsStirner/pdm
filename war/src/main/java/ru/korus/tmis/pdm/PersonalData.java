@@ -638,32 +638,40 @@ public class PersonalData {
         return res.toString();
     }
 
-    public void setGiven(String given) {
+    public PersonalData setGiven(String given) {
         this.given = given;
+        return this;
     }
 
-    public void setMiddleName(String middleName) {
+    public PersonalData setMiddleName(String middleName) {
         this.middleName = middleName;
+        return this;
     }
 
-    public void setFamily(String family) {
+    public PersonalData setFamily(String family) {
         this.family = family;
+        return this;
     }
 
-    public void setGender(Term gender) {
+    public PersonalData setGender(Term gender) {
         this.gender = gender;
+        return this;
     }
 
-    public void setBirthData(String birthData) {
+    public PersonalData setBirthData(String birthData) {
         this.birthData = birthData;
+        return this;
     }
 
-    public void setDocs(Map<String, String> docs) {
+    public PersonalData setDocs(Map<String, String> docs) {
         this.docs = docs;
+        return this;
     }
 
 
-    public void setBirthPlace(Addr birthPlace) {
+    public PersonalData setBirthPlace(Addr birthPlace) {
         this.birthPlace = birthPlace;
+        return this;
     }
+
 }

@@ -2,9 +2,14 @@ package ru.korus.tmis.pdm.test.utilities;
 
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
+import ru.korus.tmis.pdm.PersonalData;
+import ru.korus.tmis.pdm.alee.AleePdmOperations;
 import ru.korus.tmis.pdm.utilities.Xml;
 
+import java.net.MalformedURLException;
+
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -12,7 +17,7 @@ import static org.testng.Assert.assertEquals;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class XmlTest {
+public class UtilTest {
 
     /**
      * Проверка методов Xml.getElementValue и Xml.getAttrValue
@@ -54,5 +59,18 @@ public class XmlTest {
         String expressionAttr = "/Employees/Employee[@emplid='3333']/@emplid";
         final String valueAttr = Xml.getAttrValue(doc, expressionAttr);
         assertEquals(valueAttr, "3333");
+    }
+
+    @Test
+    public void emailToString() {
+        PersonalData.Telecom email = new PersonalData.Telecom();
+        final String testEmail = "test@korus.ru";
+        email.setValue("mailto:"+ testEmail);
+        try {
+            String res = AleePdmOperations.emailToString(email);
+            assertEquals(res, testEmail);
+        } catch (MalformedURLException e) {
+            fail("A malformed e-mail: ", e);
+        }
     }
 }
