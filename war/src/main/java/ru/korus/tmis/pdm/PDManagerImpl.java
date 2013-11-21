@@ -1,10 +1,15 @@
 package ru.korus.tmis.pdm;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.korus.tmis.pdm.alee.AleePdmOperations;
 import ru.korus.tmis.pdm.mongo.MongoPdmOperations;
 import ru.korus.tmis.pdm.ws.*;
 
-import javax.jws.*;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
+import javax.jws.WebService;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -20,6 +25,7 @@ import java.util.Vector;
         serviceName = "tmis-pdm", portName = "portPdm", name = "PDManager")
 public class PDManagerImpl implements PDManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(PDManager.class);
     private static StorageOperations storageOperations = null;
 
     static {
@@ -39,9 +45,11 @@ public class PDManagerImpl implements PDManager {
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/new")
     @WebResult(name = "PRPA_IN101312UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters")
     public PRPAIN101312UV02 add(PRPAIN101311UV02 parameters) {
-
+        logger.info("Adding a new person. Parsing input parameters...");
         final PersonalData personalData = PersonalData.newInstance(parameters);
+        logger.info("Adding a new person. Save to storage...");
         final String id = save(personalData);
+        logger.info("Adding a new person. Prepare and sending the response...");
         return getPRPAIN101312UV02(id);
     }
 
@@ -52,8 +60,11 @@ public class PDManagerImpl implements PDManager {
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/findCandidates")
     @WebResult(name = "PRPA_IN101306UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
     public PRPAIN101306UV02 findCandidates(PRPAIN101305UV02 parameters) {
+        logger.info("Find by demographics info. Parsing input parameters...");
         final PersonalData person = PersonalData.newInstance(parameters);
+        logger.info("Find by demographics info. Find in storage...");
         final List<PersonalData> personalDataList = findPerson(person);
+        logger.info("Find by demographics info. Prepare and sending the response...");
         return getPRPAIN101306UV02(personalDataList);
     }
 
@@ -64,15 +75,18 @@ public class PDManagerImpl implements PDManager {
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/getDemographics")
     @WebResult(name = "PRPA_IN101308UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
     public PRPAIN101308UV02 getDemographics(PRPAIN101307UV02 parameters) {
+        logger.info("Get demographics info by id. Parsing input parameters...");
         //TODO add verification
         final List<PRPAMT101307UV02IdentifiedPersonIdentifier> identifiedPersons = parameters.getControlActProcess().getQueryByParameter().getValue().
                 getParameterList().getIdentifiedPersonIdentifier();
-
+        logger.info("Get demographics info by id. Count of inputsIDs : ", identifiedPersons == null ? "not set" : ("" + identifiedPersons.size()));
         List<PersonalData> personalDataList = new Vector<PersonalData>(identifiedPersons.size());
         for (PRPAMT101307UV02IdentifiedPersonIdentifier curPerson : identifiedPersons) {
             final String id = curPerson.getValue().get(0).getRoot();
+            logger.info("Get demographics info by id. Find demographics info for id = " + id);
             personalDataList.add(findById(id));
         }
+        logger.info("Get demographics info by id. Prepare and sending the response...");
         return getPRPAIN101308UV02(personalDataList);
     }
 
@@ -83,9 +97,11 @@ public class PDManagerImpl implements PDManager {
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/new")
     @WebResult(name = "PRPA_IN101315UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
     public PRPAIN101315UV02 update(@WebParam(name = "PRPA_IN101314UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters") PRPAIN101314UV02 parameters) {
+        logger.info("Update demographics info by id. Parsing input parameters...");
         for (PRPAMT101302UV02PersonAsOtherIDs cur :
                 parameters.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getAsOtherIDs()) {
             for (II ii : cur.getId()) {
+                logger.error("Update demographics info by id. Check document root: ", ii.getRoot());
                 if (PersonalData.OID_PDM.equals(ii.getRoot())) {
                     final PersonalData personalData = findById(ii.getExtension());
                     final PersonalData personalDataNew = personalData.update(parameters);
@@ -94,13 +110,17 @@ public class PDManagerImpl implements PDManager {
                 }
             }
         }
+        logger.error("Update demographics info by id. Wrong input parameters. Not found PDM OID: {}", PersonalData.OID_PDM);
         throw new RuntimeException("The PDM ID is not set");
     }
 
     @Override
     public PRPAIN101306UV02 findLike(@WebParam(name = "PRPA_IN101305UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters") PRPAIN101305UV02 parameters) {
+        logger.info("Find Like. Parsing input parameters...");
         final PersonalData person = PersonalData.newInstance(parameters);
+        logger.info("Find Like. Find like in storage...");
         final List<PersonalData> personalDataList = findPersonLike(person);
+        logger.info("Find Like. Prepare and sending the response...");
         return getPRPAIN101306UV02(personalDataList);
     }
 
@@ -119,6 +139,7 @@ public class PDManagerImpl implements PDManager {
 
 
     private PRPAIN101315UV02 getPRPAIN101315UV02(String id) {
+        logger.info("Creating the response PRPAIN101315UV02. Person id = {}", id);
         PRPAIN101315UV02 res = factory.createPRPAIN101315UV02();
 
         final PRPAMT101303UV02IdentifiedPerson identifiedPerson = factory.createPRPAMT101303UV02IdentifiedPerson();
@@ -136,10 +157,12 @@ public class PDManagerImpl implements PDManager {
         identifiedPerson.setIdentifiedPerson(person);
         II ii = createPdmII(id);
         person.getId().add(ii);
+        logger.info("The message PRPAIN101315UV02 is completed");
         return res;
     }
 
     private PRPAIN101312UV02 getPRPAIN101312UV02(String id) {
+        logger.info("Creating the response PRPAIN101312UV02. Person id = {}", id);
         PRPAIN101312UV02 res = factory.createPRPAIN101312UV02();
 
         final PRPAIN101312UV02MFMIMT700701UV01ControlActProcess controlActProcess = factory.createPRPAIN101312UV02MFMIMT700701UV01ControlActProcess();
@@ -157,14 +180,17 @@ public class PDManagerImpl implements PDManager {
         identifiedPerson.setIdentifiedPerson(person);
         II ii = createPdmII(id);
         person.getId().add(ii);
+        logger.info("The message PRPAIN101312UV02 is completed");
         return res;
     }
 
     private PRPAIN101306UV02 getPRPAIN101306UV02(List<PersonalData> personalDataList) {
+        logger.info("Creating the response PRPAIN101306UV02. The count of persons: {}", personalDataList == null ? "not set" : personalDataList.size());
         PRPAIN101306UV02 res = factory.createPRPAIN101306UV02();
         PRPAIN101306UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101306UV02MFMIMT700711UV01ControlActProcess();
         res.setControlActProcess(controlActProcess);
         for (PersonalData personalData : personalDataList) {
+            logger.info("Creating the response PRPAIN101306UV02. Current person id: {}", personalData.getId());
             PRPAIN101306UV02MFMIMT700711UV01Subject1 subject = factory.createPRPAIN101306UV02MFMIMT700711UV01Subject1();
             controlActProcess.getSubject().add(subject);
             PRPAIN101306UV02MFMIMT700711UV01RegistrationEvent event = factory.createPRPAIN101306UV02MFMIMT700711UV01RegistrationEvent();
@@ -203,6 +229,7 @@ public class PDManagerImpl implements PDManager {
             }
 
         }
+        logger.info("The message PRPAIN101306UV02 is completed");
         return res;
     }
 
@@ -213,11 +240,12 @@ public class PDManagerImpl implements PDManager {
      * @return - сообшение HL7 PRPA_IN101308UV02, содержащее входные персональные данные
      */
     private PRPAIN101308UV02 getPRPAIN101308UV02(List<PersonalData> personalDataList) {
-
+        logger.info("Creating the response PRPAIN101308UV02. The count of persons: {}", personalDataList == null ? "not set" : personalDataList.size());
         PRPAIN101308UV02 res = factory.createPRPAIN101308UV02();
         final PRPAIN101308UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101308UV02MFMIMT700711UV01ControlActProcess();
         res.setControlActProcess(controlActProcess);
         for (PersonalData personalData : personalDataList) {
+            logger.info("Creating the response PRPAIN101308UV02. Current person id: {}", personalData.getId());
             final PRPAIN101308UV02MFMIMT700711UV01Subject1 subject1 = factory.createPRPAIN101308UV02MFMIMT700711UV01Subject1();
             controlActProcess.getSubject().add(subject1);
             final PRPAIN101308UV02MFMIMT700711UV01RegistrationEvent registrationEvent = factory.createPRPAIN101308UV02MFMIMT700711UV01RegistrationEvent();
@@ -255,7 +283,7 @@ public class PDManagerImpl implements PDManager {
                 person.getIdentifiedPerson().setBirthPlace(factory.createPRPAMT101303UV02PersonBirthPlace(birthPlace));
             }
         }
-
+        logger.info("The message PRPAIN101308UV02 is completed");
         return res;
     }
 

@@ -67,8 +67,6 @@ public class AleePdmOperations implements StorageOperations {
             URIBuilder uriBuilder = createBaseUrl(new URIBuilder(), req);
             uriBuilder = toParamList(uriBuilder, personalData, null);
             final URI uri = uriBuilder.build();
-            final String path = uri.getPath();
-            final String query = uri.getQuery();
             System.out.println("Create/Update person request: " + uri);
             String res = getResponse(uri);
             if (personalData.getId() == null) {
@@ -201,7 +199,7 @@ public class AleePdmOperations implements StorageOperations {
     }
 
 
-    private String getResponse(URI uri) throws IOException {
+    public static String getResponse(URI uri) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpget = new HttpGet(uri);
         httpget.setHeader("Content-Type", "text/plain");
@@ -323,9 +321,9 @@ public class AleePdmOperations implements StorageOperations {
     }
 
 
-    private String getResponseData(CloseableHttpResponse response) throws IOException {
+    private static String getResponseData(CloseableHttpResponse response) throws IOException {
         System.out.println("Output from Server ...");
-        final String res = EntityUtils.toString(response.getEntity());
+        final String res = EntityUtils.toString(response.getEntity(), "UTF-8");
         System.out.println(res);
         return res;
     }

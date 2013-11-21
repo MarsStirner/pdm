@@ -16,7 +16,7 @@ import static org.testng.Assert.*;
 
 public class PDManagerTest {
 
-    private static final String IVAN = "Ivan";
+    private static final String IVAN = "Иван";
     private static final String IVANOVICH = "Ivanovich";
     private static final String IVANOV = "Ivanov";
     private static final String TEST_STREET = "TestStreet";
@@ -335,11 +335,11 @@ public class PDManagerTest {
         giv.getContent().add("Ivan");
         pn.getContent().add(factory.createENGiven(giv));
 
-        final PRPAMT101306UV02PersonAdministrativeGender gender = factory.createPRPAMT101306UV02PersonAdministrativeGender();
+       /* final PRPAMT101306UV02PersonAdministrativeGender gender = factory.createPRPAMT101306UV02PersonAdministrativeGender();
         final CV genderCode = factory.createCV();
         genderCode.setCode("M");
         gender.getValue().add(genderCode);
-        prmList.getPersonAdministrativeGender().add(gender);
+        prmList.getPersonAdministrativeGender().add(gender);*/
 
         //TODO добавить при создании персоны
         /*final PRPAMT101306UV02PersonBirthPlaceAddress birthPlaceAddress = factory.createPRPAMT101306UV02PersonBirthPlaceAddress();
