@@ -5,6 +5,12 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="ru.korus.tmis.pdm.ws.PostalAddressUse" %>
 <%@ page import="ru.korus.tmis.pdm.ws.TelecommunicationAddressUse" %>
+<%@ page import="ch.qos.logback.core.util.StatusPrinter" %>
+<%@ page import="ch.qos.logback.classic.LoggerContext" %>
+<%@ page import="org.slf4j.LoggerFactory" %>
+<%@ page import="java.io.PrintStream" %>
+<%@ page import="java.io.ByteArrayOutputStream" %>
+<%@ page import="java.io.OutputStream" %>
 <html>
 <head>
     <title>PDM info</title>
@@ -130,5 +136,14 @@
     </TR>
     <%}%>
 </table>
+<h3>logback info</h3>
+<%  final ByteArrayOutputStream outLog = new ByteArrayOutputStream();
+    PrintStream ps = new PrintStream(outLog);
+    StatusPrinter.setPrintStream(ps);
+    StatusPrinter.print((LoggerContext) LoggerFactory.getILoggerFactory());
+    String logInfo[] = outLog.toString("UTF-8").split("\n");
+    for(String curInfo : logInfo) {%>
+        <p><%=outLog.toString("UTF-8")%></p>
+<%}%>
 </body>
 </html>
