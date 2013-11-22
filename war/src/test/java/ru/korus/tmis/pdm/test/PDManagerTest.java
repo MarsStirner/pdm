@@ -28,7 +28,13 @@ public class PDManagerTest {
      * Проверка допавления новой персоны в ЗХПД
      */
     @Test
-    public void addNewPerson() {
+    public void addNewPersons() {
+       for(int i = 0; i < 1000; ++i) {
+           addNew();
+       }
+    }
+
+    private void addNew() {
         ObjectFactory factory = new ObjectFactory();
         PDManagerService serv = new PDManagerService();
         PDManager pdManager = serv.getPDManagerSOAP();

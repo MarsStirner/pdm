@@ -6,6 +6,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -13,6 +15,7 @@ import ru.korus.tmis.pdm.PdmSysProperties;
 import ru.korus.tmis.pdm.PersonalData;
 import ru.korus.tmis.pdm.StorageOperations;
 import ru.korus.tmis.pdm.utilities.Xml;
+import ru.korus.tmis.pdm.ws.PDManager;
 import ru.korus.tmis.pdm.ws.PostalAddressUse;
 import ru.korus.tmis.pdm.ws.TelecommunicationAddressUse;
 
@@ -35,6 +38,8 @@ import java.util.Vector;
  * Description:  <br>
  */
 public class AleePdmOperations implements StorageOperations {
+
+    private static final Logger logger = LoggerFactory.getLogger(AleePdmOperations.class);
 
     private static final String BASE_URL;
 
@@ -67,7 +72,7 @@ public class AleePdmOperations implements StorageOperations {
             URIBuilder uriBuilder = createBaseUrl(new URIBuilder(), req);
             uriBuilder = toParamList(uriBuilder, personalData, null);
             final URI uri = uriBuilder.build();
-            System.out.println("Create/Update person request: " + uri);
+            logger.info("Create/Update person request: {}", uri);
             String res = getResponse(uri);
             if (personalData.getId() == null) {
                 personalData.setId(getId(res));
@@ -88,7 +93,7 @@ public class AleePdmOperations implements StorageOperations {
                     .addParameter("attributes", "true")
                     .addParameter("id", id);
             final URI uri = uriBuilder.build();
-            System.out.println("Find person by id request: " + uri);
+            logger.info("Find person by id request: " + uri);
             String res = getXmlResponse(uri);
             return createPersonalData(Xml.loadString(res), null);
         } catch (URISyntaxException e) {
@@ -127,7 +132,7 @@ public class AleePdmOperations implements StorageOperations {
                 .addParameter("attributes", "true");
         uriBuilder = toParamList(uriBuilder, person, compareType);
         final URI uri = uriBuilder.build();
-        System.out.println("Find person by personal information: " + uri);
+        logger.info("Find person by personal information: " + uri);
         String res = getXmlResponse(uri);
         return createPersonalDataList(Xml.loadString(res));
     }
@@ -322,9 +327,9 @@ public class AleePdmOperations implements StorageOperations {
 
 
     private static String getResponseData(CloseableHttpResponse response) throws IOException {
-        System.out.println("Output from Server ...");
+        logger.info("Output from Server ...");
         final String res = EntityUtils.toString(response.getEntity(), "UTF-8");
-        System.out.println(res);
+        logger.info(res);
         return res;
     }
 
