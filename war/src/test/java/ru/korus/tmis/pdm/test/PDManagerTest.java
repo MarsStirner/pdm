@@ -29,8 +29,10 @@ public class PDManagerTest {
      */
     @Test
     public void addNewPersons() {
-       for(int i = 0; i < 1000; ++i) {
+        final int maxPerson = Integer.valueOf(System.getProperty("pdm.MaxNew", "1"));
+        for(int i = 0; i < maxPerson; ++i) {
            addNew();
+           System.out.println("added person: " + i);
        }
     }
 

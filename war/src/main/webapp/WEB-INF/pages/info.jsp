@@ -136,6 +136,10 @@
     </TR>
     <%}%>
 </table>
+
+<h3>The dump of config file:</h3>
+<textarea rows="30" cols="70" readonly="readonly"><%=AleePdmOperations.getConfigDump()%>/></textarea>
+
 <h3>logback info</h3>
 <%  final ByteArrayOutputStream outLog = new ByteArrayOutputStream();
     PrintStream ps = new PrintStream(outLog);

@@ -24,6 +24,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,6 +56,11 @@ public class AleePdmOperations implements StorageOperations {
     private static final String ALEE_COMPARE_TYPE_LIKE = "lk";
 
     private static AttrConfig config = null;
+    private static String configDump = null;
+
+    public static String getConfigDump() {
+        return configDump;
+    }
 
     static {
         BASE_URL = PdmSysProperties.getAleeUrl();
@@ -344,7 +350,10 @@ public class AleePdmOperations implements StorageOperations {
             }
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(config, System.out);
+            StringWriter sw = new StringWriter();
+            marshaller.marshal(config, sw);
+            configDump = sw.toString();
+            logger.info("Config dump: {}", configDump );
         } catch (JAXBException e) { //если файла настройки нет, то используем параметры по-умолчанию
             config = new AttrConfig();
         }
