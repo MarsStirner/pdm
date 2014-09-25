@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="30 seconds" debug="true"
+<configuration scan="true" scanPeriod="30 seconds" debug="true">
 
     <!--Логгер для ЗХПД-->
     <appender name="PDM" class="ch.qos.logback.core.rolling.RollingFileAppender">

@@ -4,8 +4,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.BasicQuery;
-import ru.korus.tmis.pdm.PersonalData;
-import ru.korus.tmis.pdm.StorageOperations;
+import ru.korus.tmis.pdm.ws.PersonalData;
+import ru.korus.tmis.pdm.ws.StorageOperations;
 
 import java.util.List;
 import java.util.Map;

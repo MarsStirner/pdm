@@ -3,6 +3,9 @@
     <artifactId>pdm-war</artifactId>
     <packaging>war</packaging>
     <version>0.0.0</version>
+    <properties>
+        <spring.version>3.2.5.RELEASE</spring.version>
+    </properties>
     <name>PDManager WebApp</name>
     <parent>
         <groupId>ru.korus.tmis.pdm</groupId>
@@ -53,25 +56,25 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>3.2.2.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>3.2.2.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>3.2.2.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>3.2.2.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <!-- mongodb java driver -->

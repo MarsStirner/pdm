@@ -11,13 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import ru.korus.tmis.pdm.PdmSysProperties;
-import ru.korus.tmis.pdm.PersonalData;
-import ru.korus.tmis.pdm.StorageOperations;
 import ru.korus.tmis.pdm.utilities.Xml;
-import ru.korus.tmis.pdm.ws.PDManager;
-import ru.korus.tmis.pdm.ws.PostalAddressUse;
-import ru.korus.tmis.pdm.ws.TelecommunicationAddressUse;
+import ru.korus.tmis.pdm.ws.PdmSysProperties;
+import ru.korus.tmis.pdm.ws.PersonalData;
+import ru.korus.tmis.pdm.ws.StorageOperations;
+import ru.korus.tmis.pdm.ws.hl7.PostalAddressUse;
+import ru.korus.tmis.pdm.ws.hl7.TelecommunicationAddressUse;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

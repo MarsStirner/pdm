@@ -2,7 +2,7 @@ package ru.korus.tmis.pdm.test.utilities;
 
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
-import ru.korus.tmis.pdm.PersonalData;
+import ru.korus.tmis.pdm.ws.PersonalData;
 import ru.korus.tmis.pdm.alee.AleePdmOperations;
 import ru.korus.tmis.pdm.utilities.Xml;
 

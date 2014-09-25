@@ -1,8 +1,8 @@
 package ru.korus.tmis.pdm.alee;
 
-import ru.korus.tmis.pdm.PersonalData;
-import ru.korus.tmis.pdm.ws.PostalAddressUse;
-import ru.korus.tmis.pdm.ws.TelecommunicationAddressUse;
+import ru.korus.tmis.pdm.ws.PersonalData;
+import ru.korus.tmis.pdm.ws.hl7.PostalAddressUse;
+import ru.korus.tmis.pdm.ws.hl7.TelecommunicationAddressUse;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

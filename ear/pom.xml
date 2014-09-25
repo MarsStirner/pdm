@@ -6,7 +6,7 @@
 	<version>0.0.0</version>
 	<name>PDManager ear</name>
 	<parent>
-		<groupId>ru.korus.tmis.pd</groupId>
+		<groupId>ru.korus.tmis.pdm</groupId>
 		<artifactId>PDManager</artifactId>
 		<version>0.0.0</version>
 	</parent>
