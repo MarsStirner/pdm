@@ -1,4 +1,4 @@
-package ru.korus.tmis.pdm.domain.service;
+package ru.korus.tmis.pdm.springdomain.service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -6,4 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 public interface AuthService {
 
     boolean checkTokenCookies(HttpServletRequest request, HttpServletResponse response);
+
+    String createToken(String username, String password);
 }

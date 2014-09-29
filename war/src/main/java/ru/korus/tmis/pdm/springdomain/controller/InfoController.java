@@ -1,4 +1,4 @@
-package ru.korus.tmis.pdm.domain.controller;
+package ru.korus.tmis.pdm.springdomain.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

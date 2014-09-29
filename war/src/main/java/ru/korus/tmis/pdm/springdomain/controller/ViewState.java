@@ -1,4 +1,4 @@
-package ru.korus.tmis.pdm.domain.controller;
+package ru.korus.tmis.pdm.springdomain.controller;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -40,7 +40,6 @@ public enum ViewState {
     public String getJspPath() {
         return path.replace('/', '-');
     }
-
 
     public String redirect() {
         return "redirect:" + path;

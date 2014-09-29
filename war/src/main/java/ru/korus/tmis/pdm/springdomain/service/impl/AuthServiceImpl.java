@@ -1,13 +1,15 @@
-package ru.korus.tmis.pdm.domain.service.impl;
+package ru.korus.tmis.pdm.springdomain.service.impl;
 
 import org.springframework.stereotype.Service;
-import ru.korus.tmis.pdm.domain.service.AuthService;
+import ru.korus.tmis.pdm.springdomain.service.AuthService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -25,12 +27,10 @@ public class AuthServiceImpl implements AuthService {
 
         private String login;
 
-        private String password;
-
         private Date loginTime;
     }
 
-    private static Map<String, AuthData> tokens;
+    private static Map<String, AuthData> tokens = new HashMap<String, AuthData>();
 
     @Override
     public boolean checkTokenCookies(HttpServletRequest request, HttpServletResponse response) {
@@ -55,8 +55,35 @@ public class AuthServiceImpl implements AuthService {
         return authData != null;
     }
 
+    @Override
+    public String createToken(String username, String password) {
+        if(checkLoginAndPassword(username, password)) {
+            AuthData authData = new AuthData();
+            authData.login = username;
+            authData.loginTime = new Date();
+            String token = UUID.randomUUID().toString();
+            for(int tryIndex = 0; tryIndex < 10 && tokens.get(token) != null; ++tryIndex) {
+                token = UUID.randomUUID().toString();
+            }
+            if(tokens.get(token) == null) {
+                tokens.put(token, authData);
+                return token;
+            }
+        }
+        return null;
+    }
+
+    private boolean checkLoginAndPassword(String username, String password) {
+        //TODO
+        return username.equals("a") && password.equals("a");
+    }
+
     private AuthData checkToken(String tokenValue) {
-        return tokens.get(tokenValue);
+        AuthData authData = tokens.get(tokenValue);
+        if(authData != null) {
+            authData.loginTime = new Date();
+        }
+        return authData;
     }
 
     private void clearToken() {

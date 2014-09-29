@@ -32,7 +32,7 @@ public class PDManagerService
         URL url = null;
         WebServiceException e = null;
         try {
-            final String urlAddr = System.getProperty(PDM_URL, "http://198.199.126.156:8080/pdm-war/tmis-pdm?wsdl"/*"http://10.1.2.191:9090/pdm-war/tmis-pdm?wsdl"*/);
+            final String urlAddr = System.getProperty(PDM_URL, "http://127.0.0.1:8080/pdm-war/tmis-pdm?wsdl"/*"http://10.1.2.191:9090/pdm-war/tmis-pdm?wsdl"*/);
             url = new URL(urlAddr);
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);

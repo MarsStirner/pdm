@@ -1,9 +1,9 @@
-package ru.korus.tmis.pdm.domain.controller;
+package ru.korus.tmis.pdm.springdomain.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import ru.korus.tmis.pdm.domain.service.AuthService;
+import ru.korus.tmis.pdm.springdomain.service.AuthService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

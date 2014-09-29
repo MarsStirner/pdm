@@ -112,7 +112,7 @@
         <TH>HL7 use code</TH>
         <TH>Alee code</TH>
     </TR>
-    <%   for (Map.Entry<PostalAddressUse, String> addrCode : AleePdmOperations.getConfig().getAddrMap().entrySet()) { %>
+    <% for (Map.Entry<PostalAddressUse, String> addrCode : AleePdmOperations.getConfig().getAddrMap().entrySet()) { %>
     <TR>
         <TD><%=addrCode.getKey()%>
         </TD>
@@ -124,10 +124,10 @@
 <h3>Supported Telecoms Type</h3>
 <table border="1">
     <TR>
-        <TH>HL7 use code </TH>
+        <TH>HL7 use code</TH>
         <TH>Alee code</TH>
     </TR>
-    <%   for (Map.Entry<TelecommunicationAddressUse, String> telCode : AleePdmOperations.getConfig().getTelecomMap().entrySet()) { %>
+    <% for (Map.Entry<TelecommunicationAddressUse, String> telCode : AleePdmOperations.getConfig().getTelecomMap().entrySet()) { %>
     <TR>
         <TD><%=telCode.getKey()%>
         </TD>
@@ -141,13 +141,14 @@
 <textarea rows="30" cols="70" readonly="readonly"><%=AleePdmOperations.getConfigDump()%>/></textarea>
 
 <h3>logback info</h3>
-<%  final ByteArrayOutputStream outLog = new ByteArrayOutputStream();
+<% final ByteArrayOutputStream outLog = new ByteArrayOutputStream();
     PrintStream ps = new PrintStream(outLog);
     StatusPrinter.setPrintStream(ps);
     StatusPrinter.print((LoggerContext) LoggerFactory.getILoggerFactory());
     String logInfo[] = outLog.toString("UTF-8").split("\n");
-    for(String curInfo : logInfo) {%>
-        <textarea rows="30" cols="150" readonly="readonly"><%=outLog.toString("UTF-8")%></textarea>
+    for (String curInfo : logInfo) {%>
+<textarea rows="30" cols="150" readonly="readonly"><%=outLog.toString("UTF-8")%>
+</textarea>
 <%}%>
 </body>
 </html>
