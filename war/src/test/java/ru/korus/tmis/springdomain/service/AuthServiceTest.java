@@ -31,5 +31,5 @@ public class AuthServiceTest extends AbstractTestNGSpringContextTests {
         assertNull(res);
         res = authService.createToken("a", "a");
         assertFalse(res.isEmpty());
-;    }
+    }
 }
