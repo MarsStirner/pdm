@@ -1,14 +1,12 @@
 package ru.korus.tmis.springdomain.service;
 
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.testng.annotations.Test;
-import ru.korus.tmis.pdm.springdomain.config.PdmSpringConfiguration;
-import ru.korus.tmis.pdm.springdomain.service.AuthService;
+import ru.korus.tmis.pdm.config.PdmSpringConfiguration;
+import ru.korus.tmis.pdm.service.AuthService;
 
 import static org.testng.Assert.*;
 

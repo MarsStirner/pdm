@@ -1,9 +1,16 @@
 package ru.korus.tmis.pdm.test;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.testng.annotations.Test;
 
+import ru.korus.tmis.pdm.config.PdmSpringConfiguration;
+import ru.korus.tmis.pdm.service.PdmService;
+import ru.korus.tmis.pdm.ws.hl7.*;
+import ru.korus.tmis.pdm.ws.PDManagerImpl;
 import ru.korus.tmis.pdm.ws.PersonalData;
-import ru.korus.tmis.pdm.test.ws.*;
 
 import javax.xml.bind.JAXBElement;
 
@@ -14,7 +21,12 @@ import java.util.UUID;
 
 import static org.testng.Assert.*;
 
-public class PDManagerTest {
+@ContextConfiguration(classes = { PdmSpringConfiguration.class })
+@WebAppConfiguration
+public class PDManagerTest extends AbstractTestNGSpringContextTests {
+
+    @Autowired
+    PDManager pdManager;
 
     private static final String IVAN = "Иван";
     private static final String IVANOVICH = "Ivanovich";
@@ -38,8 +50,7 @@ public class PDManagerTest {
 
     private void addNew() {
         ObjectFactory factory = new ObjectFactory();
-        PDManagerService serv = new PDManagerService();
-        PDManager pdManager = serv.getPDManagerSOAP();
+       // ru.korus.tmis.pdm.ws.hl7.PDManager pdManager = new PDManagerImpl();
 
         PRPAIN101311UV02 prm = factory.createPRPAIN101311UV02();
 
@@ -68,22 +79,22 @@ public class PDManagerTest {
         identifiedPerson.setIdentifiedPerson(person);
 
         /* ФИО персоны */
-        PN name = factory.createPN();
+        PNExplicit name = factory.createPNExplicit();
 
         /* Имя (первое значение given) */
-        EnGiven giv = factory.createEnGiven();
-        giv.getContent().add(IVAN);
-        name.getContent().add(factory.createENGiven(giv));
+        EnExplicitGiven giv = factory.createEnExplicitGiven();
+        giv.setContent(IVAN);
+        name.getContent().add(factory.createENExplicitGiven(giv));
 
         /* Отчество (первое значение given) */
-        EnGiven mn = factory.createEnGiven();
-        mn.getContent().add(IVANOVICH);
-        name.getContent().add(factory.createENGiven(mn));
+        EnExplicitGiven mn = factory.createEnExplicitGiven();
+        mn.setContent(IVANOVICH);
+        name.getContent().add(factory.createENExplicitGiven(mn));
 
         /* Фамилия */
-        EnFamily family = factory.createEnFamily();
-        family.getContent().add(IVANOV);
-        name.getContent().add(factory.createENFamily(family));
+        EnExplicitFamily family = factory.createEnExplicitFamily();
+        family.setContent(IVANOV);
+        name.getContent().add(factory.createENExplicitFamily(family));
 
         /* Паспорт */
         person.getName().add(name);
@@ -98,11 +109,11 @@ public class PDManagerTest {
         }
 
         /* Домашний адрес */
-        final AD addr = factory.createAD();
+        final ADExplicit addr = factory.createADExplicit();
         person.getAddr().add(addr);
-        AdxpStreetName street = factory.createAdxpStreetName();
-        street.getContent().add(TEST_STREET);
-        addr.getContent().add(factory.createADStreetName(street));
+        AdxpExplicitStreetName street = factory.createAdxpExplicitStreetName();
+        street.setContent(TEST_STREET);
+        addr.getContent().add(factory.createADExplicitStreetName(street));
         addr.getUse().add(PostalAddressUse.HP);// признак - "домашний"
 
         /* Пол персоны */
@@ -122,8 +133,6 @@ public class PDManagerTest {
     @Test
     public void findById() {
         ObjectFactory factory = new ObjectFactory();
-        PDManagerService serv = new PDManagerService();
-        PDManager pdManager = serv.getPDManagerSOAP();
         PRPAIN101307UV02 prm = factory.createPRPAIN101307UV02();
         final PRPAIN101307UV02QUQIMT021001UV01ControlActProcess controlActProcess = factory.createPRPAIN101307UV02QUQIMT021001UV01ControlActProcess();
         prm.setControlActProcess(controlActProcess);
@@ -146,15 +155,12 @@ public class PDManagerTest {
         assertEquals(personId.getExtension(), newId);
         final List<PN> name = identifiedPerson.getIdentifiedPerson().getName();
         assertEquals(name.size(), 1);
-        EnGiven giv = (EnGiven)((JAXBElement)(name.get(0).getContent().get(0))).getValue();
-        assertEquals(giv.getContent().size(), 1);
-        assertEquals((String)giv.getContent().get(0), IVAN);
-        EnGiven mn = (EnGiven)((JAXBElement)(name.get(0).getContent().get(1))).getValue();
-        assertEquals(mn.getContent().size(), 1);
-        assertEquals((String)mn.getContent().get(0), IVANOVICH);
-        EnFamily family = (EnFamily)((JAXBElement)(name.get(0).getContent().get(2))).getValue();
-        assertEquals(family.getContent().size(), 1);
-        assertEquals((String)family.getContent().get(0), IVANOV);
+        EnExplicitGiven giv = (EnExplicitGiven)((JAXBElement)(name.get(0).getContent().get(0))).getValue();
+        assertEquals((String)giv.getContent(), IVAN);
+        EnExplicitGiven mn = (EnExplicitGiven)((JAXBElement)(name.get(0).getContent().get(1))).getValue();
+        assertEquals((String)mn.getContent(), IVANOVICH);
+        EnExplicitFamily family = (EnExplicitFamily)((JAXBElement)(name.get(0).getContent().get(2))).getValue();
+        assertEquals((String)family.getContent(), IVANOV);
         assertEquals(identifiedPerson.getIdentifiedPerson().getAdministrativeGenderCode().getCode(), "M");
         assertEquals(identifiedPerson.getIdentifiedPerson().getAddr().size(), 1);
         AD homeAddress = identifiedPerson.getIdentifiedPerson().getAddr().get(0);
@@ -162,8 +168,8 @@ public class PDManagerTest {
         final int countOfAddrElements = 27;
         assertEquals(homeAddress.getContent().size(), countOfAddrElements);
         final int indexOfStreetAddr = 10;
-        AdxpStreetName streetName = (AdxpStreetName)((JAXBElement)(homeAddress.getContent().get(indexOfStreetAddr))).getValue();
-        assertEquals(streetName.getContent().get(0), TEST_STREET);
+        AdxpExplicitStreetName streetName = (AdxpExplicitStreetName)((JAXBElement)(homeAddress.getContent().get(indexOfStreetAddr))).getValue();
+        assertEquals(streetName.getContent(), TEST_STREET);
         List<PRPAMT101303UV02OtherIDs> asOtherId = identifiedPerson.getIdentifiedPerson().getAsOtherIDs();
         assertEquals(asOtherId.size(), newDocId.size());
         for(int index = 0; index < newDocId.size(); ++index) {
@@ -175,8 +181,6 @@ public class PDManagerTest {
     //@Test
     public void findByPersonInfo() {
         ObjectFactory factory = new ObjectFactory();
-        PDManagerService serv = new PDManagerService();
-        PDManager pdManager = serv.getPDManagerSOAP();
         PRPAIN101305UV02 prm = factory.createPRPAIN101305UV02();
         final PRPAIN101305UV02QUQIMT021001UV01ControlActProcess controlActProcess = factory.createPRPAIN101305UV02QUQIMT021001UV01ControlActProcess();
         prm.setControlActProcess(controlActProcess);
@@ -188,11 +192,11 @@ public class PDManagerTest {
 
         final PRPAMT101306UV02PersonName personName = factory.createPRPAMT101306UV02PersonName();
         prmList.getPersonName().add(personName);
-        final PN pn = factory.createPN();
+        final PNExplicit pn = factory.createPNExplicit();
         personName.getValue().add(pn);
-        EnGiven giv = factory.createEnGiven();
-        giv.getContent().add("Ivan");
-        pn.getContent().add(factory.createENGiven(giv));
+        EnExplicitGiven giv = factory.createEnExplicitGiven();
+        giv.setContent("Ivan");
+        pn.getContent().add(factory.createENExplicitGiven(giv));
 
         final PRPAMT101306UV02PersonAdministrativeGender gender = factory.createPRPAMT101306UV02PersonAdministrativeGender();
         final CV genderCode = factory.createCV();
@@ -252,8 +256,6 @@ public class PDManagerTest {
     @Test
     public void update() {
         ObjectFactory factory = new ObjectFactory();
-        PDManagerService serv = new PDManagerService();
-        PDManager pdManager = serv.getPDManagerSOAP();
         final PRPAIN101314UV02 prm = factory.createPRPAIN101314UV02();
         final PRPAIN101314UV02MFMIMT700721UV01ControlActProcess controlActProcess = factory.createPRPAIN101314UV02MFMIMT700721UV01ControlActProcess();
         prm.setControlActProcess(controlActProcess);
@@ -276,17 +278,17 @@ public class PDManagerTest {
 
         final PRPAMT101302UV02PersonName pn = factory.createPRPAMT101302UV02PersonName();
         person.getName().add(pn);
-        EnFamily family = factory.createEnFamily();
-        family.getContent().add("Petrov");
-        pn.getContent().add(factory.createENFamily(family));
+        EnExplicitFamily family = factory.createEnExplicitFamily();
+        family.setContent("Petrov");
+        pn.getContent().add(factory.createENExplicitFamily(family));
 
-        EnGiven given = factory.createEnGiven();
-        given.getContent().add("Peter");
-        pn.getContent().add(factory.createENGiven(given));
+        EnExplicitGiven given = factory.createEnExplicitGiven();
+        given.setContent("Peter");
+        pn.getContent().add(factory.createENExplicitGiven(given));
 
-        EnGiven middleName = factory.createEnGiven();
-        middleName.getContent().add("Peterovich");
-        pn.getContent().add(factory.createENGiven(middleName));
+        EnExplicitGiven middleName = factory.createEnExplicitGiven();
+        middleName.setContent("Peterovich");
+        pn.getContent().add(factory.createENExplicitGiven(middleName));
 
        final PRPAMT101302UV02PersonTelecom telecom = factory.createPRPAMT101302UV02PersonTelecom();
         person.getTelecom().add(telecom);
@@ -295,9 +297,9 @@ public class PDManagerTest {
 
         final PRPAMT101302UV02PersonAddr personAddr = factory.createPRPAMT101302UV02PersonAddr();
         person.getAddr().add(personAddr);
-        AdxpStreetAddressLine strAdrLine = factory.createAdxpStreetAddressLine();
-        strAdrLine.getContent().add("Update address line");
-        personAddr.getContent().add(factory.createADStreetAddressLine(strAdrLine));
+        AdxpExplicitStreetAddressLine strAdrLine = factory.createAdxpExplicitStreetAddressLine();
+        strAdrLine.setContent("Update address line");
+        personAddr.getContent().add(factory.createADExplicitStreetAddressLine(strAdrLine));
         personAddr.getUse().add(PostalAddressUse.HP);
 
         final PRPAMT101302UV02PersonAsOtherIDs passportOtherIDs = factory.createPRPAMT101302UV02PersonAsOtherIDs();
@@ -323,8 +325,6 @@ public class PDManagerTest {
     //@Test
     public void findLike() {
         ObjectFactory factory = new ObjectFactory();
-        PDManagerService serv = new PDManagerService();
-        PDManager pdManager = serv.getPDManagerSOAP();
         PRPAIN101305UV02 prm = factory.createPRPAIN101305UV02();
         final PRPAIN101305UV02QUQIMT021001UV01ControlActProcess controlActProcess = factory.createPRPAIN101305UV02QUQIMT021001UV01ControlActProcess();
         prm.setControlActProcess(controlActProcess);
@@ -336,11 +336,11 @@ public class PDManagerTest {
 
         final PRPAMT101306UV02PersonName personName = factory.createPRPAMT101306UV02PersonName();
         prmList.getPersonName().add(personName);
-        final PN pn = factory.createPN();
+        final PNExplicit pn = factory.createPNExplicit();
         personName.getValue().add(pn);
-        EnGiven giv = factory.createEnGiven();
-        giv.getContent().add("Ivan");
-        pn.getContent().add(factory.createENGiven(giv));
+        EnExplicitGiven giv = factory.createEnExplicitGiven();
+        giv.setContent("Ivan");
+        pn.getContent().add(factory.createENExplicitGiven(giv));
 
        /* final PRPAMT101306UV02PersonAdministrativeGender gender = factory.createPRPAMT101306UV02PersonAdministrativeGender();
         final CV genderCode = factory.createCV();
