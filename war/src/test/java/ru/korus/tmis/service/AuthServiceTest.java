@@ -1,4 +1,4 @@
-package ru.korus.tmis.springdomain.service;
+package ru.korus.tmis.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
