@@ -1,4 +1,4 @@
-package ru.korus.tmis.pdm.mongo;
+package ru.korus.tmis.pdm.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +25,6 @@ public class SpringMongoConfig extends AbstractMongoConfiguration {
 
     @Override
     protected String getMappingBasePackage() {
-        return "ru.korus.tmis.pdm.mongo";
+        return "ru.korus.tmis.pdm.service.impl.mongo";
     }
 }

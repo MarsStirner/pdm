@@ -2,13 +2,11 @@ package ru.korus.tmis.pdm.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.korus.tmis.pdm.alee.AleePdmOperations;
-import ru.korus.tmis.pdm.mongo.MongoPdmOperations;
+import ru.korus.tmis.pdm.service.PdmDaoServiceLocator;
 import ru.korus.tmis.pdm.service.PdmService;
-import ru.korus.tmis.pdm.ws.PdmSysProperties;
 import ru.korus.tmis.pdm.ws.PersonalData;
-import ru.korus.tmis.pdm.ws.StorageOperations;
 import ru.korus.tmis.pdm.ws.hl7.*;
 
 import java.util.List;
@@ -25,18 +23,11 @@ import java.util.Vector;
 public class PdmServiceImpl implements PdmService {
 
     private static final Logger logger = LoggerFactory.getLogger(PDManager.class);
-    private static StorageOperations storageOperations = null;
 
-    static {
-        if (PdmSysProperties.getPdmStorageType().equals(PdmSysProperties.Value.STORAGE_TYPE_ALEE)) {
-            storageOperations = new AleePdmOperations();
-        } else {
-            storageOperations = new MongoPdmOperations();
-        }
-    }
+    @Autowired
+    private PdmDaoServiceLocator pdmDaoServiceLocator;
 
     private ObjectFactory factory = new ObjectFactory();
-
 
     @Override
     public PRPAIN101312UV02 add(PRPAIN101311UV02 parameters) {
@@ -107,16 +98,16 @@ public class PdmServiceImpl implements PdmService {
     }
 
     private List<PersonalData> findPersonLike(PersonalData person) {
-        return storageOperations.findPersonLike(person);
+        return pdmDaoServiceLocator.getPdmDaoService().findPersonLike(person);
     }
 
     private void savePerson(PersonalData personalDataNew) {
-        storageOperations.save(personalDataNew);
+        pdmDaoServiceLocator.getPdmDaoService().save(personalDataNew);
     }
 
 
     private List<PersonalData> findPerson(PersonalData person) {
-        return storageOperations.find(person);
+        return pdmDaoServiceLocator.getPdmDaoService().find(person);
     }
 
 
@@ -378,19 +369,19 @@ public class PdmServiceImpl implements PdmService {
 
 
     private String save(PersonalData personalData) {
+        boolean isAdded = false;
         for (Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
-            find(doc);
+            isAdded |= pdmDaoServiceLocator.getPdmDaoService().find(doc);
         }
-        storageOperations.save(personalData);
+        if(isAdded) {
+            pdmDaoServiceLocator.getPdmDaoService().save(personalData);
+        }
         return personalData.getId();
     }
 
-    private void find(Map.Entry<String, String> doc) {
-        storageOperations.find(doc);
-    }
 
     private PersonalData findById(String id) {
-        return storageOperations.findById(id);
+        return pdmDaoServiceLocator.getPdmDaoService().findById(id);
     }
 
     private II createPdmII(String id) {

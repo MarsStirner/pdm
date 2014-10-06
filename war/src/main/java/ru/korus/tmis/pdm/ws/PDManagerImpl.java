@@ -1,11 +1,7 @@
 package ru.korus.tmis.pdm.ws;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.korus.tmis.pdm.alee.AleePdmOperations;
-import ru.korus.tmis.pdm.mongo.MongoPdmOperations;
 import ru.korus.tmis.pdm.service.PdmService;
 import ru.korus.tmis.pdm.ws.hl7.*;
 
@@ -13,9 +9,6 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 
 /**
  * Author: Sergey A. Zagrebelny <br>

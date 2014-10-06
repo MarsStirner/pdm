@@ -1,4 +1,6 @@
-package ru.korus.tmis.pdm.ws;
+package ru.korus.tmis.pdm.service;
+
+import ru.korus.tmis.pdm.ws.PersonalData;
 
 import java.util.List;
 import java.util.Map;
@@ -9,11 +11,12 @@ import java.util.Map;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public interface StorageOperations {
+//TODO Move too repositories!
+public interface PdmDaoService {
 
     void save(PersonalData personalData);
 
-    void find(Map.Entry<String, String> doc);
+    boolean find(Map.Entry<String, String> doc);
 
     PersonalData findById(String id);
 

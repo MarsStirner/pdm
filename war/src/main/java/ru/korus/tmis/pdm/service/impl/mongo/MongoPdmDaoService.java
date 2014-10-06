@@ -1,11 +1,13 @@
-package ru.korus.tmis.pdm.mongo;
+package ru.korus.tmis.pdm.service.impl.mongo;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.stereotype.Service;
+import ru.korus.tmis.pdm.config.SpringMongoConfig;
+import ru.korus.tmis.pdm.service.PdmDaoService;
 import ru.korus.tmis.pdm.ws.PersonalData;
-import ru.korus.tmis.pdm.ws.StorageOperations;
 
 import java.util.List;
 import java.util.Map;
@@ -16,12 +18,13 @@ import java.util.Map;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class MongoPdmOperations implements StorageOperations {
+@Service
+public class MongoPdmDaoService implements PdmDaoService {
 
     static private ApplicationContext ctx = null;
     static private MongoOperations mongoOperation = null;
 
-    public MongoPdmOperations() {
+    public MongoPdmDaoService() {
         if(ctx == null || mongoOperation == null) {
             init();
         }
@@ -38,11 +41,12 @@ public class MongoPdmOperations implements StorageOperations {
     }
 
     @Override
-    public void find(Map.Entry<String, String> doc) {
+    public boolean find(Map.Entry<String, String> doc) {
         BasicQuery query = new BasicQuery(String.format("{docs: { $elemMatch: {code:'%s' , codeSystem : '%s'}}}", doc.getValue(), doc.getKey()));
         if (!mongoOperation.find(query, PersonalData.class).isEmpty()){
             throw new RuntimeException("The person already added");
         }
+        return true;
     }
 
     @Override

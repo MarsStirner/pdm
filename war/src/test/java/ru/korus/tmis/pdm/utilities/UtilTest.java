@@ -3,7 +3,6 @@ package ru.korus.tmis.pdm.utilities;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import ru.korus.tmis.pdm.ws.PersonalData;
-import ru.korus.tmis.pdm.alee.AleePdmOperations;
 
 import java.net.MalformedURLException;
 
@@ -60,16 +59,4 @@ public class UtilTest {
         assertEquals(valueAttr, "3333");
     }
 
-    @Test
-    public void emailToString() {
-        PersonalData.Telecom email = new PersonalData.Telecom();
-        final String testEmail = "test@korus.ru";
-        email.setValue("mailto:"+ testEmail);
-        try {
-            String res = AleePdmOperations.emailToString(email);
-            assertEquals(res, testEmail);
-        } catch (MalformedURLException e) {
-            fail("A malformed e-mail: ", e);
-        }
-    }
 }
