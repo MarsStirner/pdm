@@ -16,7 +16,7 @@ public class PdmSysProperties {
     }
 
     public static String getPdmStorageType() {
-        return System.getProperty(PdmSysProperties.PDM_STORAGE_TYPE, "");
+        return System.getProperty(PdmSysProperties.PDM_STORAGE_TYPE, "postgresql");
     }
 
     public static String getConfigFileName() {

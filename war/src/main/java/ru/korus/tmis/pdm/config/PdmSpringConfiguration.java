@@ -37,7 +37,7 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
     }
 
  //   @Bean
-   // public PdmDaoService getPdmDaoService() {
+   // public PdmDaoService getMongoPdmDaoService() {
      //   return mongo;
 /*
             if (PdmSysProperties.getPdmStorageType().equals(PdmSysProperties.Value.STORAGE_TYPE_POSTGRESQL)) {

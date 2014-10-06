@@ -4,11 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.korus.tmis.pdm.entities.*;
 import ru.korus.tmis.pdm.service.PdmDaoServiceLocator;
 import ru.korus.tmis.pdm.service.PdmService;
-import ru.korus.tmis.pdm.ws.PersonalData;
 import ru.korus.tmis.pdm.ws.hl7.*;
 
+import javax.xml.bind.JAXBElement;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -22,6 +24,22 @@ import java.util.Vector;
 @Service
 public class PdmServiceImpl implements PdmService {
 
+    public static final String OID_PDM = "3.0.0.0";
+    public static final String OID_PREFIX = "OID";
+    public static final char DOT_CH = '_';
+    public static final String OID_DOC_PASSPORTNUMBER = "3.0.0.1";
+    public static final String OID_DOC_PASSPORT_DATE = "3.0.0.2";
+    public static final String OID_DOC_PASSPORT_CREATER = "3.0.0.3";
+    public static final String OID_DOC_ACTBIRTH_NUMBER = "3.0.0.4";
+    public static final String OID_DOC_ACTBIRTH_DATE = "3.0.0.5";
+    public static final String OID_DOC_INN = "3.0.0.6";
+    public static final String OID_DOC_SNILS = "3.0.0.7";
+    public static final String OID_DOC_INSURANCE_ID = "3.0.0.8";
+    public static final String OID_DOC_INSURANCE_ID_EXT = "3.0.0.9";
+    public static final String OID_DOC_INSURANCE_END_DATE = "3.0.0.10";
+    public static final String OID_DOC_INSURANCE_BEG_DATE = "3.0.0.11";
+    public static final String OID_DOC_INSURANCE_COMPANY = "3.0.0.12";
+    public static final String OID_DEFAULT_GENDER_CODE_SYSTEM = "2.16.840.1.113883.5.1";
     private static final Logger logger = LoggerFactory.getLogger(PDManager.class);
 
     @Autowired
@@ -29,10 +47,186 @@ public class PdmServiceImpl implements PdmService {
 
     private ObjectFactory factory = new ObjectFactory();
 
+    /**
+     * @param prm
+     */
+    static public PersonalData newInstance(PRPAIN101311UV02 prm) {
+        PersonalData res = new PersonalData();
+        res.setId(null);
+        PRPAMT101301UV02Person identifiedPerson = prm.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson();
+        List<PNExplicit> names = identifiedPerson.getName();
+        if (!names.isEmpty()) {
+            initNames(res, names.get(0));
+        }
+        CE genderCode = identifiedPerson.getAdministrativeGenderCode();
+        res.setGender(genderCode == null ? null : Term.newInstance(genderCode.getCode(), genderCode.getCodeSystem()));
+        TS birthTime = identifiedPerson.getBirthTime();
+        res.setBirthData(birthTime == null ? null : birthTime.getValue());
+
+        initTelecom(res, identifiedPerson.getTelecom());
+
+        for (PRPAMT101301UV02OtherIDs ids : identifiedPerson.getAsOtherIDs()) {
+            initDocs(res, ids.getId());
+        }
+
+        initAddr(res, identifiedPerson.getAddr());
+
+        if (identifiedPerson.getBirthPlace() instanceof JAXBElement &&
+                identifiedPerson.getBirthPlace().getValue() instanceof PRPAMT101301UV02BirthPlace) {
+            res.setBirthPlace(Addr.newInstance(identifiedPerson.getBirthPlace().getValue().getAddr(), null));
+        }
+        return res;
+    }
+
+    public static <A> void initAddr(PersonalData res, List<A> addrList) {
+        for (A a : addrList) {
+            ADExplicit addr = (ADExplicit) a;
+            final String use = addr.getUse().isEmpty() ? null : addr.getUse().get(0).name();
+
+            final Addr addrInfo = findByUseAttr(res.getAddress(), use);
+            if (addrInfo == null) {
+                res.getAddress().add(Addr.newInstance(addr, use));
+            } else {
+                addrInfo.set(Addr.newInstance(addr, use));
+            }
+        }
+    }
+
+    public static <T> void initTelecom(PersonalData res, List<T> telecomList) {
+        for (T t : telecomList) {
+            final TEL telecom = (TEL) t;
+            final String use = telecom.getUse().isEmpty() ? null : telecom.getUse().get(0).name();
+            Telecom tel = findByUseAttr(res.getTelecoms(), use);
+            if (tel == null) {
+                res.getTelecoms().add(Telecom.newInstance(telecom.getValue(), use));
+            } else {
+                tel.setValue(telecom.getValue());
+            }
+        }
+    }
+
+    private static <T> T findByUseAttr(List<T> list, String use) {
+        for (T obj : list) {
+            final String useCur = ((Use) obj).getUse();
+            if (useCur == null && use == null) {
+                return (T) obj;
+            }
+            if (useCur.equals(use)) {
+                return (T) obj;
+            }
+        }
+        return null;
+    }
+
+    private static void initDocs(PersonalData res, List<II> id1) {
+        for (II ii : id1) {
+            final String root = ii.getRoot();
+            if (root != null) {
+                res.getDocs().put(codeOID(root), ii.getExtension());
+            }
+        }
+    }
+
+    public static void initNames(PersonalData res, PNExplicit pn) {
+        boolean isName = true;
+        for (Serializable object : pn.getContent()) {
+            if (object instanceof JAXBElement) {
+                JAXBElement el = (JAXBElement) object;
+                if (el.getValue() instanceof EnExplicitGiven) {
+                    if (isName) {
+                        res.setGiven(((EnExplicitGiven) el.getValue()).getContent());
+                        isName = false;
+                    } else {
+                        res.setMiddleName(((EnExplicitGiven) el.getValue()).getContent());
+                    }
+                } else if (el.getValue() instanceof EnExplicitFamily) {
+                    res.setFamily(((EnExplicitFamily) el.getValue()).getContent());
+                }
+            }
+        }
+    }
+
+    public static PersonalData newInstance(PRPAIN101305UV02 prm) {
+        PersonalData res = new PersonalData();
+        final PRPAMT101306UV02ParameterList parameterList = prm.getControlActProcess().getQueryByParameter().getValue().getParameterList();
+        List<PRPAMT101306UV02PersonName> personNames = parameterList.getPersonName();
+        if (!personNames.isEmpty() && !personNames.get(0).getValue().isEmpty()) { // если задаано ФИО персоны
+            initNames(res, personNames.get(0).getValue().get(0));
+        }
+        final List<PRPAMT101306UV02PersonAdministrativeGender> personAdministrativeGender = parameterList.getPersonAdministrativeGender();
+        if (!personAdministrativeGender.isEmpty() &&
+                !personAdministrativeGender.get(0).getValue().isEmpty()) { //если задан пол персоны
+            CV genderCode = personAdministrativeGender.get(0).getValue().get(0);
+            res.setGender(genderCode == null ? null : Term.newInstance(genderCode.getCode(), genderCode.getCodeSystem()));
+        }
+        for (PRPAMT101306UV02OtherIDsScopingOrganization otherId : parameterList.getOtherIDsScopingOrganization()) {
+            initDocs(res, otherId.getValue());
+        }
+
+        for (PRPAMT101306UV02IdentifiedPersonTelecom telecom : parameterList.getIdentifiedPersonTelecom()) {
+            initTelecom(res, telecom.getValue());
+        }
+
+        for (PRPAMT101306UV02IdentifiedPersonAddress address : parameterList.getIdentifiedPersonAddress()) {
+            initAddr(res, address.getValue());
+        }
+        List<PRPAMT101306UV02PersonBirthPlaceAddress> birthPlaceAddressList = parameterList.getPersonBirthPlaceAddress();
+        if (!birthPlaceAddressList.isEmpty() &&
+                !birthPlaceAddressList.get(0).getValue().isEmpty()) {
+            res.setBirthPlace(Addr.newInstance(birthPlaceAddressList.get(0).getValue().get(0), null));
+        }
+
+        return res;
+    }
+
+    public static String decodeOID(String root) {
+        return root.replace(DOT_CH, '.').substring(OID_PREFIX.length());
+    }
+
+    public static String codeOID(String root) {
+        return OID_PREFIX + root.replace('.', DOT_CH);
+    }
+
+    public PersonalData update(PersonalData personalData, PRPAIN101314UV02 prm) {
+
+        PRPAMT101302UV02IdentifiedPersonIdentifiedPerson identifiedPerson = prm.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson();
+        List<PRPAMT101302UV02PersonName> names = identifiedPerson.getName();
+        if (!names.isEmpty()) {
+            initNames(personalData, names.get(0));
+        }
+        CE genderCode = identifiedPerson.getAdministrativeGenderCode();
+        personalData.setGender(genderCode == null ? null : Term.newInstance(genderCode.getCode(), genderCode.getCodeSystem()));
+        TS birthTime = identifiedPerson.getBirthTime();
+        personalData.setBirthData(birthTime == null ? null : birthTime.getValue());
+
+        initTelecom(personalData, identifiedPerson.getTelecom());
+
+        for (PRPAMT101302UV02PersonAsOtherIDs cur :
+                identifiedPerson.getAsOtherIDs()) {
+            for (II ii : cur.getId()) {
+                final String root = ii.getRoot();
+                if (!OID_PDM.equals(root)) {
+                    personalData.getDocs().put(codeOID(root), ii.getExtension());
+                }
+            }
+
+        }
+
+        initAddr(personalData, identifiedPerson.getAddr());
+
+        if (identifiedPerson.getBirthPlace() instanceof JAXBElement &&
+                identifiedPerson.getBirthPlace().getValue() instanceof PRPAMT101302UV02PersonBirthPlace) {
+            personalData.setBirthPlace(Addr.newInstance(identifiedPerson.getBirthPlace().getValue().getAddr(), null));
+        }
+
+        return personalData;
+
+    }
+
     @Override
     public PRPAIN101312UV02 add(PRPAIN101311UV02 parameters) {
         logger.info("Adding a new person. Parsing input parameters...");
-        final PersonalData personalData = PersonalData.newInstance(parameters);
+        final PersonalData personalData = newInstance(parameters);
         logger.info("Adding a new person. Save to storage...");
         final String id = save(personalData);
         logger.info("Adding a new person. Prepare and sending the response...");
@@ -43,7 +237,7 @@ public class PdmServiceImpl implements PdmService {
     @Override
     public PRPAIN101306UV02 findCandidates(PRPAIN101305UV02 parameters) {
         logger.info("Find by demographics info. Parsing input parameters...");
-        final PersonalData person = PersonalData.newInstance(parameters);
+        final PersonalData person = newInstance(parameters);
         logger.info("Find by demographics info. Find in storage...");
         final List<PersonalData> personalDataList = findPerson(person);
         logger.info("Find by demographics info. Prepare and sending the response...");
@@ -75,22 +269,22 @@ public class PdmServiceImpl implements PdmService {
                 parameters.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getAsOtherIDs()) {
             for (II ii : cur.getId()) {
                 logger.error("Update demographics info by id. Check document root: ", ii.getRoot());
-                if (PersonalData.OID_PDM.equals(ii.getRoot())) {
+                if (OID_PDM.equals(ii.getRoot())) {
                     final PersonalData personalData = findById(ii.getExtension());
-                    final PersonalData personalDataNew = personalData.update(parameters);
+                    final PersonalData personalDataNew = update(personalData, parameters);
                     savePerson(personalDataNew);
                     return getPRPAIN101315UV02(ii.getExtension());
                 }
             }
         }
-        logger.error("Update demographics info by id. Wrong input parameters. Not found PDM OID: {}", PersonalData.OID_PDM);
+        logger.error("Update demographics info by id. Wrong input parameters. Not found PDM OID: {}", OID_PDM);
         throw new RuntimeException("The PDM ID is not set");
     }
 
     @Override
     public PRPAIN101306UV02 findLike(PRPAIN101305UV02 parameters) {
         logger.info("Find Like. Parsing input parameters...");
-        final PersonalData person = PersonalData.newInstance(parameters);
+        final PersonalData person = newInstance(parameters);
         logger.info("Find Like. Find like in storage...");
         final List<PersonalData> personalDataList = findPersonLike(person);
         logger.info("Find Like. Prepare and sending the response...");
@@ -98,16 +292,16 @@ public class PdmServiceImpl implements PdmService {
     }
 
     private List<PersonalData> findPersonLike(PersonalData person) {
-        return pdmDaoServiceLocator.getPdmDaoService().findPersonLike(person);
+        return pdmDaoServiceLocator.getMongoPdmDaoService().findPersonLike(person);
     }
 
     private void savePerson(PersonalData personalDataNew) {
-        pdmDaoServiceLocator.getPdmDaoService().save(personalDataNew);
+        pdmDaoServiceLocator.getMongoPdmDaoService().save(personalDataNew);
     }
 
 
     private List<PersonalData> findPerson(PersonalData person) {
-        return pdmDaoServiceLocator.getPdmDaoService().find(person);
+        return pdmDaoServiceLocator.getMongoPdmDaoService().find(person);
     }
 
 
@@ -187,11 +381,11 @@ public class PdmServiceImpl implements PdmService {
                 person.getIdentifiedPerson().getAsOtherIDs().add(otherId);
             }
 
-            for (PersonalData.Telecom telecom : personalData.getTelecoms()) {
+            for (Telecom telecom : personalData.getTelecoms()) {
                 person.getIdentifiedPerson().getTelecom().add(getHL7Telecom(telecom));
             }
 
-            for (PersonalData.Addr addr : personalData.getAddress()) {
+            for (Addr addr : personalData.getAddress()) {
                 person.getIdentifiedPerson().getAddr().add(getHL7Addr(addr));
             }
 
@@ -242,11 +436,11 @@ public class PdmServiceImpl implements PdmService {
                 person.getIdentifiedPerson().getAsOtherIDs().add(otherId);
             }
 
-            for (PersonalData.Telecom telecom : personalData.getTelecoms()) {
+            for (Telecom telecom : personalData.getTelecoms()) {
                 person.getIdentifiedPerson().getTelecom().add(getHL7Telecom(telecom));
             }
 
-            for (PersonalData.Addr addr : personalData.getAddress()) {
+            for (Addr addr : personalData.getAddress()) {
                 person.getIdentifiedPerson().getAddr().add(getHL7Addr(addr));
             }
 
@@ -260,7 +454,7 @@ public class PdmServiceImpl implements PdmService {
         return res;
     }
 
-    private AD getHL7Addr(PersonalData.Addr addr) {
+    private AD getHL7Addr(Addr addr) {
         AD res = factory.createAD();
         AdxpExplicitCountry country = factory.createAdxpExplicitCountry();
         AdxpExplicitStreetAddressLine addrLine = factory.createAdxpExplicitStreetAddressLine();
@@ -354,7 +548,7 @@ public class PdmServiceImpl implements PdmService {
         return res;
     }
 
-    private TEL getHL7Telecom(PersonalData.Telecom telecom) {
+    private TEL getHL7Telecom(Telecom telecom) {
         TEL res = factory.createTEL();
         res.setValue(telecom.getValue());
         if (telecom.getUse() != null) {
@@ -364,28 +558,28 @@ public class PdmServiceImpl implements PdmService {
     }
 
     private II createII(Map.Entry<String, String> doc) {
-        return createII(doc.getValue(), PersonalData.decodeOID(doc.getKey()));
+        return createII(doc.getValue(), decodeOID(doc.getKey()));
     }
 
 
     private String save(PersonalData personalData) {
         boolean isAdded = false;
         for (Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
-            isAdded |= pdmDaoServiceLocator.getPdmDaoService().find(doc);
+            isAdded |= pdmDaoServiceLocator.getMongoPdmDaoService().find(doc);
         }
         if(isAdded) {
-            pdmDaoServiceLocator.getPdmDaoService().save(personalData);
+            pdmDaoServiceLocator.getMongoPdmDaoService().save(personalData);
         }
         return personalData.getId();
     }
 
 
     private PersonalData findById(String id) {
-        return pdmDaoServiceLocator.getPdmDaoService().findById(id);
+        return pdmDaoServiceLocator.getMongoPdmDaoService().findById(id);
     }
 
     private II createPdmII(String id) {
-        return createII(id, PersonalData.OID_PDM);
+        return createII(id, OID_PDM);
     }
 
     private II createII(String extension, String root) {
@@ -414,7 +608,7 @@ public class PdmServiceImpl implements PdmService {
     }
 
     private CE getHL7Gender(PersonalData personalData) {
-        PersonalData.Term gender = personalData.getGender();
+        Term gender = personalData.getGender();
         if (gender == null) {
             return null;
         }

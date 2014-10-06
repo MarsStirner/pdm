@@ -7,10 +7,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.testng.annotations.Test;
 
 import ru.korus.tmis.pdm.config.PdmSpringConfiguration;
-import ru.korus.tmis.pdm.service.PdmService;
+import ru.korus.tmis.pdm.service.impl.PdmServiceImpl;
 import ru.korus.tmis.pdm.ws.hl7.*;
-import ru.korus.tmis.pdm.ws.PDManagerImpl;
-import ru.korus.tmis.pdm.ws.PersonalData;
 
 import javax.xml.bind.JAXBElement;
 
@@ -98,8 +96,8 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
 
         /* Паспорт */
         person.getName().add(name);
-        newDocId.put(PersonalData.OID_DOC_PASSPORTNUMBER, UUID.randomUUID().toString());
-        newDocId.put(PersonalData.OID_DOC_PASSPORT_DATE, "1800.100000.1987");
+        newDocId.put(PdmServiceImpl.OID_DOC_PASSPORTNUMBER, UUID.randomUUID().toString());
+        newDocId.put(PdmServiceImpl.OID_DOC_PASSPORT_DATE, "1800.100000.1987");
         for(Map.Entry<String, String> id : newDocId.entrySet()) {
             final PRPAMT101301UV02OtherIDs otherId = new PRPAMT101301UV02OtherIDs();
             otherId.getId().add(new II());
@@ -128,6 +126,7 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
         String root = ii.getRoot();
         newId =  ii.getExtension();
         assertEquals(root, "3.0.0.0");
+        assertNotNull(ii.getExtension());
     }
 
     @Test
@@ -273,7 +272,7 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
         person.getAsOtherIDs().add(otherId);
         final PRPAMT101302UV02OtherIDsId id = factory.createPRPAMT101302UV02OtherIDsId();
         otherId.getId().add(id);
-        id.setRoot(PersonalData.OID_PDM);
+        id.setRoot(PdmServiceImpl.OID_PDM);
         id.setExtension(newId);
 
         final PRPAMT101302UV02PersonName pn = factory.createPRPAMT101302UV02PersonName();
@@ -306,14 +305,14 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
         person.getAsOtherIDs().add(passportOtherIDs);
         final PRPAMT101302UV02OtherIDsId passportId = factory.createPRPAMT101302UV02OtherIDsId();
         passportOtherIDs.getId().add(passportId);
-        passportId.setRoot(PersonalData.OID_DOC_PASSPORT_CREATER);
+        passportId.setRoot(PdmServiceImpl.OID_DOC_PASSPORT_CREATER);
         passportId.setExtension("1234578987654321");
 
         final PRPAMT101302UV02PersonAsOtherIDs snilsOtherIDs = factory.createPRPAMT101302UV02PersonAsOtherIDs();
         person.getAsOtherIDs().add(snilsOtherIDs);
         final PRPAMT101302UV02OtherIDsId snilsId = factory.createPRPAMT101302UV02OtherIDsId();
         passportOtherIDs.getId().add(snilsId);
-        snilsId.setRoot(PersonalData.OID_DOC_PASSPORT_DATE);
+        snilsId.setRoot(PdmServiceImpl.OID_DOC_PASSPORT_DATE);
         snilsId.setExtension("1313.1313.1980");
 
         final PRPAIN101315UV02 res = pdManager.update(prm);

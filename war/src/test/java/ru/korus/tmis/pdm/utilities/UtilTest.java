@@ -2,9 +2,6 @@ package ru.korus.tmis.pdm.utilities;
 
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
-import ru.korus.tmis.pdm.ws.PersonalData;
-
-import java.net.MalformedURLException;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;

@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.config.SpringMongoConfig;
 import ru.korus.tmis.pdm.service.PdmDaoService;
-import ru.korus.tmis.pdm.ws.PersonalData;
+import ru.korus.tmis.pdm.entities.PersonalData;
 
 import java.util.List;
 import java.util.Map;
@@ -19,12 +19,12 @@ import java.util.Map;
  * Description:  <br>
  */
 @Service
-public class MongoPdmDaoService implements PdmDaoService {
+public class MongoPdmDaoServiceImpl implements PdmDaoService {
 
     static private ApplicationContext ctx = null;
     static private MongoOperations mongoOperation = null;
 
-    public MongoPdmDaoService() {
+    public MongoPdmDaoServiceImpl() {
         if(ctx == null || mongoOperation == null) {
             init();
         }

@@ -1,6 +1,6 @@
 package ru.korus.tmis.pdm.service;
 
-import ru.korus.tmis.pdm.ws.PersonalData;
+import ru.korus.tmis.pdm.entities.PersonalData;
 
 import java.util.List;
 import java.util.Map;

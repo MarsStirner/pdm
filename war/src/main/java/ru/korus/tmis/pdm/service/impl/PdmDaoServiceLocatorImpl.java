@@ -17,14 +17,17 @@ import ru.korus.tmis.pdm.ws.PdmSysProperties;
 public class PdmDaoServiceLocatorImpl implements PdmDaoServiceLocator {
 
     @Autowired
-    @Qualifier("mongoPdmDaoService")
-    private PdmDaoService mongoOperations;
+    @Qualifier("mongoPdmDaoServiceImpl")
+    private PdmDaoService mongoPdmDaoService;
 
-    public PdmDaoService getPdmDaoService() {
+    @Autowired
+    @Qualifier("postgresPdmDaoServiceImpl")
+    private PdmDaoService postgresPdmDaoServiceImpl;
 
-        PdmDaoService res = mongoOperations;
+    public PdmDaoService getMongoPdmDaoService() {
+        PdmDaoService res = mongoPdmDaoService;
         if (PdmSysProperties.getPdmStorageType().equals(PdmSysProperties.Value.STORAGE_TYPE_POSTGRESQL)) {
-            //res = mongoOperations;
+          //  res = postgresPdmDaoServiceImpl;
         }
         return res;
     }
