@@ -24,10 +24,10 @@ public class PdmDaoServiceLocatorImpl implements PdmDaoServiceLocator {
     @Qualifier("postgresPdmDaoServiceImpl")
     private PdmDaoService postgresPdmDaoServiceImpl;
 
-    public PdmDaoService getMongoPdmDaoService() {
+    public PdmDaoService getPdmDaoService() {
         PdmDaoService res = mongoPdmDaoService;
         if (PdmSysProperties.getPdmStorageType().equals(PdmSysProperties.Value.STORAGE_TYPE_POSTGRESQL)) {
-          //  res = postgresPdmDaoServiceImpl;
+            res = postgresPdmDaoServiceImpl;
         }
         return res;
     }

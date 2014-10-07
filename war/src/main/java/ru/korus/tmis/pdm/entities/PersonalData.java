@@ -1,11 +1,11 @@
 package ru.korus.tmis.pdm.entities;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import ru.korus.tmis.pdm.service.impl.PdmServiceImpl;
-import ru.korus.tmis.pdm.ws.hl7.*;
 
-import javax.xml.bind.JAXBElement;
+import org.hibernate.annotations.*;
+
+import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,14 +21,19 @@ import java.util.Vector;
 /**
  *
  */
-@Document(collection = "users")
+//@Document(collection = "users")
+@Entity
 public class PersonalData {
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     /**
      * Уникальный идентификатор субъекта ПДн в ЗХПД
      */
-    @Id
-    private String id;
+    private String privateKey;
 
     /**
      * Имя
@@ -48,6 +53,7 @@ public class PersonalData {
     /**
      * Пол
      */
+    @ManyToOne(cascade = {CascadeType.ALL})
     private Term gender;
 
     /**
@@ -63,13 +69,15 @@ public class PersonalData {
      * Документ, удостоверяющий временную нетрудоспособность;
      * Документ об образовании
      */
-    //TODO fix: javax.xml.ws.soap.SOAPFaultException: Map key 3.0.0.2 contains dots but no replacement was configured!
+    //TODO fix: javax.xml.ws.soap.SOAPFaultException: Map privateKey 3.0.0.2 contains dots but no replacement was configured!
+    @ElementCollection
     private Map<String, String> docs = new HashMap<String, String>();
 
     /**
      * Контактные телефоны и электронные адреса
      */
-    private Vector<Telecom> telecoms = new Vector<Telecom>();
+    @OneToMany(cascade = {CascadeType.ALL})
+    private List<Telecom> telecoms = new Vector<Telecom>();
 
     /**
      * Домашний/рабочий и др. адреса.
@@ -77,20 +85,29 @@ public class PersonalData {
      * "H" - home address; "HP" - primary home; "HV" - vacation home,
      * "WP" - work place, "DIR" - direct, "PUB" - public, "BAD" - bad address, "TMP"
      */
-    private Vector<Addr> address = new Vector<Addr>();
+    @OneToMany(cascade = {CascadeType.ALL})
+    private List<Addr> address = new Vector<Addr>();
 
     /**
      * Место рождения
      */
+    @ManyToOne(cascade = {CascadeType.ALL})
     private Addr birthPlace;
 
-
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
     }
 
     public String getGiven() {
@@ -117,14 +134,14 @@ public class PersonalData {
         return docs;
     }
 
-    public Vector<Telecom> getTelecoms() {
+    public List<Telecom> getTelecoms() {
         if(telecoms == null) {
             telecoms = new Vector<Telecom>();
         }
         return telecoms;
     }
 
-    public Vector<Addr> getAddress() {
+    public List<Addr> getAddress() {
         if(address == null) {
             address = new Vector<Addr>();
         }

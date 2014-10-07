@@ -1,6 +1,8 @@
 package ru.korus.tmis.pdm.service.impl.postgre;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.korus.tmis.pdm.repositories.PersonDataRepository;
 import ru.korus.tmis.pdm.service.PdmDaoService;
 import ru.korus.tmis.pdm.entities.PersonalData;
 
@@ -16,9 +18,12 @@ import java.util.Map;
 @Service
 public class PostgresPdmDaoServiceImpl implements PdmDaoService {
 
+    @Autowired
+    PersonDataRepository personDataRepository;
+
     @Override
     public void save(PersonalData personalData) {
-
+        personDataRepository.save(personalData);
     }
 
     @Override

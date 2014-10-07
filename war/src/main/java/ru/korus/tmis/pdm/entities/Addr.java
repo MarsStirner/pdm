@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import ru.korus.tmis.pdm.ws.hl7.*;
 
+import javax.persistence.*;
 import javax.xml.bind.JAXBElement;
 import java.io.Serializable;
 
@@ -13,7 +14,13 @@ import java.io.Serializable;
 * Company:     Korus Consulting IT<br>
 * Description:  <br>
 */
+@Entity
 public class Addr extends Use {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    protected Long id;
+
     private String country;
     private String streetAddressLine;
     private String direction;

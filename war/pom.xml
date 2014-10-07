@@ -4,7 +4,8 @@
     <packaging>war</packaging>
     <version>0.0.0</version>
     <properties>
-        <spring.version>3.2.5.RELEASE</spring.version>
+        <spring.version>4.1.1.RELEASE</spring.version>
+        <hibernate.version>4.3.6.Final</hibernate.version>
     </properties>
     <name>PDManager WebApp</name>
     <parent>
@@ -116,6 +117,31 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Spring Data JPA -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>1.7.0.RELEASE</version>
+        </dependency>
+
+        <!-- hibernate orm-->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.common</groupId>
+            <artifactId>hibernate-commons-annotations</artifactId>
+            <version>4.0.5.Final</version>
+        </dependency>
 
         <!-- mongodb java driver -->
         <dependency>
@@ -128,7 +154,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
-            <version>1.2.0.RELEASE</version>
+            <version>1.5.4.RELEASE</version>
         </dependency>
 
         <!-- Json parser -->
@@ -151,6 +177,14 @@
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
         </dependency>
+
+        <!-- MySql -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.33</version>
+        </dependency>
+
 
         <!--
                 <dependency>

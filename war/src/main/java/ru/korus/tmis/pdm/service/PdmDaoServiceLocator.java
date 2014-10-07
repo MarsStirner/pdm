@@ -7,5 +7,5 @@ package ru.korus.tmis.pdm.service;
  * Description:  <br>
  */
 public interface PdmDaoServiceLocator {
-    PdmDaoService getMongoPdmDaoService();
+    PdmDaoService getPdmDaoService();
 }

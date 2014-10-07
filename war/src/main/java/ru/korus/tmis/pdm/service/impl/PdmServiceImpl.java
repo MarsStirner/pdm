@@ -52,7 +52,7 @@ public class PdmServiceImpl implements PdmService {
      */
     static public PersonalData newInstance(PRPAIN101311UV02 prm) {
         PersonalData res = new PersonalData();
-        res.setId(null);
+        res.setPrivateKey(null);
         PRPAMT101301UV02Person identifiedPerson = prm.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson();
         List<PNExplicit> names = identifiedPerson.getName();
         if (!names.isEmpty()) {
@@ -292,16 +292,16 @@ public class PdmServiceImpl implements PdmService {
     }
 
     private List<PersonalData> findPersonLike(PersonalData person) {
-        return pdmDaoServiceLocator.getMongoPdmDaoService().findPersonLike(person);
+        return pdmDaoServiceLocator.getPdmDaoService().findPersonLike(person);
     }
 
     private void savePerson(PersonalData personalDataNew) {
-        pdmDaoServiceLocator.getMongoPdmDaoService().save(personalDataNew);
+        pdmDaoServiceLocator.getPdmDaoService().save(personalDataNew);
     }
 
 
     private List<PersonalData> findPerson(PersonalData person) {
-        return pdmDaoServiceLocator.getMongoPdmDaoService().find(person);
+        return pdmDaoServiceLocator.getPdmDaoService().find(person);
     }
 
 
@@ -357,7 +357,7 @@ public class PdmServiceImpl implements PdmService {
         PRPAIN101306UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101306UV02MFMIMT700711UV01ControlActProcess();
         res.setControlActProcess(controlActProcess);
         for (PersonalData personalData : personalDataList) {
-            logger.info("Creating the response PRPAIN101306UV02. Current person id: {}", personalData.getId());
+            logger.info("Creating the response PRPAIN101306UV02. Current person id: {}", personalData.getPrivateKey());
             PRPAIN101306UV02MFMIMT700711UV01Subject1 subject = factory.createPRPAIN101306UV02MFMIMT700711UV01Subject1();
             controlActProcess.getSubject().add(subject);
             PRPAIN101306UV02MFMIMT700711UV01RegistrationEvent event = factory.createPRPAIN101306UV02MFMIMT700711UV01RegistrationEvent();
@@ -366,7 +366,7 @@ public class PdmServiceImpl implements PdmService {
             event.setSubject1(subject2);
             final PRPAMT101310UV02IdentifiedPerson person = factory.createPRPAMT101310UV02IdentifiedPerson();
             subject2.setIdentifiedPerson(person);
-            II ii = createPdmII(personalData.getId());
+            II ii = createPdmII(personalData.getPrivateKey());
             person.getId().add(ii);
             person.setStatusCode(factory.createCS());
             person.getStatusCode().setCode("active");
@@ -412,7 +412,7 @@ public class PdmServiceImpl implements PdmService {
         final PRPAIN101308UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101308UV02MFMIMT700711UV01ControlActProcess();
         res.setControlActProcess(controlActProcess);
         for (PersonalData personalData : personalDataList) {
-            logger.info("Creating the response PRPAIN101308UV02. Current person id: {}", personalData.getId());
+            logger.info("Creating the response PRPAIN101308UV02. Current person id: {}", personalData.getPrivateKey());
             final PRPAIN101308UV02MFMIMT700711UV01Subject1 subject1 = factory.createPRPAIN101308UV02MFMIMT700711UV01Subject1();
             controlActProcess.getSubject().add(subject1);
             final PRPAIN101308UV02MFMIMT700711UV01RegistrationEvent registrationEvent = factory.createPRPAIN101308UV02MFMIMT700711UV01RegistrationEvent();
@@ -421,7 +421,7 @@ public class PdmServiceImpl implements PdmService {
             registrationEvent.setSubject1(subject2);
             final PRPAMT101303UV02IdentifiedPerson person = factory.createPRPAMT101303UV02IdentifiedPerson();
             subject2.setIdentifiedPerson(person);
-            II ii = createPdmII(personalData.getId());
+            II ii = createPdmII(personalData.getPrivateKey());
             person.getId().add(ii);
             person.setStatusCode(factory.createCS());
             person.getStatusCode().setCode("active");
@@ -565,17 +565,17 @@ public class PdmServiceImpl implements PdmService {
     private String save(PersonalData personalData) {
         boolean isAdded = false;
         for (Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
-            isAdded |= pdmDaoServiceLocator.getMongoPdmDaoService().find(doc);
+            isAdded |= pdmDaoServiceLocator.getPdmDaoService().find(doc);
         }
-        if(isAdded) {
-            pdmDaoServiceLocator.getMongoPdmDaoService().save(personalData);
+        if(!isAdded) {
+            pdmDaoServiceLocator.getPdmDaoService().save(personalData);
         }
-        return personalData.getId();
+        return personalData.getPrivateKey();
     }
 
 
     private PersonalData findById(String id) {
-        return pdmDaoServiceLocator.getMongoPdmDaoService().findById(id);
+        return pdmDaoServiceLocator.getPdmDaoService().findById(id);
     }
 
     private II createPdmII(String id) {
