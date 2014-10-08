@@ -90,7 +90,9 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
         properties.put("hibernate.dialect", PROPERTY_NAME_HIBERNATE_DIALECT);
         properties.put("hibernate.show_sql", true);
         properties.put("hibernate.globally_quoted_identifiers", "true");
-        properties.put("hibernate.connection.characterEncoding", "utf-8");
+        properties.put("hibernate.connection.useUnicode", "true");
+        properties.put("hibernate.connection.characterEncoding", "UTF-8");
+        properties.put("hibernate.connection.charSet", "UTF-8");
 
         return properties;
     }
