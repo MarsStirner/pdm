@@ -86,7 +86,7 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
     private Properties hibProperties() {
         Properties properties = new Properties();
 
-        properties.put("hibernate.hbm2ddl.auto", "create");
+        properties.put("hibernate.hbm2ddl.auto", "update");
         properties.put("hibernate.dialect", PROPERTY_NAME_HIBERNATE_DIALECT);
         properties.put("hibernate.show_sql", true);
         properties.put("hibernate.globally_quoted_identifiers", "true");
