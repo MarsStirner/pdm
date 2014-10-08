@@ -51,7 +51,7 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
 
     /*** Spring Data JPA config **************************************************************************************/
     private static final String PROPERTY_NAME_DATABASE_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String PROPERTY_NAME_DATABASE_URL = "jdbc:mysql://localhost:3306/pdm";
+    private static final String PROPERTY_NAME_DATABASE_URL = "jdbc:mysql://localhost:3306/pdm?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
     private static final String PROPERTY_NAME_DATABASE_USERNAME = "root";
     private static final String PROPERTY_NAME_DATABASE_PASSWORD = "root";
 
