@@ -50,12 +50,13 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public PersonalData findById(String id) {
-        PersonalData person = mongoOperation.findById(id, PersonalData.class);
+    public PersonalData findById(byte[] privateKey) {
+        throw new RuntimeException("TODO!!");
+        /*PersonalData person = mongoOperation.findById(id, PersonalData.class);
         if( person == null ) {
             throw new RuntimeException("The person with id'" + id + "' not found");
         }
-        return person;
+        return person;*/
     }
 
     @Override

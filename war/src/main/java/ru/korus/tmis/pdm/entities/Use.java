@@ -1,9 +1,8 @@
 package ru.korus.tmis.pdm.entities;
 
-import javax.persistence.Embeddable;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import ru.korus.tmis.pdm.entities.enums.UseType;
+
+import javax.persistence.*;
 
 /**
 * Author:      Sergey A. Zagrebelny <br>
@@ -11,9 +10,10 @@ import javax.persistence.Id;
 * Company:     Korus Consulting IT<br>
 * Description:  <br>
 */
-@Embeddable
+@MappedSuperclass
 public class Use {
 
+    @Enumerated(value = EnumType.STRING)
     private UseType use;
 
     public void setUse(UseType use) {
@@ -25,6 +25,6 @@ public class Use {
     }
 
     public String getUse() {
-        return use.name();
+        return use== null ? null : use.name();
     }
 }

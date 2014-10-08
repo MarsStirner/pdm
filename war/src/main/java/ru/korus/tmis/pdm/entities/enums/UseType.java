@@ -1,4 +1,4 @@
-package ru.korus.tmis.pdm.entities;
+package ru.korus.tmis.pdm.entities.enums;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>

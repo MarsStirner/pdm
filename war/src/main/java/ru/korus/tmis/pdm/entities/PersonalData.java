@@ -26,6 +26,7 @@ import java.util.Vector;
 public class PersonalData {
 
 
+    public static final int PRIVATE_KEY_SIZE = 256;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -33,7 +34,8 @@ public class PersonalData {
     /**
      * Уникальный идентификатор субъекта ПДн в ЗХПД
      */
-    private String privateKey;
+    @Column(length = PRIVATE_KEY_SIZE)
+    private byte[] privateKey;
 
     /**
      * Имя
@@ -70,13 +72,13 @@ public class PersonalData {
      * Документ об образовании
      */
     //TODO fix: javax.xml.ws.soap.SOAPFaultException: Map privateKey 3.0.0.2 contains dots but no replacement was configured!
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private Map<String, String> docs = new HashMap<String, String>();
 
     /**
      * Контактные телефоны и электронные адреса
      */
-    @OneToMany(cascade = {CascadeType.ALL})
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<Telecom> telecoms = new Vector<Telecom>();
 
     /**
@@ -85,7 +87,7 @@ public class PersonalData {
      * "H" - home address; "HP" - primary home; "HV" - vacation home,
      * "WP" - work place, "DIR" - direct, "PUB" - public, "BAD" - bad address, "TMP"
      */
-    @OneToMany(cascade = {CascadeType.ALL})
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private List<Addr> address = new Vector<Addr>();
 
     /**
@@ -102,11 +104,11 @@ public class PersonalData {
         this.id = id;
     }
 
-    public String getPrivateKey() {
+    public byte[] getPrivateKey() {
         return privateKey;
     }
 
-    public void setPrivateKey(String privateKey) {
+    public void setPrivateKey(byte[] privateKey) {
         this.privateKey = privateKey;
     }
 

@@ -10,4 +10,6 @@ import ru.korus.tmis.pdm.entities.PersonalData;
  * Description:  <br>
  */
 public interface PersonDataRepository extends PagingAndSortingRepository<PersonalData, String> {
+
+    PersonalData findByPrivateKey(byte[] privateKey);
 }

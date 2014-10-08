@@ -15,7 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class ListAlg {
     
     static String IV = "AAAAAAAAAAAAAAAA";
-  static String plaintext = "testtext12345678"; /*Note null padding*/
+  static String plaintext = "testtext12345678dfdfdf"; /*Note null padding*/
   static String encryptionKey = "0123456789abcdef";
   public static void main(String [] args) {
     try {

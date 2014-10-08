@@ -133,6 +133,16 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
     public void findById() {
         ObjectFactory factory = new ObjectFactory();
         PRPAIN101307UV02 prm = factory.createPRPAIN101307UV02();
+
+        /* Идентификатор отправителя */
+        final MCCIMT000100UV01Sender sender = factory.createMCCIMT000100UV01Sender();
+        final MCCIMT000100UV01Device device = factory.createMCCIMT000100UV01Device();
+        final II senderId = factory.createII();
+        senderId.setRoot(SENDER_ID);
+        device.getId().add(senderId);
+        sender.setDevice(device);
+        prm.setSender(sender);
+
         final PRPAIN101307UV02QUQIMT021001UV01ControlActProcess controlActProcess = factory.createPRPAIN101307UV02QUQIMT021001UV01ControlActProcess();
         prm.setControlActProcess(controlActProcess);
         final PRPAMT101307UV02QueryByParameter query = factory.createPRPAMT101307UV02QueryByParameter();
@@ -256,6 +266,16 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
     public void update() {
         ObjectFactory factory = new ObjectFactory();
         final PRPAIN101314UV02 prm = factory.createPRPAIN101314UV02();
+
+          /* Идентификатор отправителя */
+        final MCCIMT000100UV01Sender sender = factory.createMCCIMT000100UV01Sender();
+        final MCCIMT000100UV01Device device = factory.createMCCIMT000100UV01Device();
+        final II senderId = factory.createII();
+        senderId.setRoot(SENDER_ID);
+        device.getId().add(senderId);
+        sender.setDevice(device);
+        prm.setSender(sender);
+
         final PRPAIN101314UV02MFMIMT700721UV01ControlActProcess controlActProcess = factory.createPRPAIN101314UV02MFMIMT700721UV01ControlActProcess();
         prm.setControlActProcess(controlActProcess);
         final PRPAIN101314UV02MFMIMT700721UV01Subject1 subject1 = factory.createPRPAIN101314UV02MFMIMT700721UV01Subject1();

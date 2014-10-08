@@ -1,5 +1,6 @@
 package ru.korus.tmis.pdm.service.impl;
 
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,15 @@ import ru.korus.tmis.pdm.service.PdmDaoServiceLocator;
 import ru.korus.tmis.pdm.service.PdmService;
 import ru.korus.tmis.pdm.ws.hl7.*;
 
+import javax.crypto.*;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.JAXBElement;
 import java.io.Serializable;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -41,6 +49,7 @@ public class PdmServiceImpl implements PdmService {
     public static final String OID_DOC_INSURANCE_COMPANY = "3.0.0.12";
     public static final String OID_DEFAULT_GENDER_CODE_SYSTEM = "2.16.840.1.113883.5.1";
     private static final Logger logger = LoggerFactory.getLogger(PDManager.class);
+    public static final String CRYPT_TYPE = "AES";
 
     @Autowired
     private PdmDaoServiceLocator pdmDaoServiceLocator;
@@ -228,10 +237,73 @@ public class PdmServiceImpl implements PdmService {
         logger.info("Adding a new person. Parsing input parameters...");
         final PersonalData personalData = newInstance(parameters);
         logger.info("Adding a new person. Save to storage...");
-        final String id = save(personalData);
+        String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
+        final String id = toPublicKey(save(personalData), senderId);
         logger.info("Adding a new person. Prepare and sending the response...");
         return getPRPAIN101312UV02(id);
 
+    }
+
+    private String toPublicKey(byte[] privateKey, String senderId) {
+        String pass = getPass(senderId);
+        try {
+            byte[] key = getKey256Bit(pass);
+            Key aesKey = new SecretKeySpec(key, CRYPT_TYPE);
+            Cipher cipher = Cipher.getInstance(CRYPT_TYPE);
+            cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+            byte[] encrypted = cipher.doFinal(privateKey);
+            return Base64.encode(encrypted);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String getPass(String senderId) {
+        //TODO
+        return senderId;
+    }
+
+    private byte[] toPrivateKey(String publicKey, String senderId) {
+        String pass = getPass(senderId);
+        try {
+            byte[] key = getKey256Bit(pass);
+            Key aesKey = new SecretKeySpec(key, CRYPT_TYPE);
+            byte[] text = Base64.decode(publicKey);
+            Cipher cipher = Cipher.getInstance(CRYPT_TYPE);
+            cipher.init(Cipher.DECRYPT_MODE, aesKey);
+            return cipher.doFinal(text);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private byte[] getKey256Bit(String pass) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        PBEKeySpec spec = new PBEKeySpec(pass.toCharArray(),"salt".getBytes(), 1, 256);
+        SecretKey secretKey = factory.generateSecret(spec);
+        return secretKey.getEncoded();
     }
 
     @Override
@@ -241,7 +313,8 @@ public class PdmServiceImpl implements PdmService {
         logger.info("Find by demographics info. Find in storage...");
         final List<PersonalData> personalDataList = findPerson(person);
         logger.info("Find by demographics info. Prepare and sending the response...");
-        return getPRPAIN101306UV02(personalDataList);
+        String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
+        return getPRPAIN101306UV02(personalDataList, senderId);
     }
 
     @Override
@@ -253,12 +326,15 @@ public class PdmServiceImpl implements PdmService {
         logger.info("Get demographics info by id. Count of inputsIDs : ", identifiedPersons == null ? "not set" : ("" + identifiedPersons.size()));
         List<PersonalData> personalDataList = new Vector<PersonalData>(identifiedPersons.size());
         for (PRPAMT101307UV02IdentifiedPersonIdentifier curPerson : identifiedPersons) {
-            final String id = curPerson.getValue().get(0).getRoot();
-            logger.info("Get demographics info by id. Find demographics info for id = " + id);
-            personalDataList.add(findById(id));
+            String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
+            String publicKey = curPerson.getValue().get(0).getRoot();
+            final byte[] privateKey = toPrivateKey(publicKey, senderId);
+            logger.info("Get demographics info by id. Find demographics info for id = " + publicKey);
+            personalDataList.add(findById(privateKey));
         }
         logger.info("Get demographics info by id. Prepare and sending the response...");
-        return getPRPAIN101308UV02(personalDataList);
+        String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
+        return getPRPAIN101308UV02(personalDataList, senderId);
 
     }
 
@@ -270,7 +346,10 @@ public class PdmServiceImpl implements PdmService {
             for (II ii : cur.getId()) {
                 logger.error("Update demographics info by id. Check document root: ", ii.getRoot());
                 if (OID_PDM.equals(ii.getRoot())) {
-                    final PersonalData personalData = findById(ii.getExtension());
+                    String publicKey = ii.getExtension();
+                    String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
+                    final byte[] privateKey = toPrivateKey(publicKey, senderId);
+                    final PersonalData personalData = findById(privateKey);
                     final PersonalData personalDataNew = update(personalData, parameters);
                     savePerson(personalDataNew);
                     return getPRPAIN101315UV02(ii.getExtension());
@@ -288,7 +367,8 @@ public class PdmServiceImpl implements PdmService {
         logger.info("Find Like. Find like in storage...");
         final List<PersonalData> personalDataList = findPersonLike(person);
         logger.info("Find Like. Prepare and sending the response...");
-        return getPRPAIN101306UV02(personalDataList);
+        String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
+        return getPRPAIN101306UV02(personalDataList, senderId);
     }
 
     private List<PersonalData> findPersonLike(PersonalData person) {
@@ -351,7 +431,7 @@ public class PdmServiceImpl implements PdmService {
         return res;
     }
 
-    private PRPAIN101306UV02 getPRPAIN101306UV02(List<PersonalData> personalDataList) {
+    private PRPAIN101306UV02 getPRPAIN101306UV02(List<PersonalData> personalDataList, String senderId) {
         logger.info("Creating the response PRPAIN101306UV02. The count of persons: {}", personalDataList == null ? "not set" : personalDataList.size());
         PRPAIN101306UV02 res = factory.createPRPAIN101306UV02();
         PRPAIN101306UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101306UV02MFMIMT700711UV01ControlActProcess();
@@ -366,7 +446,7 @@ public class PdmServiceImpl implements PdmService {
             event.setSubject1(subject2);
             final PRPAMT101310UV02IdentifiedPerson person = factory.createPRPAMT101310UV02IdentifiedPerson();
             subject2.setIdentifiedPerson(person);
-            II ii = createPdmII(personalData.getPrivateKey());
+            II ii = createPdmII(toPublicKey(personalData.getPrivateKey(), senderId));
             person.getId().add(ii);
             person.setStatusCode(factory.createCS());
             person.getStatusCode().setCode("active");
@@ -406,7 +486,7 @@ public class PdmServiceImpl implements PdmService {
      * @param personalDataList - входные персональные данные
      * @return - сообшение HL7 PRPA_IN101308UV02, содержащее входные персональные данные
      */
-    private PRPAIN101308UV02 getPRPAIN101308UV02(List<PersonalData> personalDataList) {
+    private PRPAIN101308UV02 getPRPAIN101308UV02(List<PersonalData> personalDataList, String senderId) {
         logger.info("Creating the response PRPAIN101308UV02. The count of persons: {}", personalDataList == null ? "not set" : personalDataList.size());
         PRPAIN101308UV02 res = factory.createPRPAIN101308UV02();
         final PRPAIN101308UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101308UV02MFMIMT700711UV01ControlActProcess();
@@ -421,7 +501,7 @@ public class PdmServiceImpl implements PdmService {
             registrationEvent.setSubject1(subject2);
             final PRPAMT101303UV02IdentifiedPerson person = factory.createPRPAMT101303UV02IdentifiedPerson();
             subject2.setIdentifiedPerson(person);
-            II ii = createPdmII(personalData.getPrivateKey());
+            II ii = createPdmII(toPublicKey(personalData.getPrivateKey(), senderId));
             person.getId().add(ii);
             person.setStatusCode(factory.createCS());
             person.getStatusCode().setCode("active");
@@ -562,7 +642,7 @@ public class PdmServiceImpl implements PdmService {
     }
 
 
-    private String save(PersonalData personalData) {
+    private byte[] save(PersonalData personalData) {
         boolean isAdded = false;
         for (Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
             isAdded |= pdmDaoServiceLocator.getPdmDaoService().find(doc);
@@ -574,7 +654,7 @@ public class PdmServiceImpl implements PdmService {
     }
 
 
-    private PersonalData findById(String id) {
+    private PersonalData findById(byte[] id) {
         return pdmDaoServiceLocator.getPdmDaoService().findById(id);
     }
 

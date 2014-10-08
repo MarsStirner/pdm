@@ -18,7 +18,7 @@ public interface PdmDaoService {
 
     boolean find(Map.Entry<String, String> doc);
 
-    PersonalData findById(String id);
+    PersonalData findById(byte[] privateKey);
 
     List<PersonalData> find(PersonalData person);
 
