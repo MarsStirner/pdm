@@ -34,13 +34,12 @@ public class ConfigController implements Serializable {
         model.put("state", ViewState.MAIN);
         Info info = configService.getInfo();
         model.put("info", info);
-        model.put("infoAdmin", info);
         return MAIN_JSP;
     }
 
     @RequestMapping(value = "user/update", method = RequestMethod.POST )
-    public String updateAdminInfo(@ModelAttribute Info infoAdmin, Map<String, Object> model, HttpServletRequest request) {
-        configService.updateAdminInfo(infoAdmin);
+    public String updateAdminInfo(@ModelAttribute Info info, Map<String, Object> model, HttpServletRequest request) {
+        configService.updateAdminInfo(info);
         return ViewState.MAIN.redirect();
     }
 }

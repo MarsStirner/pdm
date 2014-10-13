@@ -52,7 +52,7 @@
                         <h4 class="modal-title" id="loginUpdateLabel">Редактирование учетной записи администратора</h4>
                     </div>
                     <div class="modal-body">
-                        <form:form method="POST" action="config/user/update" modelAttribute="infoAdmin" role="form" cssClass="form-horizontal">
+                        <form:form method="POST" action="config/user/update" modelAttribute="info" role="form" cssClass="form-horizontal">
                             <div class="form-group">
                                 <form:label path="curPassword">Текущий пароль:</form:label>
                                 <form:input path="curPassword" cssClass="form-control"/>
@@ -60,7 +60,7 @@
                         </form:form>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-default" data-dismiss="modal" onClick="$('#infoAdmin').submit();">Сохранить</button>
+                        <button type="submit" class="btn btn-default" data-dismiss="modal" onClick="$('#info').submit();">Сохранить</button>
                         <button type="reset" class="btn btn-default" data-dismiss="modal">
                             Отмена
                         </button>
