@@ -9,8 +9,9 @@ package ru.korus.tmis.pdm.controller;
 public enum ViewState {
 
     ROOT("/", ""),
+    MAIN("/config", "Настройки"),
     AUTH("/auth", "Авторизация"),
-    CREATE("/main", "Новая запись"),
+    CREATE("/create", "Новая запись"),
     FIND("/find", "Поиск и редактирование");
 
     private final String path;

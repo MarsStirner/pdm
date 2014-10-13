@@ -1,83 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<config>
-    <givenCode>name</givenCode>
-    <middleNameCode>3name</middleNameCode>
-    <familyCode>surname</familyCode>
-    <genderCode>sex</genderCode>
-    <birthDataCode>datebirth</birthDataCode>
-    <placeDataCode>placebirth</placeDataCode>
-    <docsMap>
-        <entry>
-            <key>3.0.0.11</key>
-            <value>periodupto</value>
-        </entry>
-        <entry>
-            <key>3.0.0.2</key>
-            <value>dateofissue</value>
-        </entry>
-        <entry>
-            <key>3.0.0.10</key>
-            <value>periodfrom</value>
-        </entry>
-        <entry>
-            <key>3.0.0.1</key>
-            <value>passportnumber</value>
-        </entry>
-        <entry>
-            <key>3.0.0.4</key>
-            <value>actbirth</value>
-        </entry>
-        <entry>
-            <key>3.0.0.3</key>
-            <value>placeissue</value>
-        </entry>
-        <entry>
-            <key>3.0.0.6</key>
-            <value>inn</value>
-        </>
-        <entry>
-            <key>3.0.0.5</key>
-            <value>datecertificate</value>
-        </entry>
-        <entry>
-            <key>3.0.0.9</key>
-            <value>seriespolicy</value>
-        </entry>
-        <entry>
-            <key>3.0.0.12</key>
-            <value>insurancecompany</value>
-        </entry>
-        <entry>
-            <key>3.0.0.7</key>
-            <value>snils</value>
-        </entry>
-        <entry>
-            <key>3.0.0.8</key>
-            <value>policynumber</value>
-        </entry>
-    </docsMap>
-    <telecomMap>
-        <entry>
-            <key>MC</key>
-            <value>mobilephone</value>
-        </entry>
-        <entry>
-            <key>WP</key>
-            <value>workphone</value>
-        </entry>
-        <entry>
-            <key>HP</key>
-            <value>homephone</value>
-        </entry>
-    </telecomMap>
-    <addrMap>
-        <entry>
-            <key>H</key>
-            <value>realaddress</value>
-        </entry>
-        <entry>
-            <key>HP</key>
-            <value>regaddress</value>
-        </entry>
-    </addrMap>
-</config>
+<pdmConfig>
+    <admin login="a" password="KP4iVWGokjg="/>
+    <systems>
+        <system name="TMIS" oid="4.0.0.1" passwordKey="KP4iVWGokjg="/>
+        <system name="TRFU" oid="4.0.0.2" passwordKey="KP4iVWGokjg="/>
+    </systems>
+    <docs>
+        <doc name="passport" description="ПАСПОРТ РФ">
+            <attribute name="passportNumber" oid="3.0.0.1" description="Номер паспорта"/>
+            <attribute name="begDate" oid="3.0.0.2" description="Дата выдачи"/>
+        </doc>
+        <doc name="inn" description="ИНН">
+            <attribute name="innNumber" oid="3.0.0.6" description="Номер ИНН"/>
+        </doc>
+    </docs>
+    <files>
+        <file name="scan" oid="3.1.0.1" description="Скан документа"/>
+    </files>
+</pdmConfig>

@@ -9,43 +9,35 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="ВТР">
-    <meta http-equiv="X-UA-Compatible" content="IE=9" />
-    <link href="resources/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet">
-    <script type="text/javascript" src="resources/jquery/jquery-1.8.2.min.js"></script>
-    <script type="text/javascript" src="resources/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+
+    <link rel="stylesheet" href="resources/css/style.min.css" />
 
     <title>ЗХПД</title>
     <meta name="description" content="Защищенное хранилище персональных данных">
 </head>
 <body>
-<nav class="navbar navbar-default" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="${pageContext.request.contextPath}" title="На главную станицу">ЗХПД</a>
-        </div>
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li>
-                    <a href="${pageContext.request.contextPath}/new" title="Новая запись">Создать</a>
-                </li>
-                <li>
-                    <a href="${pageContext.request.contextPath}/find" title="Все настройки (из табл. tmis_core.setting)">Редактировать</a>
-                </li>
-            </ul>
-        </div>
+<header>
+    <nav>
+        <ul class="pdm-navlist">
+            <li><a href="#">Настройки</a></li>
+            <li><a href="#">Подсистемы</a></li>
+            <li><a href="#">Документы</a></li>
+            <li><a href="#">Файлы</a></li>
+            <li><a href="#">ЗХПД</a></li>
+        </ul>
+    </nav>
+    <div class="pdm-title">
+        <h2 class="${state.isShowTitle() ? "" : "hide"}">
+            ${state.getTitle()}
+        </h2>
     </div>
-</nav>
-<div class="container">
-    <div class="row">
+</header>
+<div class="pdm-main">
         <jsp:include page="pdm${state.getJspPath()}.jsp"/>
-    </div>
 </div>
+
+<jsp:include page="import_js.jsp"/>
 
 </body>
 </html>

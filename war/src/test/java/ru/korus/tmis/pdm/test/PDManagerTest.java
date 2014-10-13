@@ -127,6 +127,7 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
         newId =  ii.getExtension();
         assertEquals(root, "3.0.0.0");
         assertNotNull(ii.getExtension());
+        System.out.println("New public key: " + ii.getExtension());
     }
 
     @Test

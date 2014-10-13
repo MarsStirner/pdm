@@ -50,12 +50,19 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
 
 
     /*** Spring Data JPA config **************************************************************************************/
-    private static final String PROPERTY_NAME_DATABASE_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String PROPERTY_NAME_DATABASE_URL = "jdbc:mysql://localhost:3306/pdm?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
+    private static final String PROPERTY_NAME_DATABASE_DRIVER_MYSQL = "com.mysql.jdbc.Driver";
+    private static final String PROPERTY_NAME_DATABASE_URL_MYSQL = "jdbc:mysql://localhost:3306/pdm?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
+
+    private static final String PROPERTY_NAME_DATABASE_DRIVER_POSTGRESQL = "org.postgresql.Driver\n";
+    private static final String PROPERTY_NAME_DATABASE_URL_POSTGRESQL = "jdbc:postgresql://localhost:5432/pdm";
+
     private static final String PROPERTY_NAME_DATABASE_USERNAME = "root";
     private static final String PROPERTY_NAME_DATABASE_PASSWORD = "root";
 
-    private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "org.hibernate.dialect.MySQL5InnoDBDialect";
+    private static final String PROPERTY_NAME_HIBERNATE_DIALECT_MYSQL = "org.hibernate.dialect.MySQL5InnoDBDialect";
+
+    private static final String PROPERTY_NAME_HIBERNATE_DIALECT_POSTGRESQL = "org.hibernate.dialect.PostgreSQLDialect";
+
     private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "true";
     private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "ru.korus.tmis.pdm.entities";
 
@@ -63,8 +70,9 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
-        dataSource.setDriverClassName(PROPERTY_NAME_DATABASE_DRIVER);
-        dataSource.setUrl(PROPERTY_NAME_DATABASE_URL);
+        dataSource.setDriverClassName(PROPERTY_NAME_DATABASE_DRIVER_POSTGRESQL);
+        dataSource.setUrl(PROPERTY_NAME_DATABASE_URL_POSTGRESQL);
+
         dataSource.setUsername(PROPERTY_NAME_DATABASE_USERNAME);
         dataSource.setPassword(PROPERTY_NAME_DATABASE_PASSWORD);
 
@@ -87,7 +95,7 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
         Properties properties = new Properties();
 
         properties.put("hibernate.hbm2ddl.auto", "update");
-        properties.put("hibernate.dialect", PROPERTY_NAME_HIBERNATE_DIALECT);
+        properties.put("hibernate.dialect", PROPERTY_NAME_HIBERNATE_DIALECT_POSTGRESQL);
         properties.put("hibernate.show_sql", true);
         properties.put("hibernate.globally_quoted_identifiers", "true");
         properties.put("hibernate.connection.useUnicode", "true");

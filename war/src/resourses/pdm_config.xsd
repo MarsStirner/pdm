@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+   <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+         <xs:element name="pdmConfig">
+               <xs:complexType>
+                     <xs:sequence>
+                           <xs:element name="admin">
+                                 <xs:complexType>
+                                       <xs:attribute name="login" type="xs:string"></xs:attribute>
+                                       <xs:attribute name="passwordKey" type="xs:string"></xs:attribute>
+                                 </xs:complexType>
+                           </xs:element>
+                           <xs:element name="systems">
+                                 <xs:complexType>
+                                       <xs:sequence>
+                                             <xs:element name="system" maxOccurs="unbounded">
+                                                   <xs:complexType>
+                                                         <xs:attribute name="name" type="xs:string"></xs:attribute>
+                                                         <xs:attribute name="oid" type="xs:string"></xs:attribute>
+                                                         <xs:attribute name="passwordKey" type="xs:string"></xs:attribute>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                       </xs:sequence>
+                                 </xs:complexType>
+                           </xs:element>
+                           <xs:element name="docs">
+                                 <xs:complexType>
+                                       <xs:sequence>
+                                             <xs:element name="doc" maxOccurs="unbounded">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="attribute" maxOccurs="unbounded">
+                                                                     <xs:complexType>
+                                                                           <xs:attribute name="name" type="xs:string"></xs:attribute>
+                                                                           <xs:attribute name="oid" type="xs:string"></xs:attribute>
+                                                                           <xs:attribute name="description" type="xs:string"></xs:attribute>
+                                                                     </xs:complexType>
+                                                               </xs:element>
+                                                         </xs:sequence>
+                                                         <xs:attribute name="name" type="xs:string"></xs:attribute>
+                                                         <xs:attribute name="description" type="xs:string"></xs:attribute>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                       </xs:sequence>
+                                 </xs:complexType>
+                           </xs:element>
+                           <xs:element name="files">
+                                 <xs:complexType>
+                                       <xs:sequence>
+                                             <xs:element name="file">
+                                                   <xs:complexType>
+                                                         <xs:attribute name="name" type="xs:string"></xs:attribute>
+                                                         <xs:attribute name="oid" type="xs:string"></xs:attribute>
+                                                         <xs:attribute name="description" type="xs:string"></xs:attribute>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                       </xs:sequence>
+                                 </xs:complexType>
+                           </xs:element>
+                     </xs:sequence>
+               </xs:complexType>
+         </xs:element>
+   </xs:schema>

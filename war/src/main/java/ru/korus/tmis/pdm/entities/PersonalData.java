@@ -26,7 +26,7 @@ import java.util.Vector;
 public class PersonalData {
 
 
-    public static final int PRIVATE_KEY_SIZE = 256;
+    public static final int PRIVATE_KEY_SIZE = 32;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

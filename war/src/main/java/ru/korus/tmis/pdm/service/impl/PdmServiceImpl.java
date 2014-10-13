@@ -6,12 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.entities.*;
+import ru.korus.tmis.pdm.service.PdmConfigService;
 import ru.korus.tmis.pdm.service.PdmDaoServiceLocator;
 import ru.korus.tmis.pdm.service.PdmService;
+import ru.korus.tmis.pdm.utilities.Crypting;
 import ru.korus.tmis.pdm.ws.hl7.*;
 
 import javax.crypto.*;
-import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.JAXBElement;
 import java.io.Serializable;
@@ -50,11 +51,16 @@ public class PdmServiceImpl implements PdmService {
     public static final String OID_DEFAULT_GENDER_CODE_SYSTEM = "2.16.840.1.113883.5.1";
     private static final Logger logger = LoggerFactory.getLogger(PDManager.class);
     public static final String CRYPT_TYPE = "AES";
+    public static final String PUBLIK_KEY_SALT = "salt";
+    public static final int SECRET_PUBLIK_KEY_SIZE = 256;
 
     @Autowired
     private PdmDaoServiceLocator pdmDaoServiceLocator;
 
-    private ObjectFactory factory = new ObjectFactory();
+    @Autowired
+    PdmConfigService pdmConfigService;
+
+    private ru.korus.tmis.pdm.ws.hl7.ObjectFactory factoryHL7 = new ObjectFactory();
 
     /**
      * @param prm
@@ -245,12 +251,13 @@ public class PdmServiceImpl implements PdmService {
     }
 
     private String toPublicKey(byte[] privateKey, String senderId) {
-        String pass = getPass(senderId);
         try {
-            byte[] key = getKey256Bit(pass);
+            int encryptMode = Cipher.ENCRYPT_MODE;
+            String pass = pdmConfigService.getSystemPasswordKey(senderId);
+            byte[] key = Crypting.getKey256Bit(pass, PUBLIK_KEY_SALT, SECRET_PUBLIK_KEY_SIZE);
             Key aesKey = new SecretKeySpec(key, CRYPT_TYPE);
             Cipher cipher = Cipher.getInstance(CRYPT_TYPE);
-            cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+            cipher.init(encryptMode, aesKey);
             byte[] encrypted = cipher.doFinal(privateKey);
             return Base64.encode(encrypted);
         } catch (NoSuchAlgorithmException e) {
@@ -269,19 +276,15 @@ public class PdmServiceImpl implements PdmService {
         return null;
     }
 
-    private String getPass(String senderId) {
-        //TODO
-        return senderId;
-    }
-
     private byte[] toPrivateKey(String publicKey, String senderId) {
-        String pass = getPass(senderId);
         try {
-            byte[] key = getKey256Bit(pass);
+            int encryptMode = Cipher.DECRYPT_MODE;
+            String pass = pdmConfigService.getSystemPasswordKey(senderId);
+            byte[] key = Crypting.getKey256Bit(pass, PUBLIK_KEY_SALT, SECRET_PUBLIK_KEY_SIZE);
             Key aesKey = new SecretKeySpec(key, CRYPT_TYPE);
             byte[] text = Base64.decode(publicKey);
             Cipher cipher = Cipher.getInstance(CRYPT_TYPE);
-            cipher.init(Cipher.DECRYPT_MODE, aesKey);
+            cipher.init(encryptMode, aesKey);
             return cipher.doFinal(text);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -297,13 +300,6 @@ public class PdmServiceImpl implements PdmService {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private byte[] getKey256Bit(String pass) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        PBEKeySpec spec = new PBEKeySpec(pass.toCharArray(),"salt".getBytes(), 1, 256);
-        SecretKey secretKey = factory.generateSecret(spec);
-        return secretKey.getEncoded();
     }
 
     @Override
@@ -387,17 +383,17 @@ public class PdmServiceImpl implements PdmService {
 
     private PRPAIN101315UV02 getPRPAIN101315UV02(String id) {
         logger.info("Creating the response PRPAIN101315UV02. Person id = {}", id);
-        PRPAIN101315UV02 res = factory.createPRPAIN101315UV02();
+        PRPAIN101315UV02 res = factoryHL7.createPRPAIN101315UV02();
 
-        final PRPAMT101303UV02IdentifiedPerson identifiedPerson = factory.createPRPAMT101303UV02IdentifiedPerson();
-        final PRPAIN101315UV02MFMIMT700701UV01Subject2 subject2 = factory.createPRPAIN101315UV02MFMIMT700701UV01Subject2();
-        final PRPAMT101303UV02Person person = factory.createPRPAMT101303UV02Person();
+        final PRPAMT101303UV02IdentifiedPerson identifiedPerson = factoryHL7.createPRPAMT101303UV02IdentifiedPerson();
+        final PRPAIN101315UV02MFMIMT700701UV01Subject2 subject2 = factoryHL7.createPRPAIN101315UV02MFMIMT700701UV01Subject2();
+        final PRPAMT101303UV02Person person = factoryHL7.createPRPAMT101303UV02Person();
 
-        final PRPAIN101315UV02MFMIMT700701UV01ControlActProcess controlActProcess = factory.createPRPAIN101315UV02MFMIMT700701UV01ControlActProcess();
+        final PRPAIN101315UV02MFMIMT700701UV01ControlActProcess controlActProcess = factoryHL7.createPRPAIN101315UV02MFMIMT700701UV01ControlActProcess();
         res.setControlActProcess(controlActProcess);
-        final PRPAIN101315UV02MFMIMT700701UV01Subject1 subject1 = factory.createPRPAIN101315UV02MFMIMT700701UV01Subject1();
+        final PRPAIN101315UV02MFMIMT700701UV01Subject1 subject1 = factoryHL7.createPRPAIN101315UV02MFMIMT700701UV01Subject1();
         controlActProcess.getSubject().add(subject1);
-        final PRPAIN101315UV02MFMIMT700701UV01RegistrationEvent registrationEvent = factory.createPRPAIN101315UV02MFMIMT700701UV01RegistrationEvent();
+        final PRPAIN101315UV02MFMIMT700701UV01RegistrationEvent registrationEvent = factoryHL7.createPRPAIN101315UV02MFMIMT700701UV01RegistrationEvent();
         subject1.setRegistrationEvent(registrationEvent);
         registrationEvent.setSubject1(subject2);
         subject2.setIdentifiedPerson(identifiedPerson);
@@ -410,14 +406,14 @@ public class PdmServiceImpl implements PdmService {
 
     private PRPAIN101312UV02 getPRPAIN101312UV02(String id) {
         logger.info("Creating the response PRPAIN101312UV02. Person id = {}", id);
-        PRPAIN101312UV02 res = factory.createPRPAIN101312UV02();
+        PRPAIN101312UV02 res = factoryHL7.createPRPAIN101312UV02();
 
-        final PRPAIN101312UV02MFMIMT700701UV01ControlActProcess controlActProcess = factory.createPRPAIN101312UV02MFMIMT700701UV01ControlActProcess();
-        final PRPAIN101312UV02MFMIMT700701UV01Subject1 subject1 = factory.createPRPAIN101312UV02MFMIMT700701UV01Subject1();
-        final PRPAIN101312UV02MFMIMT700701UV01RegistrationEvent registrationEvent = factory.createPRPAIN101312UV02MFMIMT700701UV01RegistrationEvent();
-        final PRPAMT101304UV02IdentifiedPerson identifiedPerson = factory.createPRPAMT101304UV02IdentifiedPerson();
-        final PRPAIN101312UV02MFMIMT700701UV01Subject2 subject2 = factory.createPRPAIN101312UV02MFMIMT700701UV01Subject2();
-        final PRPAMT101304UV02Person person = factory.createPRPAMT101304UV02Person();
+        final PRPAIN101312UV02MFMIMT700701UV01ControlActProcess controlActProcess = factoryHL7.createPRPAIN101312UV02MFMIMT700701UV01ControlActProcess();
+        final PRPAIN101312UV02MFMIMT700701UV01Subject1 subject1 = factoryHL7.createPRPAIN101312UV02MFMIMT700701UV01Subject1();
+        final PRPAIN101312UV02MFMIMT700701UV01RegistrationEvent registrationEvent = factoryHL7.createPRPAIN101312UV02MFMIMT700701UV01RegistrationEvent();
+        final PRPAMT101304UV02IdentifiedPerson identifiedPerson = factoryHL7.createPRPAMT101304UV02IdentifiedPerson();
+        final PRPAIN101312UV02MFMIMT700701UV01Subject2 subject2 = factoryHL7.createPRPAIN101312UV02MFMIMT700701UV01Subject2();
+        final PRPAMT101304UV02Person person = factoryHL7.createPRPAMT101304UV02Person();
 
         res.setControlActProcess(controlActProcess);
         controlActProcess.getSubject().add(subject1);
@@ -433,30 +429,30 @@ public class PdmServiceImpl implements PdmService {
 
     private PRPAIN101306UV02 getPRPAIN101306UV02(List<PersonalData> personalDataList, String senderId) {
         logger.info("Creating the response PRPAIN101306UV02. The count of persons: {}", personalDataList == null ? "not set" : personalDataList.size());
-        PRPAIN101306UV02 res = factory.createPRPAIN101306UV02();
-        PRPAIN101306UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101306UV02MFMIMT700711UV01ControlActProcess();
+        PRPAIN101306UV02 res = factoryHL7.createPRPAIN101306UV02();
+        PRPAIN101306UV02MFMIMT700711UV01ControlActProcess controlActProcess = factoryHL7.createPRPAIN101306UV02MFMIMT700711UV01ControlActProcess();
         res.setControlActProcess(controlActProcess);
         for (PersonalData personalData : personalDataList) {
             logger.info("Creating the response PRPAIN101306UV02. Current person id: {}", personalData.getPrivateKey());
-            PRPAIN101306UV02MFMIMT700711UV01Subject1 subject = factory.createPRPAIN101306UV02MFMIMT700711UV01Subject1();
+            PRPAIN101306UV02MFMIMT700711UV01Subject1 subject = factoryHL7.createPRPAIN101306UV02MFMIMT700711UV01Subject1();
             controlActProcess.getSubject().add(subject);
-            PRPAIN101306UV02MFMIMT700711UV01RegistrationEvent event = factory.createPRPAIN101306UV02MFMIMT700711UV01RegistrationEvent();
+            PRPAIN101306UV02MFMIMT700711UV01RegistrationEvent event = factoryHL7.createPRPAIN101306UV02MFMIMT700711UV01RegistrationEvent();
             subject.setRegistrationEvent(event);
-            final PRPAIN101306UV02MFMIMT700711UV01Subject2 subject2 = factory.createPRPAIN101306UV02MFMIMT700711UV01Subject2();
+            final PRPAIN101306UV02MFMIMT700711UV01Subject2 subject2 = factoryHL7.createPRPAIN101306UV02MFMIMT700711UV01Subject2();
             event.setSubject1(subject2);
-            final PRPAMT101310UV02IdentifiedPerson person = factory.createPRPAMT101310UV02IdentifiedPerson();
+            final PRPAMT101310UV02IdentifiedPerson person = factoryHL7.createPRPAMT101310UV02IdentifiedPerson();
             subject2.setIdentifiedPerson(person);
             II ii = createPdmII(toPublicKey(personalData.getPrivateKey(), senderId));
             person.getId().add(ii);
-            person.setStatusCode(factory.createCS());
+            person.setStatusCode(factoryHL7.createCS());
             person.getStatusCode().setCode("active");
-            person.setIdentifiedPerson(factory.createPRPAMT101310UV02Person());
+            person.setIdentifiedPerson(factoryHL7.createPRPAMT101310UV02Person());
             person.getIdentifiedPerson().getName().add(getHL7Name(personalData));
             person.getIdentifiedPerson().setAdministrativeGenderCode(getHL7Gender(personalData));
             person.getIdentifiedPerson().setBirthTime(getHL7BirthDate(personalData));
 
             for (Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
-                PRPAMT101310UV02OtherIDs otherId = factory.createPRPAMT101310UV02OtherIDs();
+                PRPAMT101310UV02OtherIDs otherId = factoryHL7.createPRPAMT101310UV02OtherIDs();
                 otherId.getId().add(createII(doc));
                 person.getIdentifiedPerson().getAsOtherIDs().add(otherId);
             }
@@ -470,9 +466,9 @@ public class PdmServiceImpl implements PdmService {
             }
 
             if (personalData.getBirthPlace() != null) {
-                PRPAMT101310UV02BirthPlace birthPlace = factory.createPRPAMT101310UV02BirthPlace();
+                PRPAMT101310UV02BirthPlace birthPlace = factoryHL7.createPRPAMT101310UV02BirthPlace();
                 birthPlace.setAddr(getHL7Addr(personalData.getBirthPlace()));
-                person.getIdentifiedPerson().setBirthPlace(factory.createPRPAMT101310UV02PersonBirthPlace(birthPlace));
+                person.getIdentifiedPerson().setBirthPlace(factoryHL7.createPRPAMT101310UV02PersonBirthPlace(birthPlace));
             }
 
         }
@@ -488,30 +484,30 @@ public class PdmServiceImpl implements PdmService {
      */
     private PRPAIN101308UV02 getPRPAIN101308UV02(List<PersonalData> personalDataList, String senderId) {
         logger.info("Creating the response PRPAIN101308UV02. The count of persons: {}", personalDataList == null ? "not set" : personalDataList.size());
-        PRPAIN101308UV02 res = factory.createPRPAIN101308UV02();
-        final PRPAIN101308UV02MFMIMT700711UV01ControlActProcess controlActProcess = factory.createPRPAIN101308UV02MFMIMT700711UV01ControlActProcess();
+        PRPAIN101308UV02 res = factoryHL7.createPRPAIN101308UV02();
+        final PRPAIN101308UV02MFMIMT700711UV01ControlActProcess controlActProcess = factoryHL7.createPRPAIN101308UV02MFMIMT700711UV01ControlActProcess();
         res.setControlActProcess(controlActProcess);
         for (PersonalData personalData : personalDataList) {
             logger.info("Creating the response PRPAIN101308UV02. Current person id: {}", personalData.getPrivateKey());
-            final PRPAIN101308UV02MFMIMT700711UV01Subject1 subject1 = factory.createPRPAIN101308UV02MFMIMT700711UV01Subject1();
+            final PRPAIN101308UV02MFMIMT700711UV01Subject1 subject1 = factoryHL7.createPRPAIN101308UV02MFMIMT700711UV01Subject1();
             controlActProcess.getSubject().add(subject1);
-            final PRPAIN101308UV02MFMIMT700711UV01RegistrationEvent registrationEvent = factory.createPRPAIN101308UV02MFMIMT700711UV01RegistrationEvent();
+            final PRPAIN101308UV02MFMIMT700711UV01RegistrationEvent registrationEvent = factoryHL7.createPRPAIN101308UV02MFMIMT700711UV01RegistrationEvent();
             subject1.setRegistrationEvent(registrationEvent);
-            final PRPAIN101308UV02MFMIMT700711UV01Subject2 subject2 = factory.createPRPAIN101308UV02MFMIMT700711UV01Subject2();
+            final PRPAIN101308UV02MFMIMT700711UV01Subject2 subject2 = factoryHL7.createPRPAIN101308UV02MFMIMT700711UV01Subject2();
             registrationEvent.setSubject1(subject2);
-            final PRPAMT101303UV02IdentifiedPerson person = factory.createPRPAMT101303UV02IdentifiedPerson();
+            final PRPAMT101303UV02IdentifiedPerson person = factoryHL7.createPRPAMT101303UV02IdentifiedPerson();
             subject2.setIdentifiedPerson(person);
             II ii = createPdmII(toPublicKey(personalData.getPrivateKey(), senderId));
             person.getId().add(ii);
-            person.setStatusCode(factory.createCS());
+            person.setStatusCode(factoryHL7.createCS());
             person.getStatusCode().setCode("active");
-            person.setIdentifiedPerson(factory.createPRPAMT101303UV02Person());
+            person.setIdentifiedPerson(factoryHL7.createPRPAMT101303UV02Person());
             person.getIdentifiedPerson().getName().add(getHL7Name(personalData));
             person.getIdentifiedPerson().setAdministrativeGenderCode(getHL7Gender(personalData));
             person.getIdentifiedPerson().setBirthTime(getHL7BirthDate(personalData));
 
             for (Map.Entry<String, String> doc : personalData.getDocs().entrySet()) {
-                PRPAMT101303UV02OtherIDs otherId = factory.createPRPAMT101303UV02OtherIDs();
+                PRPAMT101303UV02OtherIDs otherId = factoryHL7.createPRPAMT101303UV02OtherIDs();
                 otherId.getId().add(createII(doc));
                 person.getIdentifiedPerson().getAsOtherIDs().add(otherId);
             }
@@ -525,9 +521,9 @@ public class PdmServiceImpl implements PdmService {
             }
 
             if (personalData.getBirthPlace() != null) {
-                PRPAMT101303UV02BirthPlace birthPlace = factory.createPRPAMT101303UV02BirthPlace();
+                PRPAMT101303UV02BirthPlace birthPlace = factoryHL7.createPRPAMT101303UV02BirthPlace();
                 birthPlace.setAddr(getHL7Addr(personalData.getBirthPlace()));
-                person.getIdentifiedPerson().setBirthPlace(factory.createPRPAMT101303UV02PersonBirthPlace(birthPlace));
+                person.getIdentifiedPerson().setBirthPlace(factoryHL7.createPRPAMT101303UV02PersonBirthPlace(birthPlace));
             }
         }
         logger.info("The message PRPAIN101308UV02 is completed");
@@ -535,34 +531,34 @@ public class PdmServiceImpl implements PdmService {
     }
 
     private AD getHL7Addr(Addr addr) {
-        AD res = factory.createAD();
-        AdxpExplicitCountry country = factory.createAdxpExplicitCountry();
-        AdxpExplicitStreetAddressLine addrLine = factory.createAdxpExplicitStreetAddressLine();
-        AdxpExplicitDirection direction = factory.createAdxpExplicitDirection();
-        AdxpExplicitPostBox postBox = factory.createAdxpExplicitPostBox();
-        AdxpExplicitUnitType unitType = factory.createAdxpExplicitUnitType();
-        AdxpExplicitDelimiter delimiter = factory.createAdxpExplicitDelimiter();
-        AdxpExplicitDeliveryInstallationArea deliveryInstallationArea = factory.createAdxpExplicitDeliveryInstallationArea();
-        AdxpExplicitDeliveryModeIdentifier celiveryModeIdentifier = factory.createAdxpExplicitDeliveryModeIdentifier();
-        AdxpExplicitPostalCode postalCode = factory.createAdxpExplicitPostalCode();
-        AdxpExplicitDeliveryAddressLine deliveryAddressLine = factory.createAdxpExplicitDeliveryAddressLine();
-        AdxpExplicitStreetName explicitStreetName = factory.createAdxpExplicitStreetName();
-        AdxpExplicitUnitID edxpExplicitUnitID = factory.createAdxpExplicitUnitID();
-        AdxpExplicitAdditionalLocator additionalLocator = factory.createAdxpExplicitAdditionalLocator();
-        AdxpExplicitDeliveryMode deliveryMode = factory.createAdxpExplicitDeliveryMode();
-        AdxpExplicitStreetNameBase streetNameBase = factory.createAdxpExplicitStreetNameBase();
-        AdxpExplicitDeliveryInstallationQualifier deliveryInstallationQualifier = factory.createAdxpExplicitDeliveryInstallationQualifier();
-        AdxpExplicitCounty county = factory.createAdxpExplicitCounty();
-        AdxpExplicitPrecinct explicitPrecinct = factory.createAdxpExplicitPrecinct();
-        AdxpExplicitCareOf careOf = factory.createAdxpExplicitCareOf();
-        AdxpExplicitHouseNumber houseNumber = factory.createAdxpExplicitHouseNumber();
-        AdxpExplicitCensusTract censusTract = factory.createAdxpExplicitCensusTract();
-        AdxpExplicitBuildingNumberSuffix buildingNumberSuffix = factory.createAdxpExplicitBuildingNumberSuffix();
-        AdxpExplicitHouseNumberNumeric houseNumberNumeric = factory.createAdxpExplicitHouseNumberNumeric();
-        AdxpExplicitStreetNameType1 streetNameType1 = factory.createAdxpExplicitStreetNameType1();
-        AdxpExplicitDeliveryInstallationType deliveryInstallationType = factory.createAdxpExplicitDeliveryInstallationType();
-        AdxpExplicitState state = factory.createAdxpExplicitState();
-        AdxpExplicitCity city = factory.createAdxpExplicitCity();
+        AD res = factoryHL7.createAD();
+        AdxpExplicitCountry country = factoryHL7.createAdxpExplicitCountry();
+        AdxpExplicitStreetAddressLine addrLine = factoryHL7.createAdxpExplicitStreetAddressLine();
+        AdxpExplicitDirection direction = factoryHL7.createAdxpExplicitDirection();
+        AdxpExplicitPostBox postBox = factoryHL7.createAdxpExplicitPostBox();
+        AdxpExplicitUnitType unitType = factoryHL7.createAdxpExplicitUnitType();
+        AdxpExplicitDelimiter delimiter = factoryHL7.createAdxpExplicitDelimiter();
+        AdxpExplicitDeliveryInstallationArea deliveryInstallationArea = factoryHL7.createAdxpExplicitDeliveryInstallationArea();
+        AdxpExplicitDeliveryModeIdentifier celiveryModeIdentifier = factoryHL7.createAdxpExplicitDeliveryModeIdentifier();
+        AdxpExplicitPostalCode postalCode = factoryHL7.createAdxpExplicitPostalCode();
+        AdxpExplicitDeliveryAddressLine deliveryAddressLine = factoryHL7.createAdxpExplicitDeliveryAddressLine();
+        AdxpExplicitStreetName explicitStreetName = factoryHL7.createAdxpExplicitStreetName();
+        AdxpExplicitUnitID edxpExplicitUnitID = factoryHL7.createAdxpExplicitUnitID();
+        AdxpExplicitAdditionalLocator additionalLocator = factoryHL7.createAdxpExplicitAdditionalLocator();
+        AdxpExplicitDeliveryMode deliveryMode = factoryHL7.createAdxpExplicitDeliveryMode();
+        AdxpExplicitStreetNameBase streetNameBase = factoryHL7.createAdxpExplicitStreetNameBase();
+        AdxpExplicitDeliveryInstallationQualifier deliveryInstallationQualifier = factoryHL7.createAdxpExplicitDeliveryInstallationQualifier();
+        AdxpExplicitCounty county = factoryHL7.createAdxpExplicitCounty();
+        AdxpExplicitPrecinct explicitPrecinct = factoryHL7.createAdxpExplicitPrecinct();
+        AdxpExplicitCareOf careOf = factoryHL7.createAdxpExplicitCareOf();
+        AdxpExplicitHouseNumber houseNumber = factoryHL7.createAdxpExplicitHouseNumber();
+        AdxpExplicitCensusTract censusTract = factoryHL7.createAdxpExplicitCensusTract();
+        AdxpExplicitBuildingNumberSuffix buildingNumberSuffix = factoryHL7.createAdxpExplicitBuildingNumberSuffix();
+        AdxpExplicitHouseNumberNumeric houseNumberNumeric = factoryHL7.createAdxpExplicitHouseNumberNumeric();
+        AdxpExplicitStreetNameType1 streetNameType1 = factoryHL7.createAdxpExplicitStreetNameType1();
+        AdxpExplicitDeliveryInstallationType deliveryInstallationType = factoryHL7.createAdxpExplicitDeliveryInstallationType();
+        AdxpExplicitState state = factoryHL7.createAdxpExplicitState();
+        AdxpExplicitCity city = factoryHL7.createAdxpExplicitCity();
 
         country.setContent(addr.getCountry());
         addrLine.setContent(addr.getStreetAddressLine());
@@ -592,33 +588,33 @@ public class PdmServiceImpl implements PdmService {
         state.setContent(addr.getState());
         city.setContent(addr.getCity());
 
-        res.getContent().add(factory.createADExplicitCountry(country));
-        res.getContent().add(factory.createADExplicitStreetAddressLine(addrLine));
-        res.getContent().add(factory.createADExplicitDirection(direction));
-        res.getContent().add(factory.createADExplicitPostBox(postBox));
-        res.getContent().add(factory.createADExplicitUnitType(unitType));
-        res.getContent().add(factory.createADExplicitDelimiter(delimiter));
-        res.getContent().add(factory.createADExplicitDeliveryInstallationArea(deliveryInstallationArea));
-        res.getContent().add(factory.createADExplicitDeliveryModeIdentifier(celiveryModeIdentifier));
-        res.getContent().add(factory.createADExplicitPostalCode(postalCode));
-        res.getContent().add(factory.createADExplicitDeliveryAddressLine(deliveryAddressLine));
-        res.getContent().add(factory.createADExplicitStreetName(explicitStreetName));
-        res.getContent().add(factory.createADExplicitUnitID(edxpExplicitUnitID));
-        res.getContent().add(factory.createADExplicitAdditionalLocator(additionalLocator));
-        res.getContent().add(factory.createADExplicitDeliveryMode(deliveryMode));
-        res.getContent().add(factory.createADExplicitStreetNameBase(streetNameBase));
-        res.getContent().add(factory.createADExplicitDeliveryInstallationQualifier(deliveryInstallationQualifier));
-        res.getContent().add(factory.createADExplicitCounty(county));
-        res.getContent().add(factory.createADExplicitPrecinct(explicitPrecinct));
-        res.getContent().add(factory.createADExplicitCareOf(careOf));
-        res.getContent().add(factory.createADExplicitHouseNumber(houseNumber));
-        res.getContent().add(factory.createADExplicitCensusTract(censusTract));
-        res.getContent().add(factory.createADExplicitBuildingNumberSuffix(buildingNumberSuffix));
-        res.getContent().add(factory.createADExplicitHouseNumberNumeric(houseNumberNumeric));
-        res.getContent().add(factory.createADExplicitStreetNameType(streetNameType1));
-        res.getContent().add(factory.createADExplicitDeliveryInstallationType(deliveryInstallationType));
-        res.getContent().add(factory.createADExplicitState(state));
-        res.getContent().add(factory.createADExplicitCity(city));
+        res.getContent().add(factoryHL7.createADExplicitCountry(country));
+        res.getContent().add(factoryHL7.createADExplicitStreetAddressLine(addrLine));
+        res.getContent().add(factoryHL7.createADExplicitDirection(direction));
+        res.getContent().add(factoryHL7.createADExplicitPostBox(postBox));
+        res.getContent().add(factoryHL7.createADExplicitUnitType(unitType));
+        res.getContent().add(factoryHL7.createADExplicitDelimiter(delimiter));
+        res.getContent().add(factoryHL7.createADExplicitDeliveryInstallationArea(deliveryInstallationArea));
+        res.getContent().add(factoryHL7.createADExplicitDeliveryModeIdentifier(celiveryModeIdentifier));
+        res.getContent().add(factoryHL7.createADExplicitPostalCode(postalCode));
+        res.getContent().add(factoryHL7.createADExplicitDeliveryAddressLine(deliveryAddressLine));
+        res.getContent().add(factoryHL7.createADExplicitStreetName(explicitStreetName));
+        res.getContent().add(factoryHL7.createADExplicitUnitID(edxpExplicitUnitID));
+        res.getContent().add(factoryHL7.createADExplicitAdditionalLocator(additionalLocator));
+        res.getContent().add(factoryHL7.createADExplicitDeliveryMode(deliveryMode));
+        res.getContent().add(factoryHL7.createADExplicitStreetNameBase(streetNameBase));
+        res.getContent().add(factoryHL7.createADExplicitDeliveryInstallationQualifier(deliveryInstallationQualifier));
+        res.getContent().add(factoryHL7.createADExplicitCounty(county));
+        res.getContent().add(factoryHL7.createADExplicitPrecinct(explicitPrecinct));
+        res.getContent().add(factoryHL7.createADExplicitCareOf(careOf));
+        res.getContent().add(factoryHL7.createADExplicitHouseNumber(houseNumber));
+        res.getContent().add(factoryHL7.createADExplicitCensusTract(censusTract));
+        res.getContent().add(factoryHL7.createADExplicitBuildingNumberSuffix(buildingNumberSuffix));
+        res.getContent().add(factoryHL7.createADExplicitHouseNumberNumeric(houseNumberNumeric));
+        res.getContent().add(factoryHL7.createADExplicitStreetNameType(streetNameType1));
+        res.getContent().add(factoryHL7.createADExplicitDeliveryInstallationType(deliveryInstallationType));
+        res.getContent().add(factoryHL7.createADExplicitState(state));
+        res.getContent().add(factoryHL7.createADExplicitCity(city));
 
         final String addrType = addr.getUse();
         if (addrType != null) {
@@ -629,7 +625,7 @@ public class PdmServiceImpl implements PdmService {
     }
 
     private TEL getHL7Telecom(Telecom telecom) {
-        TEL res = factory.createTEL();
+        TEL res = factoryHL7.createTEL();
         res.setValue(telecom.getValue());
         if (telecom.getUse() != null) {
             res.getUse().add(TelecommunicationAddressUse.fromValue(telecom.getUse()));
@@ -663,26 +659,26 @@ public class PdmServiceImpl implements PdmService {
     }
 
     private II createII(String extension, String root) {
-        II ii = factory.createII();
+        II ii = factoryHL7.createII();
         ii.setExtension(extension);
         ii.setRoot(root);
         return ii;
     }
 
     private PN getHL7Name(PersonalData personalData) {
-        PN name = factory.createPN();
+        PN name = factoryHL7.createPN();
 
-        EnExplicitGiven given = factory.createEnExplicitGiven();
+        EnExplicitGiven given = factoryHL7.createEnExplicitGiven();
         given.setContent(personalData.getGiven());
-        name.getContent().add(factory.createENExplicitGiven(given));
+        name.getContent().add(factoryHL7.createENExplicitGiven(given));
 
-        EnExplicitGiven middleName = factory.createEnExplicitGiven();
+        EnExplicitGiven middleName = factoryHL7.createEnExplicitGiven();
         middleName.setContent(personalData.getMiddleName());
-        name.getContent().add(factory.createENExplicitGiven(middleName));
+        name.getContent().add(factoryHL7.createENExplicitGiven(middleName));
 
-        EnExplicitFamily family = factory.createEnExplicitFamily();
+        EnExplicitFamily family = factoryHL7.createEnExplicitFamily();
         family.setContent(personalData.getFamily());
-        name.getContent().add(factory.createENExplicitFamily(family));
+        name.getContent().add(factoryHL7.createENExplicitFamily(family));
 
         return name;
     }
@@ -692,7 +688,7 @@ public class PdmServiceImpl implements PdmService {
         if (gender == null) {
             return null;
         }
-        CE res = factory.createCE();
+        CE res = factoryHL7.createCE();
         res.setCode(gender.getCode());
         res.setCodeSystem(gender.getCodeSystem());
         return res;
@@ -703,7 +699,7 @@ public class PdmServiceImpl implements PdmService {
         if (birthDate == null) {
             return null;
         }
-        TS res = factory.createTS();
+        TS res = factoryHL7.createTS();
         res.setValue(birthDate);
         return res;
     }

@@ -11,9 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="ВТР">
     <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-    <link href="resources/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet">
-    <script type="text/javascript" src="resources/jquery/jquery-1.8.2.min.js"></script>
-    <script type="text/javascript" src="resources/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="resources/css/style.min.css" />
 
     <title>ЗХПД</title>
     <meta name="description" content="Защищенное хранилище персональных данных">
@@ -49,6 +47,8 @@
         </div>
     </div>
 </div>
+
+<jsp:include page="import_js.jsp"/>
 
 </body>
 </html>

@@ -49,17 +49,25 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>maven-jetty-plugin</artifactId>
-                <version>6.1.10</version>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.2.3.v20140905</version>
                 <configuration>
                     <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <stopKey>foo</stopKey>
+                    <stopPort>9999</stopPort>
+                    <httpConnector>
+                        <!--host>localhost</host-->
+                        <port>1111</port>
+                    </httpConnector>
+<!--
                     <connectors>
                         <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
                             <port>1111</port>
                             <maxIdleTime>60000</maxIdleTime>
                         </connector>
                     </connectors>
+-->
                 </configuration>
             </plugin>
             <plugin>
@@ -74,6 +82,28 @@
                     <autoDelete>true</autoDelete>
                     <configFile>domain.xml</configFile>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.lesscss</groupId>
+                <artifactId>lesscss-maven-plugin</artifactId>
+                <version>1.7.0.1.1</version>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/less/</sourceDirectory>
+                    <outputDirectory>${project.build.directory}/${project.build.finalName}/resources</outputDirectory>
+                    <outputFileFormat>css/style.min.css</outputFileFormat>
+                    <compress>true</compress>
+                    <includes>
+                        <include>style.less</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -183,6 +213,13 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.33</version>
+        </dependency>
+
+        <!-- PostgreSQL -->
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.1-901-1.jdbc4</version>
         </dependency>
 
 

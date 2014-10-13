@@ -1,13 +1,12 @@
 package ru.korus.tmis.pdm.service.impl.postgre;
 
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.repositories.PersonDataRepository;
 import ru.korus.tmis.pdm.service.PdmDaoService;
 import ru.korus.tmis.pdm.entities.PersonalData;
+import ru.korus.tmis.pdm.utilities.Crypting;
 
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 
@@ -25,10 +24,7 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
 
     @Override
     public void save(PersonalData personalData) {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] privateKey =  new byte[PersonalData.PRIVATE_KEY_SIZE];
-        secureRandom.nextBytes(privateKey);
-        personalData.setPrivateKey(privateKey);
+        personalData.setPrivateKey(Crypting.getSecureRandomBytes(PersonalData.PRIVATE_KEY_SIZE));
         personDataRepository.save(personalData);
     }
 

@@ -56,7 +56,7 @@ public class AuthController implements Serializable {
             if(token == null) {
                 errorMsg = "доступ запрещен";
             } else {
-                request.getSession().setAttribute(RootController.VIEW_STATE, ViewState.FIND);
+                request.getSession().setAttribute(RootController.VIEW_STATE, ViewState.MAIN);
                 response.addCookie(new Cookie("authToken", token));
                 request.getSession().setAttribute(AuthInterceptor.AUTH_SESSION, true);
                 errorMsg = null;
