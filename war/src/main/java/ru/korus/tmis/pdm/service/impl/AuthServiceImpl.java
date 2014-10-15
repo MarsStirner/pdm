@@ -1,11 +1,9 @@
 package ru.korus.tmis.pdm.service.impl;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.service.AuthService;
-import ru.korus.tmis.pdm.service.PdmConfigService;
-import ru.korus.tmis.pdm.utilities.Crypting;
+import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +26,7 @@ import java.util.UUID;
 public class AuthServiceImpl implements AuthService {
 
     @Autowired
-    PdmConfigService pdmConfigService;
+    private PdmXmlConfigService pdmXmlConfigService;
 
     public static final int MAX_IDLE_MINUTES = 10;
 
@@ -66,16 +64,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String createToken(String username, String password) {
-        if(checkLoginAndPassword(username, password)) {
+        if (checkLoginAndPassword(username, password)) {
             AuthData authData = new AuthData();
             authData.login = username;
             authData.loginTime = new Date();
 
             String token = null;
-            for(int tryIndex = 0;
-                tryIndex < 10 && tokens.get(token = UUID.randomUUID().toString()) != null; ++tryIndex);
+            for (int tryIndex = 0;
+                 tryIndex < 10 && tokens.get(token = UUID.randomUUID().toString()) != null; ++tryIndex)
+                ;
 
-            if(tokens.get(token) == null) {
+            if (tokens.get(token) == null) {
                 tokens.put(token, authData);
                 return token;
             }
@@ -83,12 +82,12 @@ public class AuthServiceImpl implements AuthService {
         return null;
     }
 
-    private boolean checkLoginAndPassword(String username, String password) {
+    @Override
+    public boolean checkAdminPassword(String password) {
         try {
-            String adminName = pdmConfigService.getUserName();
-            String passwordKey = pdmConfigService.getPasswordKey();
-            String pass = Base64.encode(Crypting.getKey256Bit(password, "admin_pass",64));
-            return username.equals(adminName) && passwordKey.equals(pass);
+            String passwordKey = pdmXmlConfigService.getPasswordKey();
+            String pass = pdmXmlConfigService.getKeyByPassword(password);
+            return passwordKey.equals(pass);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (InvalidKeySpecException e) {
@@ -97,18 +96,24 @@ public class AuthServiceImpl implements AuthService {
         return false;
     }
 
+
+    private boolean checkLoginAndPassword(String username, String password) {
+        String adminName = pdmXmlConfigService.getUserName();
+        return username.equals(adminName) && checkAdminPassword(password);
+    }
+
     private AuthData checkToken(String tokenValue) {
         AuthData authData = tokens.get(tokenValue);
-        if(authData != null) {
+        if (authData != null) {
             authData.loginTime = new Date();
         }
         return authData;
     }
 
     private void clearToken() {
-        Date deadline = new Date((new Date()).getTime() - MAX_IDLE_MINUTES *60*1000);
+        Date deadline = new Date((new Date()).getTime() - MAX_IDLE_MINUTES * 60 * 1000);
         for (Map.Entry<String, AuthData> token : tokens.entrySet()) {
-            if(token.getValue().loginTime.before(deadline)) {
+            if (token.getValue().loginTime.before(deadline)) {
                 tokens.remove(token.getKey());
             }
         }

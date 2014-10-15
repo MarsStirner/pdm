@@ -1,6 +1,8 @@
 package ru.korus.tmis.pdm.service;
 
-import ru.korus.tmis.pdm.model.Info;
+import ru.korus.tmis.pdm.model.CfgFileUpdateInfo;
+import ru.korus.tmis.pdm.model.ConfigInfo;
+import ru.korus.tmis.pdm.model.UpdateLoginInfo;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -9,7 +11,9 @@ import ru.korus.tmis.pdm.model.Info;
  * Description:  <br>
  */
 public interface ConfigService {
-    Info getInfo();
+    ConfigInfo getInfo();
 
-    boolean updateAdminInfo(Info info);
+    boolean updateAdminInfo(UpdateLoginInfo updateLoginInfo);
+
+    boolean updateCfgFileInfo(CfgFileUpdateInfo cfgFileUpdateInfo);
 }

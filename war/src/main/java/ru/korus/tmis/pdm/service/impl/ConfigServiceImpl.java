@@ -2,9 +2,12 @@ package ru.korus.tmis.pdm.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.korus.tmis.pdm.model.Info;
+import ru.korus.tmis.pdm.model.CfgFileUpdateInfo;
+import ru.korus.tmis.pdm.model.ConfigInfo;
+import ru.korus.tmis.pdm.model.UpdateLoginInfo;
+import ru.korus.tmis.pdm.service.AuthService;
 import ru.korus.tmis.pdm.service.ConfigService;
-import ru.korus.tmis.pdm.service.PdmConfigService;
+import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -14,24 +17,45 @@ import ru.korus.tmis.pdm.service.PdmConfigService;
  */
 @Service
 public class ConfigServiceImpl implements ConfigService {
+
     private String domainPath = null;
 
     @Autowired
-    PdmConfigService pdmConfigService;
+    private PdmXmlConfigService pdmXmlConfigService;
+
+    @Autowired
+    private AuthService authService;
 
     @Override
-    public Info getInfo() {
-        Info res = new Info();
+    public ConfigInfo getInfo() {
+        ConfigInfo res = new ConfigInfo();
         res.setVersion("//TODO");
         res.setDomainPath(getDomainPath());
-        res.setLogin(pdmConfigService.getUserName());
-        res.setCfgFileName(pdmConfigService.getCfgFileName());
+        res.setLogin(pdmXmlConfigService.getUserName());
+        res.setCfgFileName(pdmXmlConfigService.getCfgFileName());
         return res;
     }
 
     @Override
-    public boolean updateAdminInfo(Info info) {
-        return false;
+    public boolean updateAdminInfo(UpdateLoginInfo updateLoginInfo) {
+        boolean res = false;
+        String newLogin = updateLoginInfo.getNewLogin();
+        if(!newLogin.isEmpty() && authService.checkAdminPassword(updateLoginInfo.getCurPassword())) {
+            res = pdmXmlConfigService.setNewLogin(newLogin, updateLoginInfo.getNewPassword());
+
+        }
+        return res;
+    }
+
+    @Override
+    public boolean updateCfgFileInfo(CfgFileUpdateInfo cfgFileUpdateInfo) {
+        boolean res = false;
+        String newLogin = cfgFileUpdateInfo.getCfgFilePath();
+        if(!newLogin.isEmpty()) {
+            res = pdmXmlConfigService.setNewCfgFile(newLogin);
+
+        }
+        return res;
     }
 
     public String getDomainPath() {
@@ -43,10 +67,10 @@ public class ConfigServiceImpl implements ConfigService {
 
     private String initDomainPath() {
         final String path = this.getClass().getResource("").getPath();
-        /*final Integer indexEnd = Math.max(path.indexOf("/applications/admin-panel"), path.indexOf("/applications/tmis-server"));
+        final Integer indexEnd =path.indexOf("/pdm-war");
         if (indexEnd > 0) {
             return path.substring(0, indexEnd);
-        }*/
+        }
         return path;
     }
 }

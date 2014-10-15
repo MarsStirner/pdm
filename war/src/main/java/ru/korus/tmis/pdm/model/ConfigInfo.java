@@ -6,7 +6,7 @@ package ru.korus.tmis.pdm.model;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class Info {
+public class ConfigInfo {
 
     private String version;
 
@@ -15,8 +15,6 @@ public class Info {
     private String login;
 
     private String cfgFileName;
-
-    private String curPassword;
 
     public String getVersion() {
         return version;
@@ -50,11 +48,4 @@ public class Info {
         this.cfgFileName = cfgFileName;
     }
 
-    public String getCurPassword() {
-        return curPassword;
-    }
-
-    public void setCurPassword(String curPassword) {
-        this.curPassword = curPassword;
-    }
 }

@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.entities.*;
-import ru.korus.tmis.pdm.service.PdmConfigService;
+import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 import ru.korus.tmis.pdm.service.PdmDaoServiceLocator;
 import ru.korus.tmis.pdm.service.PdmService;
 import ru.korus.tmis.pdm.utilities.Crypting;
@@ -58,7 +58,7 @@ public class PdmServiceImpl implements PdmService {
     private PdmDaoServiceLocator pdmDaoServiceLocator;
 
     @Autowired
-    PdmConfigService pdmConfigService;
+    PdmXmlConfigService pdmXmlConfigService;
 
     private ru.korus.tmis.pdm.ws.hl7.ObjectFactory factoryHL7 = new ObjectFactory();
 
@@ -253,7 +253,7 @@ public class PdmServiceImpl implements PdmService {
     private String toPublicKey(byte[] privateKey, String senderId) {
         try {
             int encryptMode = Cipher.ENCRYPT_MODE;
-            String pass = pdmConfigService.getSystemPasswordKey(senderId);
+            String pass = pdmXmlConfigService.getSystemPasswordKey(senderId);
             byte[] key = Crypting.getKey256Bit(pass, PUBLIK_KEY_SALT, SECRET_PUBLIK_KEY_SIZE);
             Key aesKey = new SecretKeySpec(key, CRYPT_TYPE);
             Cipher cipher = Cipher.getInstance(CRYPT_TYPE);
@@ -279,7 +279,7 @@ public class PdmServiceImpl implements PdmService {
     private byte[] toPrivateKey(String publicKey, String senderId) {
         try {
             int encryptMode = Cipher.DECRYPT_MODE;
-            String pass = pdmConfigService.getSystemPasswordKey(senderId);
+            String pass = pdmXmlConfigService.getSystemPasswordKey(senderId);
             byte[] key = Crypting.getKey256Bit(pass, PUBLIK_KEY_SALT, SECRET_PUBLIK_KEY_SIZE);
             Key aesKey = new SecretKeySpec(key, CRYPT_TYPE);
             byte[] text = Base64.decode(publicKey);

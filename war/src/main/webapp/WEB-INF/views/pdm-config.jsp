@@ -23,52 +23,43 @@
                     </tr>
                     <tr>
                         <td>Логин администратора:</td>
-                        <td><b>${info.login}</b>
+                        <td>
+                            <jsp:include page="alert.jsp">
+                                <jsp:param name="msg" value="${updateLoginInfo.msg}"/>
+                                <jsp:param name="alertType" value="${updateLoginInfo.getAlertName()}"/>
+                            </jsp:include>
+                            <b>${info.login}</b>
                             <!-- Button trigger modal -->
-                            <a <%--class="btn btn-default"--%> data-toggle="modal" data-target="#loginUpdate"
-                                                               placeholder="редактировать">
-                                <b>${info.login}</b>
-                                <%-- <span class="glyphicon glyphicon-pencil"></span>--%>
+                            <a class="btn btn-default pull-right" data-toggle="modal" data-target="#loginUpdate"
+                               placeholder="редактировать">
+                                <span class="glyphicon glyphicon-pencil"></span>
                             </a>
+
+                            <p/>
                         </td>
                     </tr>
                     <tr>
                         <td>Файл конфигурации:</td>
-                        <td>${info.cfgFileName}</td>
+                        <td>
+                            <jsp:include page="alert.jsp">
+                                <jsp:param name="msg" value="${cfgFileUpdateInfo.msg}"/>
+                                <jsp:param name="alertType" value="${cfgFileUpdateInfo.getAlertName()}"/>
+                            </jsp:include>
+                            <b>${info.cfgFileName}</b>
+                            <a class="btn btn-default pull-right" data-toggle="modal" data-target="#cfgFileUpdate"
+                               placeholder="редактировать">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                            <p/>
+
+                        </td>
                     </tr>
                 </table>
             </div>
         </div>
 
-
-        <!-- Modal -->
-        <div class="modal fade" id="loginUpdate" tabindex="-1" role="dialog" aria-labelledby="loginUpdateLabel"
-             aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                                class="sr-only">Close</span></button>
-                        <h4 class="modal-title" id="loginUpdateLabel">Редактирование учетной записи администратора</h4>
-                    </div>
-                    <div class="modal-body">
-                        <form:form method="POST" action="config/user/update" modelAttribute="info" role="form" cssClass="form-horizontal">
-                            <div class="form-group">
-                                <form:label path="curPassword">Текущий пароль:</form:label>
-                                <form:input path="curPassword" cssClass="form-control"/>
-                            </div>
-                        </form:form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-default" data-dismiss="modal" onClick="$('#info').submit();">Сохранить</button>
-                        <button type="reset" class="btn btn-default" data-dismiss="modal">
-                            Отмена
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <jsp:include page="modal_admin_login_param.jsp"/>
+        <jsp:include page="modal_cfg_file_path.jsp"/>
 
     </div>
 </div>

@@ -39,7 +39,7 @@
                             <div class="form-group">
                                 <form:password class="form-control" path="password" placeholder="пароль"/>
                             </div>
-                            <button type="submit" class="btn btn-lg btn-success btn-block">Войти</button>
+                            <button type="submit" class="btn btn-lg btn-default btn-block">Войти</button>
                         </fieldset>
                     </form:form>
                 </div>

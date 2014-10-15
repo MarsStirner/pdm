@@ -11,6 +11,8 @@ import ru.korus.tmis.pdm.model.ConfigInfo;
 import ru.korus.tmis.pdm.model.PdmMessage;
 import ru.korus.tmis.pdm.model.UpdateLoginInfo;
 import ru.korus.tmis.pdm.service.ConfigService;
+import ru.korus.tmis.pdm.service.PdmSystemsService;
+import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -23,30 +25,21 @@ import java.util.Map;
  * Description:  <br>
  */
 @Controller
-@RequestMapping(value = "config")
+@RequestMapping(value = "systems")
 @Scope("session")
-public class ConfigController implements Serializable {
-
-    public final static String MAIN_JSP = "main";
+public class PdmSystemsController implements Serializable {
 
     @Autowired
-    private ConfigService configService;
-
-    private UpdateLoginInfo updateLoginInfo = new UpdateLoginInfo();
-
-    private CfgFileUpdateInfo cfgFileUpdateInfo = new CfgFileUpdateInfo();
+    PdmSystemsService pdmSystemsService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String get(Map<String, Object> model) {
-        model.put("state", ViewState.MAIN);
-        ConfigInfo info = configService.getInfo();
-        model.put("info", info);
-        model.put("updateLoginInfo", updateLoginInfo);
-        cfgFileUpdateInfo.setCfgFilePath(info.getCfgFileName());
-        model.put("cfgFileUpdateInfo", cfgFileUpdateInfo);
-        return MAIN_JSP;
+        model.put("state", ViewState.SYSTEMS);
+        model.put("pdmSystems", pdmSystemsService.getSystemsInfo());
+        return ConfigController.MAIN_JSP;
     }
 
+/*
     @RequestMapping(value = "user/update", method = RequestMethod.POST)
     public String updateAdminInfo(@ModelAttribute UpdateLoginInfo updateLoginInfo, Map<String, Object> model, HttpServletRequest request) {
         if (configService.updateAdminInfo(updateLoginInfo)) {
@@ -57,15 +50,6 @@ public class ConfigController implements Serializable {
 
         return ViewState.MAIN.redirect();
     }
+*/
 
-    @RequestMapping(value = "path/update", method = RequestMethod.POST)
-    public String updateAdminInfo(@ModelAttribute CfgFileUpdateInfo cfgFileUpdateInfo, Map<String, Object> model, HttpServletRequest request) {
-        if (configService.updateCfgFileInfo(cfgFileUpdateInfo)) {
-            this.cfgFileUpdateInfo.setMessage("Новый файл конфигурации успешно сохранен", PdmMessage.PdmMsgType.INFO);
-        } else {
-            this.cfgFileUpdateInfo.setMessage("Ошибка: Не удалось сохранить файл конфигурации", PdmMessage.PdmMsgType.ERROR);
-        }
-
-        return ViewState.MAIN.redirect();
-    }
 }
