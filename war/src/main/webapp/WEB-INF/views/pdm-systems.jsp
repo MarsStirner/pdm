@@ -32,7 +32,7 @@
                                     <jsp:param name="alertType" value="${system.getAlertName()}"/>
                                 </jsp:include>
                                     ${system.oid}
-                                <a class="btn btn-default pull-right" data-toggle="modal" data-target="#systemRemove${status.index}"
+                                <a class="btn btn-default pull-right" data-toggle="modal" data-target="#systemDelete${status.index}"
                                    placeholder="удалить">
                                     <span class="glyphicon glyphicon-remove"></span>
                                 </a>
@@ -42,6 +42,11 @@
                                 </a>
                                 <jsp:include page="modal_system_oid_update.jsp">
                                     <jsp:param name="index" value="${status.index}"/>
+                                    <jsp:param name="oid" value="${system.oid}"/>
+                                </jsp:include>
+                                <jsp:include page="modal_system_oid_delete.jsp">
+                                    <jsp:param name="index" value="${status.index}"/>
+                                    <jsp:param name="oid" value="${system.oid}"/>
                                 </jsp:include>
                             </td>
                         </tr>
@@ -53,8 +58,9 @@
                                 <jsp:param name="alertType" value="${system.getAlertName()}"/>
                             </jsp:include>
                             <a class="btn btn-default" data-toggle="modal" data-target="#systemAdd"
-                               placeholder="редактировать">
-                                <span class="glyphicon glyphicon-plus"></span>
+                               placeholder="добавить">
+                                Добавить
+                                <%--<span class="glyphicon glyphicon-plus">--%></span>
                             </a>
                             <jsp:include page="modal_system_oid_new.jsp">
                                 <jsp:param name="index" value="0"/>

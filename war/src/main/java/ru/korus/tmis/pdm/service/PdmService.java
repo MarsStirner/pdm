@@ -23,4 +23,8 @@ public interface PdmService {
     PRPAIN101315UV02 update(PRPAIN101314UV02 parameters);
 
     PRPAIN101306UV02 findLike(PRPAIN101305UV02 parameters);
+
+    String login(String oid, String password);
+
+    boolean logout(String token);
 }

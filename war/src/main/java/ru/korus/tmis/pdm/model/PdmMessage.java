@@ -31,14 +31,17 @@ public class PdmMessage {
         return msg;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
     public String getAlertName() {
         return type == null ? null : type.getAlertName();
     }
 
+    public PdmMessage() {
+
+    }
+
+    public PdmMessage(String msg, PdmMsgType type) {
+        setMessage(msg, type);
+    }
 
     public void setMessage(String msg, PdmMsgType type) {
         this.msg = msg;

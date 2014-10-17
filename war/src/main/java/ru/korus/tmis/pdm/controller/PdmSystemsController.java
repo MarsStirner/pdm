@@ -6,16 +6,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import ru.korus.tmis.pdm.model.CfgFileUpdateInfo;
-import ru.korus.tmis.pdm.model.ConfigInfo;
-import ru.korus.tmis.pdm.model.PdmMessage;
-import ru.korus.tmis.pdm.model.UpdateLoginInfo;
-import ru.korus.tmis.pdm.service.ConfigService;
+import ru.korus.tmis.pdm.model.*;
 import ru.korus.tmis.pdm.service.PdmSystemsService;
-import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -31,25 +27,26 @@ public class PdmSystemsController implements Serializable {
 
     @Autowired
     PdmSystemsService pdmSystemsService;
+    private PdmMessage lastMsg = null;
 
     @RequestMapping(method = RequestMethod.GET)
     public String get(Map<String, Object> model) {
         model.put("state", ViewState.SYSTEMS);
-        model.put("pdmSystems", pdmSystemsService.getSystemsInfo());
+        PdmSystems systemsInfo = pdmSystemsService.getSystemsInfo();
+        model.put("pdmSystems", systemsInfo);
         return ConfigController.MAIN_JSP;
     }
 
-/*
-    @RequestMapping(value = "user/update", method = RequestMethod.POST)
-    public String updateAdminInfo(@ModelAttribute UpdateLoginInfo updateLoginInfo, Map<String, Object> model, HttpServletRequest request) {
-        if (configService.updateAdminInfo(updateLoginInfo)) {
-            this.updateLoginInfo.setMessage("Новые параметры учетной записи администратора успешно сохранены", PdmMessage.PdmMsgType.INFO);
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public String updateSystem(@ModelAttribute PdmSystems pdmSystems, Map<String, Object> model, HttpServletRequest request) {
+        if (pdmSystemsService.updateSystem(pdmSystems.getCurOid(), pdmSystems.getSystems().get(pdmSystems.getIndex()))) {
+            lastMsg = new PdmMessage("Новые параметры подсистемы успешно сохранены", PdmMessage.PdmMsgType.INFO);
         } else {
-            this.updateLoginInfo.setMessage("Ошибка: Не удалось обновить параметры учетной записи администратора ЗХПД", PdmMessage.PdmMsgType.ERROR);
+            lastMsg = new PdmMessage("Ошибка: Не удалось обновить параметры подсистемы", PdmMessage.PdmMsgType.ERROR);
         }
 
-        return ViewState.MAIN.redirect();
+        return ViewState.SYSTEMS.redirect();
     }
-*/
+
 
 }

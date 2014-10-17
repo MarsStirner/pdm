@@ -11,6 +11,9 @@ public interface AuthService {
 
     String createToken(String username, String password);
 
+    String addToken(String username);
+
     boolean checkAdminPassword(String password);
 
+    boolean logout(String token);
 }

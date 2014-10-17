@@ -1,9 +1,11 @@
 package ru.korus.tmis.pdm.service.impl;
 
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.service.AuthService;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
+import ru.korus.tmis.pdm.utilities.Crypting;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -65,19 +67,25 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String createToken(String username, String password) {
         if (checkLoginAndPassword(username, password)) {
-            AuthData authData = new AuthData();
-            authData.login = username;
-            authData.loginTime = new Date();
+            return addToken(username);
+        }
+        return null;
+    }
 
-            String token = null;
-            for (int tryIndex = 0;
-                 tryIndex < 10 && tokens.get(token = UUID.randomUUID().toString()) != null; ++tryIndex)
-                ;
+    @Override
+    public String addToken(String username) {
+        AuthData authData = new AuthData();
+        authData.login = username;
+        authData.loginTime = new Date();
 
-            if (tokens.get(token) == null) {
-                tokens.put(token, authData);
-                return token;
-            }
+        String token = null;
+        for (int tryIndex = 0;
+             tryIndex < 10 && tokens.get(token = Base64.encode(Crypting.getSecureRandomBytes(16))) != null; ++tryIndex)
+            ;
+
+        if (tokens.get(token) == null) {
+            tokens.put(token, authData);
+            return token;
         }
         return null;
     }
@@ -86,7 +94,7 @@ public class AuthServiceImpl implements AuthService {
     public boolean checkAdminPassword(String password) {
         try {
             String passwordKey = pdmXmlConfigService.getPasswordKey();
-            String pass = pdmXmlConfigService.getKeyByPassword(password);
+            String pass = pdmXmlConfigService.getAdminKeyByPassword(password);
             return passwordKey.equals(pass);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -96,6 +104,10 @@ public class AuthServiceImpl implements AuthService {
         return false;
     }
 
+    @Override
+    public boolean logout(String token) {
+        return tokens.remove(token) != null;
+    }
 
     private boolean checkLoginAndPassword(String username, String password) {
         String adminName = pdmXmlConfigService.getUserName();

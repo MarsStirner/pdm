@@ -1,5 +1,6 @@
 package ru.korus.tmis.pdm.service;
 
+import ru.korus.tmis.pdm.model.PdmSystemInfo;
 import ru.korus.tmis.pdm.model.PdmSystems;
 
 /**
@@ -11,4 +12,6 @@ import ru.korus.tmis.pdm.model.PdmSystems;
 public interface PdmSystemsService {
 
     PdmSystems getSystemsInfo();
+
+    boolean updateSystem(String curOid, PdmSystemInfo pdmSystemInfo);
 }

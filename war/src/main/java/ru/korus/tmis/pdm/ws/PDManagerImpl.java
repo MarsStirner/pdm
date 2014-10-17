@@ -77,5 +77,20 @@ public class PDManagerImpl implements PDManager {
         return pdmService.findLike(parameters);
     }
 
+    @Override
+    @WebMethod(action = "http://www.korusconsulting.ru/PDManager/login")
+    @WebResult(targetNamespace = "urn:hl7-org:v3", partName = "result")
+    public String login(String oid, String password) {
+        return pdmService.login(oid, password);
+    }
+
+    @Override
+    @WebMethod(action = "http://www.korusconsulting.ru/PDManager/logout")
+    @WebResult(targetNamespace = "urn:hl7-org:v3", partName = "result")
+    public boolean logout(String token) {
+        return pdmService.logout(token);
+    }
+
+
 
 }

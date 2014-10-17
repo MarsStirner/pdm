@@ -7,6 +7,7 @@
                                  <xs:complexType>
                                        <xs:attribute name="login" type="xs:string"></xs:attribute>
                                        <xs:attribute name="passwordKey" type="xs:string"></xs:attribute>
+                                       <xs:attribute name="salt" type="xs:string"></xs:attribute>
                                  </xs:complexType>
                            </xs:element>
                            <xs:element name="systems">
@@ -17,6 +18,8 @@
                                                          <xs:attribute name="name" type="xs:string"></xs:attribute>
                                                          <xs:attribute name="oid" type="xs:string"></xs:attribute>
                                                          <xs:attribute name="passwordKey" type="xs:string"></xs:attribute>
+                                                         <xs:attribute name="salt1" type="xs:string"></xs:attribute>
+                                                         <xs:attribute name="salt2" type="xs:string"></xs:attribute>
                                                    </xs:complexType>
                                              </xs:element>
                                        </xs:sequence>

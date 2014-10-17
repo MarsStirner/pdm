@@ -15,9 +15,9 @@ import java.security.spec.InvalidKeySpecException;
  */
 public class Crypting {
 
-    public static byte[] getKey256Bit(String pass, String salt, int size) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static byte[] genKey(String pass, byte[] salt, int size) throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        PBEKeySpec spec = new PBEKeySpec(pass.toCharArray(), salt.getBytes(), 1, size);
+        PBEKeySpec spec = new PBEKeySpec(pass.toCharArray(), salt, 1, size);
         SecretKey secretKey = factory.generateSecret(spec);
         return secretKey.getEncoded();
     }

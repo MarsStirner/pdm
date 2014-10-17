@@ -8,6 +8,7 @@ import ru.korus.tmis.pdm.service.PdmSystemsService;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 
+import javax.xml.bind.JAXBException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,4 +39,41 @@ public class PdmSystemsServiceImpl implements PdmSystemsService {
         }
         return res;
     }
+
+    @Override
+    public boolean updateSystem(String curOid, PdmSystemInfo pdmSystemInfo) {
+        boolean isUpadate = false;
+        PdmConfig.Systems.System system = pdmXmlConfigService.getSystemByOid(curOid);
+        if ( pdmSystemInfo.getNewPassword() != null && !pdmSystemInfo.getNewPassword().isEmpty() ){
+            if (!updateSystemPassword(system, pdmSystemInfo)) {
+                return false;
+            }
+        }
+        if (pdmSystemInfo.getNewOid() != null && !pdmSystemInfo.getNewOid().isEmpty()) {
+            system.setOid(pdmSystemInfo.getNewOid());
+            isUpadate = true;
+        }
+        if(pdmSystemInfo.getNewName() != null && !pdmSystemInfo.getNewOid().isEmpty()) {
+            system.setName(pdmSystemInfo.getNewName());
+            isUpadate = true;
+        }
+        if(isUpadate) {
+            try {
+                pdmXmlConfigService.saveXml();
+            } catch (JAXBException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean updateSystemPassword(PdmConfig.Systems.System system, PdmSystemInfo pdmSystemInfo) {
+        if (pdmXmlConfigService.checkSystemPasswordKey(pdmSystemInfo.getCurPassword(), system.getOid()) )
+        {
+            return pdmXmlConfigService.updateSystemPasswordKey(pdmSystemInfo.getNewPassword(), system);
+        }
+        return false;
+    }
+
 }

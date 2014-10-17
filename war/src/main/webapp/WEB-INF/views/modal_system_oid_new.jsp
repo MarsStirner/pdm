@@ -13,14 +13,14 @@
                 <h4 class="modal-title" id="systemAddLabel">Добавить подсистему</h4>
             </div>
             <div class="modal-body">
-                <form:form method="POST" action="system/new" modelAttribute="pdmSystems.newSystem"
+                <form:form method="POST" action="systems/new" modelAttribute="pdmSystems.newSystem"
                            role="form">
                     <div class="form-group">
                         <form:label path="newName">Наименование:</form:label>
                         <form:input path="newName" cssClass="form-control"/>
                     </div>
                     <div class="form-group">
-                        <form:label path="newOid">OID:</form:label>
+                        <form:label path="newOid">OID подсистемы:</form:label>
                         <form:input path="newOid" cssClass="form-control"/>
                     </div>
                     <div class="form-group">
@@ -31,7 +31,7 @@
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-default" data-dismiss="modal"
-                        onClick="$('#pdmSystems\\.newSystem').submit();">Сохранить
+                        onClick="$('form[action=systems\\/new]').submit();">Сохранить
                 </button>
                 <button type="reset" class="btn btn-default" data-dismiss="modal">
                     Отмена

@@ -2,6 +2,7 @@ package ru.korus.tmis.pdm.service;
 
 import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 
+import javax.xml.bind.JAXBException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
@@ -16,7 +17,9 @@ public interface PdmXmlConfigService {
 
     String getPasswordKey();
 
-    String getSystemPasswordKey(String oid);
+    boolean checkSystemPasswordKey(String password, String oid);
+
+    byte[] login(String oid, String password);
 
     java.util.List<PdmConfig.Systems.System> getSystems();
 
@@ -24,7 +27,18 @@ public interface PdmXmlConfigService {
 
     boolean setNewLogin(String newLogin, String newPassword);
 
-    String getKeyByPassword(String password) throws NoSuchAlgorithmException, InvalidKeySpecException;
+    void saveXml() throws JAXBException;
+
+    String getAdminKeyByPassword(String password) throws NoSuchAlgorithmException, InvalidKeySpecException;
 
     boolean setNewCfgFile(String newLogin);
+
+    PdmConfig.Systems.System getSystemByOid(String oid);
+
+    boolean updateSystemPasswordKey(String newPassword, PdmConfig.Systems.System system);
+
+    byte[] getSystemDbKey(String senderId);
+
+    boolean logout(String oid);
+
 }

@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.entities.*;
+import ru.korus.tmis.pdm.service.AuthService;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 import ru.korus.tmis.pdm.service.PdmDaoServiceLocator;
 import ru.korus.tmis.pdm.service.PdmService;
-import ru.korus.tmis.pdm.utilities.Crypting;
 import ru.korus.tmis.pdm.ws.hl7.*;
 
 import javax.crypto.*;
@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -52,13 +51,16 @@ public class PdmServiceImpl implements PdmService {
     private static final Logger logger = LoggerFactory.getLogger(PDManager.class);
     public static final String CRYPT_TYPE = "AES";
     public static final String PUBLIK_KEY_SALT = "salt";
-    public static final int SECRET_PUBLIK_KEY_SIZE = 256;
 
     @Autowired
     private PdmDaoServiceLocator pdmDaoServiceLocator;
 
     @Autowired
     PdmXmlConfigService pdmXmlConfigService;
+
+    @Autowired
+    AuthService authService;
+
 
     private ru.korus.tmis.pdm.ws.hl7.ObjectFactory factoryHL7 = new ObjectFactory();
 
@@ -252,14 +254,15 @@ public class PdmServiceImpl implements PdmService {
 
     private String toPublicKey(byte[] privateKey, String senderId) {
         try {
-            int encryptMode = Cipher.ENCRYPT_MODE;
-            String pass = pdmXmlConfigService.getSystemPasswordKey(senderId);
-            byte[] key = Crypting.getKey256Bit(pass, PUBLIK_KEY_SALT, SECRET_PUBLIK_KEY_SIZE);
-            Key aesKey = new SecretKeySpec(key, CRYPT_TYPE);
-            Cipher cipher = Cipher.getInstance(CRYPT_TYPE);
-            cipher.init(encryptMode, aesKey);
-            byte[] encrypted = cipher.doFinal(privateKey);
-            return Base64.encode(encrypted);
+            byte key[] = pdmXmlConfigService.getSystemDbKey(senderId);
+            if(key != null) {
+                Key aesKey = new SecretKeySpec(key, CRYPT_TYPE);
+                Cipher cipher = Cipher.getInstance(CRYPT_TYPE);
+                cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+                byte[] encrypted = cipher.doFinal(privateKey);
+                return Base64.encode(encrypted);
+            }
+            return null;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (NoSuchPaddingException e) {
@@ -269,8 +272,6 @@ public class PdmServiceImpl implements PdmService {
         } catch (BadPaddingException e) {
             e.printStackTrace();
         } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         }
         return null;
@@ -278,14 +279,14 @@ public class PdmServiceImpl implements PdmService {
 
     private byte[] toPrivateKey(String publicKey, String senderId) {
         try {
-            int encryptMode = Cipher.DECRYPT_MODE;
-            String pass = pdmXmlConfigService.getSystemPasswordKey(senderId);
-            byte[] key = Crypting.getKey256Bit(pass, PUBLIK_KEY_SALT, SECRET_PUBLIK_KEY_SIZE);
-            Key aesKey = new SecretKeySpec(key, CRYPT_TYPE);
-            byte[] text = Base64.decode(publicKey);
-            Cipher cipher = Cipher.getInstance(CRYPT_TYPE);
-            cipher.init(encryptMode, aesKey);
-            return cipher.doFinal(text);
+            byte key[] = pdmXmlConfigService.getSystemDbKey(senderId);
+            if(key != null) {
+                Key aesKey = new SecretKeySpec(key, CRYPT_TYPE);
+                byte[] text = Base64.decode(publicKey);
+                Cipher cipher = Cipher.getInstance(CRYPT_TYPE);
+                cipher.init(Cipher.DECRYPT_MODE, aesKey);
+                return cipher.doFinal(text);
+            }
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (NoSuchPaddingException e) {
@@ -295,8 +296,6 @@ public class PdmServiceImpl implements PdmService {
         } catch (BadPaddingException e) {
             e.printStackTrace();
         } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         }
         return null;
@@ -366,6 +365,21 @@ public class PdmServiceImpl implements PdmService {
         String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
         return getPRPAIN101306UV02(personalDataList, senderId);
     }
+
+    @Override
+    public String login(String oid, String password) {
+        String res = null;
+        if(pdmXmlConfigService.login(oid, password) != null) {
+            res = authService.addToken(oid);
+        }
+        return res;
+    }
+
+    @Override
+    public boolean logout(String token) {
+        return authService.logout(token)&& pdmXmlConfigService.logout(token);
+    }
+
 
     private List<PersonalData> findPersonLike(PersonalData person) {
         return pdmDaoServiceLocator.getPdmDaoService().findPersonLike(person);

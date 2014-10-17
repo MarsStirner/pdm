@@ -13,29 +13,31 @@
                 <h4 class="modal-title" id="systemUpdateLabel">Редактирование параметров подсистемы</h4>
             </div>
             <div class="modal-body">
-                <form:form method="POST" action="system/update" modelAttribute="pdmSystems.systems[${param.index}]"
+                <form:form method="POST" action="systems/update/${param.index}" modelAttribute="pdmSystems"
                            role="form">
+                    <form:input path="index" value="${param.index}" type="hidden" />
+                    <form:input path="curOid" value="${param.oid}" type="hidden" />
                     <div class="form-group">
-                        <form:label path="curPassword">Текущий пароль:</form:label>
-                        <form:password path="curPassword" cssClass="form-control"/>
+                        <form:label path="systems[${param.index}].newName">Новое наименование:</form:label>
+                        <form:input path="systems[${param.index}].newName" cssClass="form-control"/>
                     </div>
                     <div class="form-group">
-                        <form:label path="newName">Новое наименование:</form:label>
-                        <form:input path="newName" cssClass="form-control"/>
+                        <form:label path="systems[${param.index}].newOid">Новый OID:</form:label>
+                        <form:input path="systems[${param.index}].newOid" cssClass="form-control"/>
                     </div>
                     <div class="form-group">
-                        <form:label path="newOid">Новый OID:</form:label>
-                        <form:input path="newOid" cssClass="form-control"/>
+                        <form:label path="systems[${param.index}].curPassword">Текущий пароль:<small>необходимо только для изменения пароля</small></form:label>
+                        <form:password path="systems[${param.index}].curPassword" cssClass="form-control"/>
                     </div>
                     <div class="form-group">
-                        <form:label path="newPassword">Новый пароль:</form:label>
-                        <form:password path="newPassword" cssClass="form-control"/>
+                        <form:label path="systems[${param.index}].newPassword">Новый пароль:</form:label>
+                        <form:password path="systems[${param.index}].newPassword" cssClass="form-control"/>
                     </div>
                 </form:form>
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-default" data-dismiss="modal"
-                        onClick="$('#pdmSystems\\.systems\\[${param.index}\\]').submit();">Сохранить
+                        onClick="$('form[action=systems\\/update\\/${param.index}]').submit();">Сохранить
                 </button>
                 <button type="reset" class="btn btn-default" data-dismiss="modal">
                     Отмена

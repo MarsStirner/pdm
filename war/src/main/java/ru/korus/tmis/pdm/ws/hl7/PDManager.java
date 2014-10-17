@@ -83,4 +83,13 @@ public interface PDManager {
             @WebParam(name = "PRPA_IN101305UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters")
             PRPAIN101305UV02 parameters);
 
+
+    @WebMethod(action = "http://www.korusconsulting.ru/PDManager/login")
+    @WebResult(targetNamespace = "urn:hl7-org:v3", partName = "result")
+    public String login(String oid, String password);
+
+    @WebMethod(action = "http://www.korusconsulting.ru/PDManager/logout")
+    @WebResult(targetNamespace = "urn:hl7-org:v3", partName = "result")
+    public boolean logout(String token);
+
 }
