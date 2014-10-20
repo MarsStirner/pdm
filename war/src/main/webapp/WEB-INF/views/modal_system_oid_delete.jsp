@@ -13,20 +13,18 @@
                 <h4 class="modal-title text-danger" id="systemUpdateLabel"><strong>Удаление подсистемы</strong></h4>
             </div>
             <div class="modal-body">
-                <p class="text-danger">Для удаление подсистемы  введите пароль</p>
-                <form:form method="POST" action="systems/delete" modelAttribute="pdmSystems"
+                <form:form method="POST" action="systems/delete/${param.index}" modelAttribute="pdmSystems"
                            role="form">
-                    <form:input path="index" value="${param.index}" type="hidden" />
-                    <form:input path="curOid" value="${param.oid}" type="hidden" />
+                    <form:input path="systems[${param.index}].oid" type="hidden" />
                     <div class="form-group">
-                        <form:label path="systems[${param.index}].curPassword" cssClass="text-danger">Текущий пароль подсистемы '${systems[param.index].name}':</form:label>
+                        <form:label path="systems[${param.index}].curPassword" cssClass="text-danger">Пароль подсистемы '${param.name}':</form:label>
                         <form:password path="systems[${param.index}].curPassword" cssClass="form-control"/>
                     </div>
                 </form:form>
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-danger" data-dismiss="modal"
-                        onClick="$('form[action=systems\\/delete]').submit();">Удалить
+                        onClick="$('form[action=systems\\/delete\\/${param.index}]').submit();">Удалить
                 </button>
                 <button type="reset" class="btn btn-danger" data-dismiss="modal">
                     Отмена

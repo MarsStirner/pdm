@@ -14,10 +14,6 @@ public class PdmSystems {
 
     private PdmSystemInfo newSystem;
 
-    private String curOid;
-
-    private Integer index;
-
     public List<PdmSystemInfo> getSystems() {
         return systems;
     }
@@ -34,19 +30,5 @@ public class PdmSystems {
         this.newSystem = newSystem;
     }
 
-    public String getCurOid() {
-        return curOid;
-    }
 
-    public void setCurOid(String curOid) {
-        this.curOid = curOid;
-    }
-
-    public Integer getIndex() {
-        return index;
-    }
-
-    public void setIndex(Integer index) {
-        this.index = index;
-    }
 }

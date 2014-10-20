@@ -2,6 +2,10 @@ package ru.korus.tmis.pdm.model;
 
 import ru.korus.tmis.pdm.ws.hl7.ST;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
 /**
  * Author:      Sergey A. Zagrebelny <br>
  * Date:        15.10.2014, 16:40 <br>
@@ -69,4 +73,5 @@ public class PdmSystemInfo extends PdmMessage {
     public void setNewOid(String newOid) {
         this.newOid = newOid;
     }
+
 }

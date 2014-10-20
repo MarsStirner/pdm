@@ -1,5 +1,9 @@
 package ru.korus.tmis.pdm.model;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Author:      Sergey A. Zagrebelny <br>
  * Date:        14.10.2014, 16:53 <br>
@@ -7,6 +11,8 @@ package ru.korus.tmis.pdm.model;
  * Description:  <br>
  */
 public class PdmMessage {
+
+    private final Format formatter = new SimpleDateFormat("HH:mm:ss");
 
     public static enum PdmMsgType {
         INFO("success"),
@@ -40,8 +46,13 @@ public class PdmMessage {
     }
 
     public PdmMessage(String msg, PdmMsgType type) {
-        setMessage(msg, type);
+        setMessage(formatter.format(new Date()) + ": " + msg, type);
     }
+
+    public void setMessage(PdmMessage msg) {
+        setMessage(msg.msg, msg.type);
+    }
+
 
     public void setMessage(String msg, PdmMsgType type) {
         this.msg = msg;

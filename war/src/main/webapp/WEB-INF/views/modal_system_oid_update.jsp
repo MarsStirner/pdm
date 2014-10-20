@@ -15,8 +15,7 @@
             <div class="modal-body">
                 <form:form method="POST" action="systems/update/${param.index}" modelAttribute="pdmSystems"
                            role="form">
-                    <form:input path="index" value="${param.index}" type="hidden" />
-                    <form:input path="curOid" value="${param.oid}" type="hidden" />
+                    <form:input path="systems[${param.index}].oid" type="hidden" />
                     <div class="form-group">
                         <form:label path="systems[${param.index}].newName">Новое наименование:</form:label>
                         <form:input path="systems[${param.index}].newName" cssClass="form-control"/>

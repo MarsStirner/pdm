@@ -41,4 +41,5 @@ public interface PdmXmlConfigService {
 
     boolean logout(String oid);
 
+    void initSystemByOid();
 }

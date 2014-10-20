@@ -22,7 +22,7 @@
         <ul class="pdm-navlist">
             <li><a href="config">Настройки</a></li>
             <li><a href="systems">Подсистемы</a></li>
-            <li><a href="#">Документы</a></li>
+            <li><a href="docs">Документы</a></li>
             <li><a href="#">Файлы</a></li>
             <li><a href="#">ЗХПД</a></li>
         </ul>

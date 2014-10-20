@@ -3,18 +3,12 @@ package ru.korus.tmis.pdm.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ru.korus.tmis.pdm.model.*;
-import ru.korus.tmis.pdm.service.PdmSystemsService;
-import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
+import ru.korus.tmis.pdm.service.PdmDocsService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,53 +19,51 @@ import java.util.Map;
  * Description:  <br>
  */
 @Controller
-@RequestMapping(value = "systems")
+@RequestMapping(value = "docs")
 @Scope("session")
-public class PdmSystemsController implements Serializable {
+public class PdmDocsController implements Serializable {
 
     @Autowired
-    PdmSystemsService pdmSystemsService;
-
+    PdmDocsService pdmDocsService;
 
     private Map<String, PdmMessage> lastMsg = new HashMap<>();
-    private PdmMessage msgNewSystem = null;
+    private PdmMessage msgNewDocs = null;
     private boolean isClearMsg = true;
-
 
     @RequestMapping(method = RequestMethod.GET)
     public String get(Map<String, Object> model) {
         model.put("state", ViewState.SYSTEMS);
-        PdmSystems systemsInfo = pdmSystemsService.getSystemsInfo();
+        PdmDocs docsInfo = pdmDocsService.getDocsInfo();
         //TODO remove (use AJAX)
         if(isClearMsg ) {
             clearMsg();
         } else {
             isClearMsg = true;
         }
-        for(PdmSystemInfo pdmSystemInfo : systemsInfo.getSystems()) {
-            PdmMessage msg = lastMsg.get(pdmSystemInfo.getOid());
+        for(PdmDocsInfo pdmDocsInfo : docsInfo.getDocs()) {
+            PdmMessage msg = lastMsg.get(pdmDocsInfo.getName());
             if(msg != null) {
-                pdmSystemInfo.setMessage(msg);
+                pdmDocsInfo.setMessage(msg);
             }
         }
-        model.put("pdmSystems", systemsInfo);
-        model.put("msgNewSystem", msgNewSystem);
+        model.put("pdmDocs", docsInfo);
+        model.put("msgNewDocs", msgNewDocs);
         return ConfigController.MAIN_JSP;
     }
 
     private void clearMsg() {
         lastMsg.clear();
-        msgNewSystem = null;
+        msgNewDocs = null;
     }
 
-    @RequestMapping(value = "update/{index}", method = RequestMethod.POST)
+   /* @RequestMapping(value = "update/{index}", method = RequestMethod.POST)
     public String updateSystem(@PathVariable Integer index,
                                @ModelAttribute PdmSystems pdmSystems,
                                Map<String, Object> model,
                                HttpServletRequest request) {
         PdmSystemInfo pdmSystemInfo = pdmSystems.getSystems().get(index);
 
-        if (pdmSystemsService.updateSystem(pdmSystemInfo)) {
+        if (pdmDocsService.updateSystem(pdmSystemInfo)) {
             lastMsg.put(pdmSystemInfo.getNewOid(), new PdmMessage("Новые параметры подсистемы успешно сохранены",
                     PdmMessage.PdmMsgType.INFO));
         } else {
@@ -84,11 +76,11 @@ public class PdmSystemsController implements Serializable {
 
     @RequestMapping(value = "new", method = RequestMethod.POST)
     public String addSystem(@ModelAttribute PdmSystems pdmSystems, Map<String, Object> model, HttpServletRequest request) {
-        if (pdmSystemsService.addSystem(pdmSystems.getNewSystem())) {
-            msgNewSystem = new PdmMessage("Подсистема '" + pdmSystems.getNewSystem().getNewName() + "' успешно добавлена",
+        if (pdmDocsService.addSystem(pdmSystems.getNewSystem())) {
+            msgNewDocs = new PdmMessage("Подсистема '" + pdmSystems.getNewSystem().getNewName() + "' успешно добавлена",
                     PdmMessage.PdmMsgType.INFO);
         } else {
-            msgNewSystem = new PdmMessage("Ошибка: Не удалось добавить подсистему '" + pdmSystems.getNewSystem().getNewName() + "'",
+            msgNewDocs = new PdmMessage("Ошибка: Не удалось добавить подсистему '" + pdmSystems.getNewSystem().getNewName() + "'",
                             PdmMessage.PdmMsgType.ERROR);
         }
         isClearMsg = false;
@@ -98,12 +90,12 @@ public class PdmSystemsController implements Serializable {
     @RequestMapping(value = "delete/{index}", method = RequestMethod.POST)
     public String deleteSystem(@PathVariable Integer index, @ModelAttribute PdmSystems pdmSystems, Map<String, Object> model, HttpServletRequest request) {
         PdmSystemInfo pdmSystemInfo = pdmSystems.getSystems().get(index);
-        if (!pdmSystemsService.deleteSystem(pdmSystemInfo))  {
+        if (!pdmDocsService.deleteSystem(pdmSystemInfo))  {
             lastMsg.put(pdmSystemInfo.getOid(),
                     new PdmMessage("Ошибка: Не удалось удалить подсистему",
                             PdmMessage.PdmMsgType.ERROR));
         }
         isClearMsg = false;
         return ViewState.SYSTEMS.redirect();
-    }
+    }*/
 }

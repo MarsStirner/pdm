@@ -13,5 +13,9 @@ public interface PdmSystemsService {
 
     PdmSystems getSystemsInfo();
 
-    boolean updateSystem(String curOid, PdmSystemInfo pdmSystemInfo);
+    boolean updateSystem(PdmSystemInfo pdmSystemInfo);
+
+    boolean addSystem(PdmSystemInfo newSystem);
+
+    boolean deleteSystem(PdmSystemInfo pdmSystemInfo);
 }

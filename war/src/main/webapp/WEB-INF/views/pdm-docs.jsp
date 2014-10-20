@@ -8,65 +8,87 @@
     <div class="col">
         <div class="panel panel-info">
             <div class="panel-heading">
-                Список подсистем
+                Список документов
             </div>
             <div class="panel-body">
                 <table class="table">
                     <thead>
                     <th>
-                        Наименование
+                        Код
                     </th>
                     <th>
-                        OID
+                        Описание
                     </th>
+                    <th>
+                        Код атрибута
+                    </th>
+                    <th>
+                        Описание атрибута
+                    </th>
+                    <th></th>
                     </thead>
                     <tbody>
-                    <c:forEach items="${pdmSystems.systems}" var="system" varStatus="status">
+                    <c:forEach items="${pdmDocs.systems}" var="doc" varStatus="status">
                         <tr>
-                            <td>
-                                    ${system.name}
+                            <td rowspan="${doc.attr.size()}">
+                                    ${doc.name}
                             </td>
-                            <td>
+                            <td rowspan="${doc.attr.size()}">
+                                    ${doc.description}
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td rowspan="${doc.attr.size()}">
                                 <jsp:include page="alert.jsp">
                                     <jsp:param name="msg" value="${system.msg}"/>
                                     <jsp:param name="alertType" value="${system.getAlertName()}"/>
                                 </jsp:include>
                                     ${system.oid}
                                 <a class="btn btn-default pull-right" data-toggle="modal"
-                                   data-target="#systemDelete${status.index}"
+                                   data-target="#docDelete${status.index}"
                                    placeholder="удалить">
                                     <span class="glyphicon glyphicon-remove"></span>
                                 </a>
                                 <a class="btn btn-default pull-right" data-toggle="modal"
-                                   data-target="#systemUpdate${status.index}"
+                                   data-target="#docUpdate${status.index}"
                                    placeholder="редактировать">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
-                                <jsp:include page="modal_system_oid_update.jsp">
-                                    <jsp:param name="index" value="${status.index}"/>
-                                    <jsp:param name="oid" value="${system.oid}"/>
-                                </jsp:include>
-                                <jsp:include page="modal_system_oid_delete.jsp">
-                                    <jsp:param name="index" value="${status.index}"/>
-                                    <jsp:param name="oid" value="${system.oid}"/>
-                                    <jsp:param name="name" value="${system.name}"/>
-                                </jsp:include>
+                                    <%--<jsp:include page="modal_system_doc_update.jsp">
+                                        <jsp:param name="index" value="${status.index}"/>
+                                        <jsp:param name="oid" value="${system.oid}"/>
+                                    </jsp:include>
+                                    <jsp:include page="modal_system_dco_delete.jsp">
+                                        <jsp:param name="index" value="${status.index}"/>
+                                        <jsp:param name="oid" value="${system.oid}"/>
+                                        <jsp:param name="name" value="${system.name}"/>
+                                    </jsp:include>--%>
                             </td>
                         </tr>
+                        <c:forEach items="${doc.attrs}" var="attr" varStatus="status">
+                            <tr>
+                                <td>
+                                        ${attr.name}
+                                </td>
+                                <td>
+                                        ${doc.description}
+                                </td>
+                            </tr>
+                            < </c:forEach>
                     </c:forEach>
                     <tr>
                         <td>
                             <jsp:include page="alert.jsp">
-                                <jsp:param name="msg" value="${msgNewSystem.msg}"/>
-                                <jsp:param name="alertType" value="${msgNewSystem.getAlertName()}"/>
+                                <jsp:param name="msg" value="${msgNewDocs.msg}"/>
+                                <jsp:param name="alertType" value="${msgNewDocs.getAlertName()}"/>
                             </jsp:include>
                             <a class="btn btn-default" data-toggle="modal" data-target="#systemAdd"
                                placeholder="добавить">
                                 Добавить
                             </a>
-                            <jsp:include page="modal_system_oid_new.jsp">
+                            <%--<jsp:include page="modal_system_oid_new.jsp">
                                 <jsp:param name="index" value="0"/>
-                            </jsp:include>
+                            </jsp:include>--%>
                         </td>
                         <td>
 

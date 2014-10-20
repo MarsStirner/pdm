@@ -10,8 +10,9 @@ public enum ViewState {
 
     ROOT("/", ""),
     MAIN("/config", "Настройки"),
+    AUTH("/auth", "Авторизация"),
     SYSTEMS("/systems", "Подсистемы"),
-    AUTH("/auth", "Авторизация");
+    DOCS("/docs", "Документы");
     /*CREATE("/create", "Новая запись"),
     FIND("/find", "Поиск и редактирование");*/
 

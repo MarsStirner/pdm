@@ -125,6 +125,16 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
     }
 
     @Override
+    public void initSystemByOid() {
+        for(PdmConfig.Systems.System s : pdmConfig.getSystems().getSystem()) {
+            String oid = s.getOid();
+            if(systemsByOid.get(oid) == null) {
+                systemsByOid.put(oid, s);
+            }
+        }
+    }
+
+    @Override
     public byte[] login(String oid, String password) {
         if(systemsPassKeyDbByOid.get(oid) != null) {
             throw new RuntimeException("Access denied: oid " + oid);
