@@ -1,26 +1,24 @@
 package ru.korus.tmis.pdm.model;
 
-import java.util.List;
-
 /**
  * Author:      Sergey A. Zagrebelny <br>
- * Date:        20.10.2014, 18:50 <br>
+ * Date:        20.10.2014, 19:10 <br>
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class PdmDocsInfo extends PdmMessage {
+public class PdmAttrInfo {
 
     private String name;
 
     private String description;
 
-    private List<PdmAttrInfo> attrs;
-
-    private String newName;
+    private String oid;
 
     private String newDescription;
 
-    private PdmAttrInfo newAttr;
+    private String newOid;
+
+    private String newName;
 
     public String getName() {
         return name;
@@ -28,14 +26,6 @@ public class PdmDocsInfo extends PdmMessage {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<PdmAttrInfo> getAttrs() {
-        return attrs;
-    }
-
-    public void setAttrs(List<PdmAttrInfo> attrs) {
-        this.attrs = attrs;
     }
 
     public String getDescription() {
@@ -46,12 +36,12 @@ public class PdmDocsInfo extends PdmMessage {
         this.description = description;
     }
 
-    public String getNewName() {
-        return newName;
+    public String getOid() {
+        return oid;
     }
 
-    public void setNewName(String newName) {
-        this.newName = newName;
+    public void setOid(String oid) {
+        this.oid = oid;
     }
 
     public String getNewDescription() {
@@ -62,11 +52,19 @@ public class PdmDocsInfo extends PdmMessage {
         this.newDescription = newDescription;
     }
 
-    public PdmAttrInfo getNewAttr() {
-        return newAttr;
+    public String getNewOid() {
+        return newOid;
     }
 
-    public void setNewAttr(PdmAttrInfo newAttr) {
-        this.newAttr = newAttr;
+    public void setNewOid(String newOid) {
+        this.newOid = newOid;
+    }
+
+    public String getNewName() {
+        return newName;
+    }
+
+    public void setNewName(String newName) {
+        this.newName = newName;
     }
 }

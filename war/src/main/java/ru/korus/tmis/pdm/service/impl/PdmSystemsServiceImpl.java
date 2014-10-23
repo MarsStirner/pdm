@@ -6,7 +6,6 @@ import ru.korus.tmis.pdm.model.PdmSystemInfo;
 import ru.korus.tmis.pdm.model.PdmSystems;
 import ru.korus.tmis.pdm.service.PdmSystemsService;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
-import ru.korus.tmis.pdm.service.impl.xml.ObjectFactory;
 import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 
 import javax.xml.bind.JAXBException;
@@ -24,9 +23,6 @@ public class PdmSystemsServiceImpl implements PdmSystemsService {
 
     @Autowired
     PdmXmlConfigService pdmXmlConfigService;
-
-    private final ru.korus.tmis.pdm.service.impl.xml.ObjectFactory pdmXlmFactory = new ObjectFactory();
-
 
     @Override
     public PdmSystems getSystemsInfo() {
@@ -47,8 +43,8 @@ public class PdmSystemsServiceImpl implements PdmSystemsService {
     @Override
     public boolean updateSystem(PdmSystemInfo pdmSystemInfo) {
         final String curOid = pdmSystemInfo.getOid();
-        boolean isUpadate = false;
-        PdmConfig.Systems.System system = pdmXmlConfigService.getSystemByOid(curOid);
+        boolean isUpdate = false;
+        PdmConfig.Systems.System system = pdmXmlConfigService.getObjectByOid(curOid);
         if (pdmSystemInfo.getNewPassword() != null && !pdmSystemInfo.getNewPassword().isEmpty()) {
             if (!updateSystemPassword(system, pdmSystemInfo)) {
                 return false;
@@ -56,28 +52,28 @@ public class PdmSystemsServiceImpl implements PdmSystemsService {
         }
         if (pdmSystemInfo.getNewOid() != null && !pdmSystemInfo.getNewOid().isEmpty()) {
             system.setOid(pdmSystemInfo.getNewOid());
-            isUpadate = true;
+            isUpdate = true;
         }
         if (pdmSystemInfo.getNewName() != null && !pdmSystemInfo.getNewOid().isEmpty()) {
             system.setName(pdmSystemInfo.getNewName());
-            isUpadate = true;
+            isUpdate = true;
         }
-        return saveIfNeeded(isUpadate);
+        return pdmXmlConfigService.saveIfNeeded(isUpdate);
     }
 
 
     @Override
     public boolean addSystem(PdmSystemInfo newSystem) {
-        if (pdmXmlConfigService.getSystemByOid(newSystem.getNewOid()) == null
+        if ((PdmConfig.Systems.System)pdmXmlConfigService.getObjectByOid(newSystem.getNewOid()) == null
                 && newSystem.getNewPassword() != null
                 && !newSystem.getNewPassword().isEmpty()) {
-            PdmConfig.Systems.System system = pdmXlmFactory.createPdmConfigSystemsSystem();
+            PdmConfig.Systems.System system = PdmXmlConfigServiceImpl.getPdmXlmFactory().createPdmConfigSystemsSystem();
             pdmXmlConfigService.getSystems().add(system);
             system.setOid(newSystem.getNewOid());
             system.setName(newSystem.getNewName());
             pdmXmlConfigService.updateSystemPasswordKey(newSystem.getNewPassword(), system);
-            pdmXmlConfigService.initSystemByOid();
-            return saveIfNeeded(true);
+            pdmXmlConfigService.initObjectMap();
+            return pdmXmlConfigService.saveIfNeeded(true);
         }
         return false;
     }
@@ -86,10 +82,10 @@ public class PdmSystemsServiceImpl implements PdmSystemsService {
     public boolean deleteSystem(PdmSystemInfo pdmSystemInfo) {
         final String curOid = pdmSystemInfo.getOid();
         boolean isUpadate = false;
-        PdmConfig.Systems.System system = pdmXmlConfigService.getSystemByOid(curOid);
+        PdmConfig.Systems.System system = pdmXmlConfigService.getObjectByOid(curOid);
         if (pdmXmlConfigService.checkSystemPasswordKey(pdmSystemInfo.getCurPassword(), system.getOid())) {
             pdmXmlConfigService.getSystems().remove(system);
-            saveIfNeeded(true);
+            return pdmXmlConfigService.saveIfNeeded(true);
         }
         return false;
     }
@@ -101,16 +97,6 @@ public class PdmSystemsServiceImpl implements PdmSystemsService {
         return false;
     }
 
-    private boolean saveIfNeeded(boolean isUpdate) {
-        if (isUpdate) {
-            try {
-                pdmXmlConfigService.saveXml();
-            } catch (JAXBException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        return true;
-    }
+
 
 }

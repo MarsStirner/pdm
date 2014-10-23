@@ -11,11 +11,21 @@ import java.util.List;
 public class PdmDocs {
     private List<PdmDocsInfo> docs;
 
+    private PdmDocsInfo newDoc;
+
     public List<PdmDocsInfo> getDocs() {
         return docs;
     }
 
     public void setDocs(List<PdmDocsInfo> docs) {
         this.docs = docs;
+    }
+
+    public PdmDocsInfo getNewDoc() {
+        return newDoc;
+    }
+
+    public void setNewDoc(PdmDocsInfo newDoc) {
+        this.newDoc = newDoc;
     }
 }

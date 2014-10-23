@@ -4,6 +4,7 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
+import ru.korus.tmis.pdm.service.impl.xml.ObjectFactory;
 import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 import ru.korus.tmis.pdm.utilities.Crypting;
 
@@ -32,9 +33,13 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
     public static final int KEY_SIZE = 64;
     private PdmConfig pdmConfig;
 
-    private Map<String, PdmConfig.Systems.System> systemsByOid = new HashMap<>();
+    private Map<String, Object> objectByOid = new HashMap<>();
+
+    private Map<String, PdmConfig.Docs.Doc> docsByName = new HashMap<>();
 
     private Map<String, List<Byte>> systemsPassKeyDbByOid = new HashMap<>();
+
+    static private final ru.korus.tmis.pdm.service.impl.xml.ObjectFactory pdmXlmFactory = new ObjectFactory();
 
     @PostConstruct
     void loadXml() {
@@ -48,14 +53,33 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
             JAXBContext jaxbContext = JAXBContext.newInstance(PdmConfig.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             pdmConfig = (PdmConfig) jaxbUnmarshaller.unmarshal(fileConf);
-            for(PdmConfig.Systems.System s : pdmConfig.getSystems().getSystem()) {
-                systemsByOid.put(s.getOid(), s);
-            }
+            initObjectMap();
             res = true;
         } catch (JAXBException e) {
             e.printStackTrace();
+            throw new IllegalStateException("Cannot unmarshal config file: " + fileConf == null ? "null" : fileConf.getName() );
         }
         return res;
+    }
+
+    @Override
+    public void initObjectMap() {
+        objectByOid.clear();
+        for (PdmConfig.Systems.System s : pdmConfig.getSystems().getSystem()) {
+            objectByOid.put(s.getOid(), s);
+        }
+        docsByName.clear();
+        for (PdmConfig.Docs.Doc doc : pdmConfig.getDocs().getDoc()) {
+            docsByName.put(doc.getName(), doc);
+            for (PdmConfig.Docs.Doc.Attribute attribute : doc.getAttribute()) {
+                String oid = attribute.getOid();
+                if (objectByOid.get(oid) == null) {
+                    objectByOid.put(oid, attribute);
+                } else {
+                    throw new IllegalStateException("Oid " + oid + "  is already used for " + objectByOid.get(oid));
+                }
+            }
+        }
     }
 
     @Override
@@ -70,11 +94,11 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
 
     @Override
     public boolean checkSystemPasswordKey(String password, String oid) {
-        PdmConfig.Systems.System passwordKey = systemsByOid.get(oid);
-        if (passwordKey == null) {
+        Object system = getObjectByOid(oid);
+        if (system == null) {
             throw new RuntimeException("Unknown system OID: " + oid);
         }
-        return checkSystemPasswordKey(password, passwordKey);
+        return checkSystemPasswordKey(password, (PdmConfig.Systems.System)system);
     }
 
     private boolean checkSystemPasswordKey(String password, PdmConfig.Systems.System system) {
@@ -110,7 +134,7 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
     public byte[] getSystemDbKey(String senderId) {
         byte res[] = null;
         List<Byte> keyList = systemsPassKeyDbByOid.get(senderId);
-        if(keyList != null) {
+        if (keyList != null) {
             res = new byte[keyList.size()];
             for (int i = 0; i < keyList.size(); ++i) {
                 res[i] = keyList.get(i);
@@ -124,29 +148,18 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
         return systemsPassKeyDbByOid.remove(oid) != null;
     }
 
-    @Override
-    public void initSystemByOid() {
-        for(PdmConfig.Systems.System s : pdmConfig.getSystems().getSystem()) {
-            String oid = s.getOid();
-            if(systemsByOid.get(oid) == null) {
-                systemsByOid.put(oid, s);
-            }
-        }
-    }
 
     @Override
     public byte[] login(String oid, String password) {
-        if(systemsPassKeyDbByOid.get(oid) != null) {
+        if (systemsPassKeyDbByOid.get(oid) != null) {
             throw new RuntimeException("Access denied: oid " + oid);
         }
-        PdmConfig.Systems.System system = systemsByOid.get(oid);
-        if (system == null || checkSystemPasswordKey(password, system)) {
-            throw new RuntimeException("Unknown system OID: " + oid);
-        }
+        checkSystemPasswordKey(password, oid);
+        PdmConfig.Systems.System system = (PdmConfig.Systems.System)objectByOid.get(oid);
         try {
             byte[] key = genSystemPasswordKey(password, system.getSalt2());
             ArrayList keyByte = new ArrayList(key.length);
-            for(byte b : key) {
+            for (byte b : key) {
                 keyByte.add(b);
             }
             systemsPassKeyDbByOid.put(oid, keyByte);
@@ -163,6 +176,12 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
     public java.util.List<PdmConfig.Systems.System> getSystems() {
         return pdmConfig.getSystems().getSystem();
     }
+
+    @Override
+    public java.util.List<PdmConfig.Docs.Doc> getDocs() {
+        return pdmConfig.getDocs().getDoc();
+    }
+
 
     @Override
     public String getCfgFileName() {
@@ -209,7 +228,7 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
     @Override
     public boolean setNewCfgFile(String newLogin) {
         boolean res = false;
-        if(loadXml(new File(newLogin))) {
+        if (loadXml(new File(newLogin))) {
             System.setProperty(PDM_CONFIG_FILE, newLogin);
             res = true;
         }
@@ -217,8 +236,35 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
     }
 
     @Override
-    public PdmConfig.Systems.System getSystemByOid(String oid) {
-        return systemsByOid.get(oid);
+    public <T> T getObjectByOid(String oid) {
+        Object system = objectByOid.get(oid);
+        try {
+            return system == null ? null : (T)system;
+        } catch (ClassCastException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public PdmConfig.Docs.Doc getDocByName(String name) {
+        return docsByName.get(name);
+    }
+
+    @Override
+    public boolean saveIfNeeded(boolean isUpdate) {
+        if (isUpdate) {
+            try {
+                saveXml();
+            } catch (JAXBException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static public ObjectFactory getPdmXlmFactory() {
+        return pdmXlmFactory;
     }
 
 

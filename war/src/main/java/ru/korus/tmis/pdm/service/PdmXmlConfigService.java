@@ -23,6 +23,8 @@ public interface PdmXmlConfigService {
 
     java.util.List<PdmConfig.Systems.System> getSystems();
 
+    java.util.List<PdmConfig.Docs.Doc> getDocs();
+
     String getCfgFileName();
 
     boolean setNewLogin(String newLogin, String newPassword);
@@ -33,13 +35,17 @@ public interface PdmXmlConfigService {
 
     boolean setNewCfgFile(String newLogin);
 
-    PdmConfig.Systems.System getSystemByOid(String oid);
-
     boolean updateSystemPasswordKey(String newPassword, PdmConfig.Systems.System system);
 
     byte[] getSystemDbKey(String senderId);
 
     boolean logout(String oid);
 
-    void initSystemByOid();
+    void initObjectMap();
+
+    <T> T getObjectByOid(String oid);
+
+    PdmConfig.Docs.Doc getDocByName(String name);
+
+    boolean saveIfNeeded(boolean isSave);
 }

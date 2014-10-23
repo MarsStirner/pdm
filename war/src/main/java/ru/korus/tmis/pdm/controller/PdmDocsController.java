@@ -3,11 +3,14 @@ package ru.korus.tmis.pdm.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ru.korus.tmis.pdm.model.*;
 import ru.korus.tmis.pdm.service.PdmDocsService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,17 +35,17 @@ public class PdmDocsController implements Serializable {
 
     @RequestMapping(method = RequestMethod.GET)
     public String get(Map<String, Object> model) {
-        model.put("state", ViewState.SYSTEMS);
+        model.put("state", ViewState.DOCS);
         PdmDocs docsInfo = pdmDocsService.getDocsInfo();
         //TODO remove (use AJAX)
-        if(isClearMsg ) {
+        if (isClearMsg) {
             clearMsg();
         } else {
             isClearMsg = true;
         }
-        for(PdmDocsInfo pdmDocsInfo : docsInfo.getDocs()) {
+        for (PdmDocsInfo pdmDocsInfo : docsInfo.getDocs()) {
             PdmMessage msg = lastMsg.get(pdmDocsInfo.getName());
-            if(msg != null) {
+            if (msg != null) {
                 pdmDocsInfo.setMessage(msg);
             }
         }
@@ -56,46 +59,100 @@ public class PdmDocsController implements Serializable {
         msgNewDocs = null;
     }
 
-   /* @RequestMapping(value = "update/{index}", method = RequestMethod.POST)
-    public String updateSystem(@PathVariable Integer index,
-                               @ModelAttribute PdmSystems pdmSystems,
-                               Map<String, Object> model,
-                               HttpServletRequest request) {
-        PdmSystemInfo pdmSystemInfo = pdmSystems.getSystems().get(index);
+    @RequestMapping(value = "new", method = RequestMethod.POST)
+    public String addDoc(@ModelAttribute PdmDocs pdmDocs, Map<String, Object> model, HttpServletRequest request) {
+        if (pdmDocsService.addDoc(pdmDocs.getNewDoc())) {
+            msgNewDocs = new PdmMessage("Документ '" + pdmDocs.getNewDoc().getName() + "' успешно добавлен",
+                    PdmMessage.PdmMsgType.INFO);
+        } else {
+            msgNewDocs = new PdmMessage("Ошибка: Не удалось добавить документ '" + pdmDocs.getNewDoc().getName() + "'",
+                    PdmMessage.PdmMsgType.ERROR);
+        }
+        isClearMsg = false;
+        return ViewState.DOCS.redirect();
+    }
 
-        if (pdmDocsService.updateSystem(pdmSystemInfo)) {
-            lastMsg.put(pdmSystemInfo.getNewOid(), new PdmMessage("Новые параметры подсистемы успешно сохранены",
+    @RequestMapping(value = "update/{index}", method = RequestMethod.POST)
+    public String updateDoc(@PathVariable Integer index,
+                            @ModelAttribute PdmDocs pdmDocs,
+                            Map<String, Object> model,
+                            HttpServletRequest request) {
+        PdmDocsInfo pdmDocsInfo = pdmDocs.getDocs().get(index);
+
+        if (pdmDocsService.updateDocs(pdmDocsInfo)) {
+            lastMsg.put(pdmDocsInfo.getName(), new PdmMessage("Документ успешно сохранены",
                     PdmMessage.PdmMsgType.INFO));
         } else {
-            lastMsg.put(pdmSystemInfo.getOid(), new PdmMessage("Ошибка: Не удалось обновить параметры подсистемы",
+            lastMsg.put(pdmDocsInfo.getName(), new PdmMessage("Ошибка: Не удалось обновить документ",
                     PdmMessage.PdmMsgType.ERROR));
         }
         isClearMsg = false;
-        return ViewState.SYSTEMS.redirect();
+        return ViewState.DOCS.redirect();
     }
 
-    @RequestMapping(value = "new", method = RequestMethod.POST)
-    public String addSystem(@ModelAttribute PdmSystems pdmSystems, Map<String, Object> model, HttpServletRequest request) {
-        if (pdmDocsService.addSystem(pdmSystems.getNewSystem())) {
-            msgNewDocs = new PdmMessage("Подсистема '" + pdmSystems.getNewSystem().getNewName() + "' успешно добавлена",
-                    PdmMessage.PdmMsgType.INFO);
-        } else {
-            msgNewDocs = new PdmMessage("Ошибка: Не удалось добавить подсистему '" + pdmSystems.getNewSystem().getNewName() + "'",
-                            PdmMessage.PdmMsgType.ERROR);
-        }
-        isClearMsg = false;
-        return ViewState.SYSTEMS.redirect();
-    }
-
-    @RequestMapping(value = "delete/{index}", method = RequestMethod.POST)
-    public String deleteSystem(@PathVariable Integer index, @ModelAttribute PdmSystems pdmSystems, Map<String, Object> model, HttpServletRequest request) {
-        PdmSystemInfo pdmSystemInfo = pdmSystems.getSystems().get(index);
-        if (!pdmDocsService.deleteSystem(pdmSystemInfo))  {
-            lastMsg.put(pdmSystemInfo.getOid(),
-                    new PdmMessage("Ошибка: Не удалось удалить подсистему",
+    //TODO change to DELETE
+    @RequestMapping(value = "delete/{name}", method = RequestMethod.GET)
+    public String deleteDoc(@PathVariable String name,
+                            Map<String, Object> model,
+                            HttpServletRequest request) {
+        if (!pdmDocsService.deleteDoc(name)) {
+            lastMsg.put(name,
+                    new PdmMessage("Ошибка: Не удалось удалить документ",
                             PdmMessage.PdmMsgType.ERROR));
         }
         isClearMsg = false;
-        return ViewState.SYSTEMS.redirect();
-    }*/
+        return ViewState.DOCS.redirect();
+    }
+
+    @RequestMapping(value = "{docIndex}/update/attr/{attrIndex}", method = RequestMethod.POST)
+    public String updateDoc(@PathVariable Integer docIndex,
+                            @PathVariable Integer attrIndex,
+                            @ModelAttribute PdmDocs pdmDocs,
+                            Map<String, Object> model,
+                            HttpServletRequest request) {
+        PdmDocsInfo pdmDocsInfo = pdmDocs.getDocs().get(docIndex);
+
+        if (pdmDocsService.updateAttr(pdmDocsInfo, attrIndex)) {
+            lastMsg.put(pdmDocsInfo.getName(), new PdmMessage("Атрибут успешно сохранены",
+                    PdmMessage.PdmMsgType.INFO));
+        } else {
+            lastMsg.put(pdmDocsInfo.getName(), new PdmMessage("Ошибка: Не удалось обновить атрибут",
+                    PdmMessage.PdmMsgType.ERROR));
+        }
+        isClearMsg = false;
+        return ViewState.DOCS.redirect();
+    }
+
+    //TODO change to DELETE
+    @RequestMapping(value = "{docName}/delete/attr/{attrIndex}", method = RequestMethod.GET)
+    public String deleteAttr(@PathVariable String docName,
+                             @PathVariable Integer attrIndex,
+                             @ModelAttribute PdmDocs pdmDocs,
+                             Map<String, Object> model,
+                             HttpServletRequest request) {
+        if (!pdmDocsService.deleteAttr(docName, attrIndex)) {
+            lastMsg.put(docName,
+                    new PdmMessage("Ошибка: Не удалось удалить атрибут",
+                            PdmMessage.PdmMsgType.ERROR));
+        }
+        isClearMsg = false;
+        return ViewState.DOCS.redirect();
+    }
+
+    @RequestMapping(value = "{docIndex}/new/attr", method = RequestMethod.POST)
+    public String addAttr(@PathVariable Integer docIndex,
+                          @ModelAttribute PdmDocs pdmDocs,
+                          Map<String, Object> model,
+                          HttpServletRequest request) {
+        PdmDocsInfo pdmDocsInfo = pdmDocs.getDocs().get(docIndex);
+        if (pdmDocsService.addAttr(pdmDocsInfo)) {
+            msgNewDocs = new PdmMessage("Атрибут  успешно добавлен",
+                    PdmMessage.PdmMsgType.INFO);
+        } else {
+            msgNewDocs = new PdmMessage("Ошибка: Не удалось добавить атрибут",
+                    PdmMessage.PdmMsgType.ERROR);
+        }
+        isClearMsg = false;
+        return ViewState.DOCS.redirect();
+    }
 }
