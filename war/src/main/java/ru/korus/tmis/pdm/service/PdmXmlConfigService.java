@@ -5,6 +5,7 @@ import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 import javax.xml.bind.JAXBException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -48,4 +49,6 @@ public interface PdmXmlConfigService {
     PdmConfig.Docs.Doc getDocByName(String name);
 
     boolean saveIfNeeded(boolean isSave);
+
+    List<PdmConfig.Files.File> getFiles();
 }

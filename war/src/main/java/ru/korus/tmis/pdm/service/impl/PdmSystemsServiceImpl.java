@@ -84,8 +84,9 @@ public class PdmSystemsServiceImpl implements PdmSystemsService {
         boolean isUpadate = false;
         PdmConfig.Systems.System system = pdmXmlConfigService.getObjectByOid(curOid);
         if (pdmXmlConfigService.checkSystemPasswordKey(pdmSystemInfo.getCurPassword(), system.getOid())) {
-            pdmXmlConfigService.getSystems().remove(system);
-            return pdmXmlConfigService.saveIfNeeded(true);
+            if ( pdmXmlConfigService.getSystems().remove(system) ) {
+                return pdmXmlConfigService.saveIfNeeded(true);
+            }
         }
         return false;
     }

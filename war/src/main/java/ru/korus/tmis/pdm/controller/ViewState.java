@@ -12,7 +12,8 @@ public enum ViewState {
     MAIN("/config", "Настройки"),
     AUTH("/auth", "Авторизация"),
     SYSTEMS("/systems", "Подсистемы"),
-    DOCS("/docs", "Документы");
+    DOCS("/docs", "Документы"),
+    FILES("/files", "Файлы");
     /*CREATE("/create", "Новая запись"),
     FIND("/find", "Поиск и редактирование");*/
 

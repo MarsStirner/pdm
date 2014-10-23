@@ -68,6 +68,9 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
         for (PdmConfig.Systems.System s : pdmConfig.getSystems().getSystem()) {
             objectByOid.put(s.getOid(), s);
         }
+        for (PdmConfig.Files.File f : pdmConfig.getFiles().getFile()) {
+            objectByOid.put(f.getOid(), f);
+        }
         docsByName.clear();
         for (PdmConfig.Docs.Doc doc : pdmConfig.getDocs().getDoc()) {
             docsByName.put(doc.getName(), doc);
@@ -261,6 +264,11 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
             }
         }
         return true;
+    }
+
+    @Override
+    public List<PdmConfig.Files.File> getFiles() {
+        return pdmConfig.getFiles().getFile();
     }
 
     static public ObjectFactory getPdmXlmFactory() {
