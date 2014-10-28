@@ -13,6 +13,8 @@
 
     <link rel="stylesheet" href="resources/css/style.min.css" />
 
+    <script type="text/javascript" src="resources/angular/angular.min.js"></script>
+
     <title>ЗХПД</title>
     <meta name="description" content="Защищенное хранилище персональных данных">
 </head>
@@ -24,7 +26,17 @@
             <li><a href="systems">Подсистемы</a></li>
             <li><a href="docs">Документы</a></li>
             <li><a href="files">Файлы</a></li>
-            <li><a href="#">ЗХПД</a></li>
+            <li>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">ЗХПД<b class="caret"></b></a>
+                <ul class="dropdown-menu global_nav">
+                    <li>
+                        <a href="create">Новая запись</a>
+                    </li>
+                    <li>
+                        <a href="find">Поиск</a>
+                    </li>
+                </ul>
+            </li>
         </ul>
     </nav>
     <div class="pdm-title">

@@ -52,7 +52,7 @@ public class PdmFilesController implements Serializable {
             }
         }
         model.put("pdmFiles", filesInfo);
-        //model.put("msgNewFile", msgNewSFile);
+        model.put("msgNewFile", msgNewFile);
 
         return ConfigController.MAIN_JSP;
     }

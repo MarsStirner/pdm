@@ -14,7 +14,7 @@
                     <tr>
                         <td class="col-md-1">Версия ЗХПД:</td>
                         <td class="col-md-3"><h4><strong><span
-                                class="label label-primary sp">${info.version}</span></strong></h4></td>
+                                class="label label-primary">${info.version}</span></strong></h4></td>
                     </tr>
 
                     <tr>
