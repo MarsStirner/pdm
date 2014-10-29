@@ -12,16 +12,16 @@ import java.util.List;
  */
 public class DocsInfo {
 
-    private String description;
+    private String name;
 
     private List<ValueInfo> attrs;
 
     public String getDescription() {
-        return description;
+        return name;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescription(String name) {
+        this.name = name;
     }
 
     public List<ValueInfo> getAttrs() {

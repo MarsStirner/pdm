@@ -1,9 +1,11 @@
 package ru.korus.tmis.pdm.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.korus.tmis.pdm.model.*;
+import ru.korus.tmis.pdm.service.PdmDocsService;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -19,12 +21,16 @@ import java.util.Map;
 @Scope("session")
 public class PdmCreateController implements Serializable {
 
+    @Autowired
+    PdmDocsService pdmDocsService;
+
     private PersonalInfo personalInfo = new PersonalInfo();
 
     @RequestMapping(method = RequestMethod.GET)
     public String get(Map<String, Object> model) {
         model.put("state", ViewState.CREATE);
         model.put("newPerson", personalInfo);
+        model.put("pdmDocs", pdmDocsService.getDocsInfo());
         //model.put("pdmFiles", filesInfo);
         //model.put("msgNewFile", msgNewSFile);
         return ConfigController.MAIN_JSP;

@@ -28,15 +28,9 @@ public class PersonalInfo {
 
     private List<ValueInfo> telecoms;
 
-    private ValueInfo newTelecom;
-
     private List<ValueInfo> addressList;
 
-    private ValueInfo newAddress;
-
     private List<DocsInfo> docs;
-
-    private DocsInfo newDoc;
 
     public String getGiven() {
         return given;
@@ -113,27 +107,4 @@ public class PersonalInfo {
         this.docs = docs;
     }
 
-    public ValueInfo getNewTelecom() {
-        return newTelecom;
-    }
-
-    public void setNewTelecom(ValueInfo newTelecom) {
-        this.newTelecom = newTelecom;
-    }
-
-    public ValueInfo getNewAddress() {
-        return newAddress;
-    }
-
-    public void setNewAddress(ValueInfo newAddress) {
-        this.newAddress = newAddress;
-    }
-
-    public DocsInfo getNewDoc() {
-        return newDoc;
-    }
-
-    public void setNewDoc(DocsInfo newDoc) {
-        this.newDoc = newDoc;
-    }
 }
