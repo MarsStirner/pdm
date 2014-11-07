@@ -50,10 +50,9 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public PersonalInfo findById(byte[] privateKey) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
-        final byte[] key = pdmXmlConfigService.getInternalKey();
-        Person personalData = personDataRepository.findByPrivateKey(Crypting.decrypt(key, privateKey));
-        return personalDataBuilderService.createPersonalInfo(personalData);
+    public PersonalInfo findById(byte[] privateKey, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
+        Person personalData = personDataRepository.findByPrivateKey(privateKey);
+        return personalDataBuilderService.createPersonalInfo(personalData, senderId);
     }
 
     @Override

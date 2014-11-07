@@ -34,7 +34,7 @@ public interface PdmDaoService {
      */
     boolean find(DocsInfo docInfo);
 
-    PersonalInfo findById(byte[] privateKey) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException;
+    PersonalInfo findById(byte[] privateKey, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException;
 
     /**
      * Поиск по персональным данным

@@ -109,6 +109,9 @@ public class PersonalInfo {
     }
 
     public List<DocsInfo> getDocs() {
+        if(documents == null) {
+            documents = new LinkedList<>();
+        }
         return documents;
     }
 

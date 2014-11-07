@@ -1,10 +1,13 @@
 package ru.korus.tmis.pdm.utilities;
 
+import ru.korus.tmis.pdm.model.api.ErrorStatus;
+import ru.korus.tmis.pdm.model.api.Identifier;
 import ru.korus.tmis.pdm.service.impl.PdmServiceImpl;
 
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -82,4 +85,21 @@ public class Crypting {
         return res;
     }
 
+    public static Identifier toPublicKey(List<Byte> privateKey, byte[] key) {
+        Identifier res = new Identifier();
+        try {
+            if (key != null) {
+                List<Byte> encrypted = cryptToList(key, privateKey);
+                res.setId(DatatypeConverter.printBase64Binary(toByteArray(encrypted)));
+            }
+        } catch (NoSuchAlgorithmException
+                | NoSuchPaddingException
+                | IllegalBlockSizeException
+                | BadPaddingException
+                | InvalidKeyException e) {
+            res.setStatus(ErrorStatus.CRYPT_ERROR.format(e.getMessage()));
+        }
+
+        return res;
+    }
 }

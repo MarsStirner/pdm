@@ -1,6 +1,7 @@
 package ru.korus.tmis.pdm.entities;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity(name = "document")
 public class Document extends PrivateKey {
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Attr> attribute;
 
     public List<Attr> getAttribute()

@@ -56,13 +56,13 @@ public class Person extends PrivateKey {
      * Документ об образовании
      */
     //TODO fix: javax.xml.ws.soap.SOAPFaultException: Map privateKey 3.0.0.2 contains dots but no replacement was configured!
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Docs> docs = new Vector<Docs>();
 
     /**
      * Контактные телефоны и электронные адреса
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Telecoms> telecoms = new Vector<Telecoms>();
 
     /**
@@ -71,7 +71,7 @@ public class Person extends PrivateKey {
      * "H" - home address; "HP" - primary home; "HV" - vacation home,
      * "WP" - work place, "DIR" - direct, "PUB" - public, "BAD" - bad address, "TMP"
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Addresses> address = new Vector<Addresses>();
 
     public String getGiven() {

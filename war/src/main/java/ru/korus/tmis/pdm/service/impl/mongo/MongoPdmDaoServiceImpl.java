@@ -53,7 +53,7 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public PersonalInfo findById(byte[] privateKey) {
+    public PersonalInfo findById(byte[] privateKey, String senderId) {
         throw new RuntimeException("TODO!!");
         /*PersonalData person = mongoOperation.findById(id, PersonalData.class);
         if( person == null ) {

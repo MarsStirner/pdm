@@ -7,6 +7,7 @@ import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.PersonalInfo;
 import ru.korus.tmis.pdm.model.ValueInfo;
+import ru.korus.tmis.pdm.model.api.Identifier;
 import ru.korus.tmis.pdm.repositories.*;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 import ru.korus.tmis.pdm.service.PersonalDataBuilderService;
@@ -19,6 +20,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -91,15 +93,25 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
     }
 
     @Override
-    public PersonalInfo createPersonalInfo(Person personalData) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+    public PersonalInfo createPersonalInfo(Person personalData, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
         PersonalInfo res = new PersonalInfo();
         final byte[] key = pdmXmlConfigService.getInternalKey();
+        final byte[] keySystem = pdmXmlConfigService.getSystemDbKey(senderId);
+
+        Identifier identifier = Crypting.toPublicKey(Crypting.toListByte(personalData.getPrivateKey()), keySystem);
+        res.setPublicKey(identifier == null ? null :identifier.getId());
 
         res.setGiven(personalData.getGiven());
         res.setFamily(personalData.getFamily());
         res.setMiddleName(personalData.getMiddleName());
 
-        byte[] privateKey = Crypting.decrypt(key, personalData.getBirthInfo());
+        byte[] privateKey = Crypting.decrypt(key, personalData.getGender());
+        Term gender = termRepository.findByPrivateKey(privateKey);
+        if (gender != null) {
+            res.setGender(createValueInfo(gender));
+        }
+
+        privateKey = Crypting.decrypt(key, personalData.getBirthInfo());
         Birth birthInfo = birthInfoRepository.findByPrivateKey(privateKey);
         if (birthInfo != null) {
             res.setBirthDate(birthInfo.getBirthDate());
@@ -126,6 +138,13 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
             Document doc = documentRepository.findByPrivateKey(privateKey);
             res.getDocuments().add(createDocsInfo(doc));
         }
+        return res;
+    }
+
+    private ValueInfo createValueInfo(Term gender) {
+        ValueInfo res = new ValueInfo();
+        res.setValue(gender.getCode());
+        res.setDescription(gender.getCodeSystem());
         return res;
     }
 

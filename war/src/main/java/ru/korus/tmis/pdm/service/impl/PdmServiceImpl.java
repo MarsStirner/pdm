@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.model.*;
-import ru.korus.tmis.pdm.model.api.ErrorStatus;
 import ru.korus.tmis.pdm.model.api.Identifier;
 import ru.korus.tmis.pdm.service.*;
 import ru.korus.tmis.pdm.utilities.Crypting;
@@ -83,9 +82,11 @@ public class PdmServiceImpl implements PdmService {
 
         initTelecom(res, identifiedPerson.getTelecom());
 
+        Map<String, DocsInfo> docs = new HashMap<>();
         for (PRPAMT101301UV02OtherIDs ids : identifiedPerson.getAsOtherIDs()) {
-            initDocs(res, ids.getId());
+            initDocs(res, ids.getId(), docs);
         }
+        addDocs(res, docs);
 
         initAddr(res, identifiedPerson.getAddr());
 
@@ -139,8 +140,7 @@ public class PdmServiceImpl implements PdmService {
         return null;
     }
 
-    private <T> void initDocs(PersonalInfo res, List<T> iiList) {
-        Map<String, DocsInfo> docs = new HashMap<>();
+    private <T> void initDocs(PersonalInfo res, List<T> iiList, Map<String, DocsInfo> docs) {
         for (T obj : iiList) {
             II ii = (II) obj;
             final String root = ii.getRoot();
@@ -158,7 +158,9 @@ public class PdmServiceImpl implements PdmService {
                 }
             }
         }
-        res.setDocuments(new LinkedList<DocsInfo>());
+    }
+
+    private void addDocs(PersonalInfo res, Map<String, DocsInfo> docs) {
         for (DocsInfo doc : docs.values()) {
             res.getDocs().add(doc);
         }
@@ -196,9 +198,11 @@ public class PdmServiceImpl implements PdmService {
             CV genderCode = personAdministrativeGender.get(0).getValue().get(0);
             res.setGender(genderCode == null ? null : new ValueInfo(genderCode.getCodeSystem(), genderCode.getCode()));
         }
+        Map<String, DocsInfo> docs = new HashMap<>();
         for (PRPAMT101306UV02OtherIDsScopingOrganization otherId : parameterList.getOtherIDsScopingOrganization()) {
-            initDocs(res, otherId.getValue());
+            initDocs(res, otherId.getValue(), docs);
         }
+        addDocs(res, docs);
 
         for (PRPAMT101306UV02IdentifiedPersonTelecom telecom : parameterList.getIdentifiedPersonTelecom()) {
             initTelecom(res, telecom.getValue());
@@ -228,6 +232,7 @@ public class PdmServiceImpl implements PdmService {
 
         PRPAMT101302UV02IdentifiedPersonIdentifiedPerson identifiedPerson = prm.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson();
         List<PRPAMT101302UV02PersonName> names = identifiedPerson.getName();
+
         if (!names.isEmpty()) {
             initNames(personalInfo, names.get(0));
         }
@@ -238,11 +243,12 @@ public class PdmServiceImpl implements PdmService {
 
         initTelecom(personalInfo, identifiedPerson.getTelecom());
 
-
+        Map<String, DocsInfo> docs = new HashMap<>();
         for (PRPAMT101302UV02PersonAsOtherIDs cur :
                 identifiedPerson.getAsOtherIDs()) {
-            initDocs(personalInfo, cur.getId());
+            initDocs(personalInfo, cur.getId(), docs);
         }
+        addDocs(personalInfo, docs);
 
         initAddr(personalInfo, identifiedPerson.getAddr());
 
@@ -275,23 +281,8 @@ public class PdmServiceImpl implements PdmService {
 
 
     private Identifier toPublicKey(List<Byte> privateKey, String senderId) {
-        Identifier res = new Identifier();
-        try {
-            byte key[] = pdmXmlConfigService.getSystemDbKey(senderId);
-            if (key != null) {
-                List<Byte> encrypted = Crypting.cryptToList(key, privateKey);
-                res.setId(DatatypeConverter.printBase64Binary(Crypting.toByteArray(encrypted)));
-            }
-        } catch (NoSuchAlgorithmException
-                | NoSuchPaddingException
-                | IllegalBlockSizeException
-                | BadPaddingException
-                | InvalidKeyException e) {
-            res.setStatus(ErrorStatus.CRYPT_ERROR.format(e.getMessage()));
-            logger.error("Cannot create public key:", res.getStatus().getMsg());
-        }
-
-        return res;
+        byte key[] = pdmXmlConfigService.getSystemDbKey(senderId);
+        return Crypting.toPublicKey(privateKey, key);
     }
 
     private byte[] toPrivateKey(String publicKey, String senderId) {
@@ -299,7 +290,7 @@ public class PdmServiceImpl implements PdmService {
             byte key[] = pdmXmlConfigService.getSystemDbKey(senderId);
             if (key != null) {
                 byte[] text = DatatypeConverter.parseBase64Binary(publicKey);
-                return Crypting.crypt(key, text);
+                return Crypting.decrypt(key, text);
             }
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -337,10 +328,10 @@ public class PdmServiceImpl implements PdmService {
         for (PRPAMT101307UV02IdentifiedPersonIdentifier curPerson : identifiedPersons) {
             String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
             String publicKey = curPerson.getValue().get(0).getRoot();
-            byte[] privateKey = toPrivateKey(publicKey, senderId);
+            byte[] privateKey = toPrivateKey( publicKey, senderId);
             logger.info("Get demographics info by id. Find demographics info for id = " + publicKey);
             try {
-                personalDataList.add(findById(privateKey));
+                personalDataList.add(findById(privateKey, senderId));
             } catch (BadPaddingException
                     | NoSuchAlgorithmException
                     | NoSuchPaddingException
@@ -369,7 +360,7 @@ public class PdmServiceImpl implements PdmService {
                     byte[] privateKey = toPrivateKey(publicKey, senderId);
                     final PersonalInfo personalInfo;
                     try {
-                        personalInfo = findById(privateKey);
+                        personalInfo = findById(privateKey, senderId);
                     } catch (BadPaddingException
                             | NoSuchAlgorithmException
                             | NoSuchPaddingException
@@ -714,8 +705,8 @@ public class PdmServiceImpl implements PdmService {
     }
 
 
-    private PersonalInfo findById(byte[] id) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeyException, InvalidKeySpecException {
-        return pdmDaoServiceLocator.getPdmDaoService().findById(id);
+    private PersonalInfo findById(byte[] id, String senderId) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeyException, InvalidKeySpecException {
+        return pdmDaoServiceLocator.getPdmDaoService().findById(id, senderId);
     }
 
     private II createPdmII(String id) {
