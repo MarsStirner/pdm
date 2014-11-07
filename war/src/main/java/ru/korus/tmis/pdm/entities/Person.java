@@ -1,14 +1,10 @@
 package ru.korus.tmis.pdm.entities;
 
 
-import org.hibernate.annotations.*;
-
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -22,20 +18,9 @@ import java.util.Vector;
  *
  */
 //@Document(collection = "users")
-@Entity
-public class PersonalData {
+@Entity(name = "person")
+public class Person extends PrivateKey {
 
-
-    public static final int PRIVATE_KEY_SIZE = 32;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    /**
-     * Уникальный идентификатор субъекта ПДн в ЗХПД
-     */
-    @Column(length = PRIVATE_KEY_SIZE)
-    private byte[] privateKey;
 
     /**
      * Имя
@@ -55,13 +40,12 @@ public class PersonalData {
     /**
      * Пол
      */
-    @ManyToOne(cascade = {CascadeType.ALL})
-    private Term gender;
+    private byte[] gender;
 
     /**
-     * Дата рождения в фомате yyyyMMdd
+     * Информация о дате и месте рождения
      */
-    private String birthData;
+    private byte[] birthInfo;
 
     /**
      * Документы:
@@ -72,14 +56,14 @@ public class PersonalData {
      * Документ об образовании
      */
     //TODO fix: javax.xml.ws.soap.SOAPFaultException: Map privateKey 3.0.0.2 contains dots but no replacement was configured!
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Map<String, String> docs = new HashMap<String, String>();
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Docs> docs = new Vector<Docs>();
 
     /**
      * Контактные телефоны и электронные адреса
      */
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<Telecom> telecoms = new Vector<Telecom>();
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Telecoms> telecoms = new Vector<Telecoms>();
 
     /**
      * Домашний/рабочий и др. адреса.
@@ -87,30 +71,8 @@ public class PersonalData {
      * "H" - home address; "HP" - primary home; "HV" - vacation home,
      * "WP" - work place, "DIR" - direct, "PUB" - public, "BAD" - bad address, "TMP"
      */
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private List<Addr> address = new Vector<Addr>();
-
-    /**
-     * Место рождения
-     */
-    @ManyToOne(cascade = {CascadeType.ALL})
-    private Addr birthPlace;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public byte[] getPrivateKey() {
-        return privateKey;
-    }
-
-    public void setPrivateKey(byte[] privateKey) {
-        this.privateKey = privateKey;
-    }
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Addresses> address = new Vector<Addresses>();
 
     public String getGiven() {
         return given;
@@ -124,34 +86,33 @@ public class PersonalData {
         return family;
     }
 
-    public Term getGender() {
+    public byte[] getGender() {
         return gender;
     }
 
-    public String getBirthData() {
-        return birthData;
+    public byte[] getBirthInfo() {
+        return birthInfo;
     }
 
-    public Map<String, String> getDocs() {
+    public List<Docs> getDocs() {
+        if(docs == null) {
+            docs = new Vector<>();
+        }
         return docs;
     }
 
-    public List<Telecom> getTelecoms() {
+    public List<Telecoms> getTelecoms() {
         if(telecoms == null) {
-            telecoms = new Vector<Telecom>();
+            telecoms = new Vector<>();
         }
         return telecoms;
     }
 
-    public List<Addr> getAddress() {
+    public List<Addresses> getAddress() {
         if(address == null) {
-            address = new Vector<Addr>();
+            address = new Vector<>();
         }
         return address;
-    }
-
-    public Addr getBirthPlace() {
-        return birthPlace;
     }
 
     public String toCreateParamList() {
@@ -159,39 +120,33 @@ public class PersonalData {
         return res.toString();
     }
 
-    public PersonalData setGiven(String given) {
+    public Person setGiven(String given) {
         this.given = given;
         return this;
     }
 
-    public PersonalData setMiddleName(String middleName) {
+    public Person setMiddleName(String middleName) {
         this.middleName = middleName;
         return this;
     }
 
-    public PersonalData setFamily(String family) {
+    public Person setFamily(String family) {
         this.family = family;
         return this;
     }
 
-    public PersonalData setGender(Term gender) {
+    public Person setGender(byte[] gender) {
         this.gender = gender;
         return this;
     }
 
-    public PersonalData setBirthData(String birthData) {
-        this.birthData = birthData;
+    public Person setBirthInfo(byte[] birthInfo) {
+        this.birthInfo = birthInfo;
         return this;
     }
 
-    public PersonalData setDocs(Map<String, String> docs) {
+    public Person setDocs(List<Docs> docs) {
         this.docs = docs;
-        return this;
-    }
-
-
-    public PersonalData setBirthPlace(Addr birthPlace) {
-        this.birthPlace = birthPlace;
         return this;
     }
 

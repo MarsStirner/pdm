@@ -11,7 +11,7 @@ import javax.persistence.*;
 * Description:  <br>
 */
 @MappedSuperclass
-public class Use {
+public class Use extends PrivateKey {
 
     @Enumerated(value = EnumType.STRING)
     private UseType use;
@@ -21,7 +21,11 @@ public class Use {
     }
 
     public void setUse(String use) {
-        this.use = UseType.valueOf(use);
+        if(use == null || use.trim().isEmpty()) {
+            use = null;
+        } else {
+            this.use = UseType.valueOf(use);
+        }
     }
 
     public String getUse() {

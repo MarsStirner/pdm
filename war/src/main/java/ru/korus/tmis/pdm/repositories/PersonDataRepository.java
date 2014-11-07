@@ -1,7 +1,6 @@
 package ru.korus.tmis.pdm.repositories;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import ru.korus.tmis.pdm.entities.PersonalData;
+import ru.korus.tmis.pdm.entities.Person;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -9,7 +8,6 @@ import ru.korus.tmis.pdm.entities.PersonalData;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public interface PersonDataRepository extends PagingAndSortingRepository<PersonalData, String> {
+public interface PersonDataRepository extends PrivateKeyRepository<Person> {
 
-    PersonalData findByPrivateKey(byte[] privateKey);
 }

@@ -34,6 +34,8 @@ public interface PdmXmlConfigService {
 
     String getAdminKeyByPassword(String password) throws NoSuchAlgorithmException, InvalidKeySpecException;
 
+    byte[] getInternalKey() throws NoSuchAlgorithmException, InvalidKeySpecException;
+
     boolean setNewCfgFile(String newLogin);
 
     boolean updateSystemPasswordKey(String newPassword, PdmConfig.Systems.System system);
@@ -51,4 +53,7 @@ public interface PdmXmlConfigService {
     boolean saveIfNeeded(boolean isSave);
 
     List<PdmConfig.Files.File> getFiles();
+
+    String getDocsNameByAttrOid(String root);
+
 }

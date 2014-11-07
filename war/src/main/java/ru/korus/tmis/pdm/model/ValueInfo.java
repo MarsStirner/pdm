@@ -6,11 +6,20 @@ package ru.korus.tmis.pdm.model;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class ValueInfo {
+public class ValueInfo implements UseInfo {
 
     private String description;
 
     private String value;
+
+    public ValueInfo() {
+
+    }
+
+    public ValueInfo(String description, String value) {
+        this.description = description;
+        this.value = value;
+    }
 
     public String getDescription() {
         return description;
@@ -26,5 +35,10 @@ public class ValueInfo {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public String getUse() {
+        return description;
     }
 }

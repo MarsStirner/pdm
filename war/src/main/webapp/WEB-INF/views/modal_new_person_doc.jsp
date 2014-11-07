@@ -16,9 +16,9 @@
                 <form role="form">
                     <div class="form-group">
                         <label for="name">тип:</label>
-                        <select id="name" class="form-control" placeholder="пол" data-ng-model="${param.value}.name">
+                        <select id="name" class="form-control" placeholder="тип документа" data-ng-model="${param.value}.name">
                             <c:forEach items="${pdmDocs.docs}" var="doc" varStatus="status">
-                                <option value=${doc.name}>${doc.description}</option>
+                                <option value="${doc.name}">${doc.description}</option>
                             </c:forEach>
                         </select>
 

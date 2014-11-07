@@ -11,12 +11,8 @@ import javax.persistence.Id;
 * Company:     Korus Consulting IT<br>
 * Description:  <br>
 */
-@Entity
+@Entity(name = "telecom")
 public class Telecom extends Use {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Long id;
 
     private String value;
 

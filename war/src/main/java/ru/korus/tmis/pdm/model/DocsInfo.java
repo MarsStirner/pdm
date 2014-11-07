@@ -2,6 +2,7 @@ package ru.korus.tmis.pdm.model;
 
 import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,10 +26,22 @@ public class DocsInfo {
     }
 
     public List<ValueInfo> getAttrs() {
+        if(attrs == null) {
+            attrs = new LinkedList<>();
+        }
         return attrs;
     }
 
     public void setAttrs(List<ValueInfo> attrs) {
         this.attrs = attrs;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }

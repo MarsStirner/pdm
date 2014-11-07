@@ -15,7 +15,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -56,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
                 }
             }
             if (cookies != null && tokenValue != null && countAuthToken == 1) {
-                authData = checkToken(tokenValue);
+                authData = getAuthDataByToken(tokenValue);
             } else if (countAuthToken > 1) {
                 clearCooke(response, cookies);
             }
@@ -114,7 +113,12 @@ public class AuthServiceImpl implements AuthService {
         return username.equals(adminName) && checkAdminPassword(password);
     }
 
-    private AuthData checkToken(String tokenValue) {
+    @Override
+    public String checkToken(String token) {
+        AuthData authDataByToken = getAuthDataByToken(token);
+        return authDataByToken == null ? null : authDataByToken.login;
+    }
+    private AuthData getAuthDataByToken(String tokenValue) {
         AuthData authData = tokens.get(tokenValue);
         if (authData != null) {
             authData.loginTime = new Date();

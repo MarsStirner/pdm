@@ -3,8 +3,9 @@ package ru.korus.tmis.pdm.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import ru.korus.tmis.pdm.model.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import ru.korus.tmis.pdm.model.PersonalInfo;
 import ru.korus.tmis.pdm.service.PdmDocsService;
 
 import java.io.Serializable;
@@ -36,23 +37,5 @@ public class PdmCreateController implements Serializable {
         return ConfigController.MAIN_JSP;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String create(@RequestBody PersonalInfo personalInfo, Map<String, Object> model) {
-        model.put("state", ViewState.CREATE);
-        //model.put("newPerson", personalInfo);
-        //model.put("pdmFiles", filesInfo);
-        //model.put("msgNewFile", msgNewSFile);
-        return ConfigController.MAIN_JSP;
-    }
-
-    @RequestMapping(value = "add/telecom",method = RequestMethod.POST)
-    public String addAttr(@ModelAttribute PersonalInfo personalInfo, Map<String, Object> model) {
-        model.put("state", ViewState.CREATE);
-        this.personalInfo.getTelecoms().add(personalInfo.getNewTelecom());
-        model.put("newPerson", this.personalInfo);
-        //model.put("pdmFiles", filesInfo);
-        //model.put("msgNewFile", msgNewSFile);
-        return ViewState.CREATE.redirect();
-    }
 
 }

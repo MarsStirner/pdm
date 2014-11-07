@@ -7,9 +7,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.testng.annotations.Test;
 import ru.korus.tmis.pdm.config.PdmSpringConfiguration;
 import ru.korus.tmis.pdm.config.SpringMongoConfig;
-import ru.korus.tmis.pdm.entities.Addr;
-import ru.korus.tmis.pdm.entities.PersonalData;
-import ru.korus.tmis.pdm.entities.Term;
+import ru.korus.tmis.pdm.entities.*;
+import ru.korus.tmis.pdm.utilities.Crypting;
 
 import static org.testng.Assert.assertNotNull;
 
@@ -26,19 +25,20 @@ public class PersonDataRepositoryTest extends AbstractTestNGSpringContextTests {
     @Autowired
     PersonDataRepository  personDataRepository;
 
+
     @Test
     public void testSave() {
-        PersonalData personalData = new PersonalData();
-        personalData.setFamily("Репо");
-        personalData.setGiven("Инфо");
+        Person personalData = new Person();
+
+        personalData.setFamily("Фамилия");
+        personalData.setGiven("Имя");
         personalData.setMiddleName("Отчесво");
-        Term gender = new Term();
-        //gender.
-        personalData.setGender(gender);
-        Addr addr = new Addr();
-        personalData.setBirthPlace(addr);
-        Addr addr1 = new Addr();
-        personalData.getAddress().add(addr1);
+        personalData.setGender(Crypting.getSecureRandomBytes(8));
+        personalData.setBirthInfo(Crypting.getSecureRandomBytes(8));
+
+        Addresses addr = new Addresses(Crypting.getSecureRandomBytes(8));
+        personalData.getAddress().add(addr);
+
         personDataRepository.save(personalData);
         assertNotNull(personalData.getId());
     }

@@ -1,5 +1,7 @@
 package ru.korus.tmis.pdm.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+import ru.korus.tmis.pdm.entities.Term;
 import ru.korus.tmis.pdm.ws.PdmSysProperties;
 
 import java.util.Date;
@@ -14,23 +16,27 @@ import java.util.List;
  */
 public class PersonalInfo {
 
+    private String token;
+
+    private String publicKey;
+
     private String given;
 
     private String family;
 
     private String middleName;
 
-    private String sex;
+    private ValueInfo gender;
 
-    private Date birthDate;
+    private String birthDate;
 
-    private String birthPlace;
+    private AddrInfo birthPlace;
 
     private List<ValueInfo> telecoms;
 
-    private List<ValueInfo> addressList;
+    private List<AddrInfo> addressList;
 
-    private List<DocsInfo> docs;
+    private List<DocsInfo> documents;
 
     public String getGiven() {
         return given;
@@ -56,27 +62,27 @@ public class PersonalInfo {
         this.middleName = middleName;
     }
 
-    public String getSex() {
-        return sex;
+    public ValueInfo getGender() {
+        return gender;
     }
 
-    public void setSex(String sex) {
-        this.sex = sex;
+    public void setGender(ValueInfo gender) {
+        this.gender = gender;
     }
 
-    public Date getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
-    public String getBirthPlace() {
+    public AddrInfo getBirthPlace() {
         return birthPlace;
     }
 
-    public void setBirthPlace(String birthPlace) {
+    public void setBirthPlace(AddrInfo birthPlace) {
         this.birthPlace = birthPlace;
     }
 
@@ -91,20 +97,46 @@ public class PersonalInfo {
         this.telecoms = telecoms;
     }
 
-    public List<ValueInfo> getAddressList() {
+    public List<AddrInfo> getAddressList() {
+        if(addressList == null) {
+            addressList = new LinkedList<>();
+        }
         return addressList;
     }
 
-    public void setAddressList(List<ValueInfo> addressList) {
+    public void setAddressList(List<AddrInfo> addressList) {
         this.addressList = addressList;
     }
 
     public List<DocsInfo> getDocs() {
-        return docs;
+        return documents;
     }
 
     public void setDocs(List<DocsInfo> docs) {
-        this.docs = docs;
+        this.documents = docs;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public List<DocsInfo> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<DocsInfo> documents) {
+        this.documents = documents;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
 }

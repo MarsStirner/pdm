@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import ru.korus.tmis.pdm.model.*;
-import ru.korus.tmis.pdm.service.PdmFilesService;
+import ru.korus.tmis.pdm.model.PdmFileInfo;
+import ru.korus.tmis.pdm.model.PdmFiles;
+import ru.korus.tmis.pdm.model.PdmMessage;
 import ru.korus.tmis.pdm.service.PdmFilesService;
 
 import javax.servlet.http.HttpServletRequest;

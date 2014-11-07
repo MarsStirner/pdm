@@ -11,21 +11,67 @@
  }*/
 function createController($scope, $http) {
     $scope.newPerson = {
-        family: null,
-        given: null,
-        middleName: null,
-        sex: null,
-        birthDate: null,
-        birthPlace: null,
+        family: "Тестов",
+        given: "Тест",
+        middleName: "Тестович",
+        gender: {
+            value: "M", description: "2.16.840.1.113883.5.1"
+        },
+        birthDate: "1970-01-30",
+        birthPlace: {
+            streetAddressLine: "Марс"
+        },
         telecoms: [
+            { description: "WP", value: "tel:+7 (495) 229-53-70" },
+            { value: "mailto:test@hitsl.ru" }
         ],
-        address: [
+        addressList: [
+            {
+                description: "H",
+                country: "2",
+                state: "3",
+                county: "4",
+                precinct: "5",
+                city: "6",
+                streetName: "7",
+                postalCode: "8",
+                houseNumber: "9",
+                buildingNumberSuffix: "10",
+                additionalLocator: "11",
+                streetAddressLine: "12"
+            }
         ],
         documents: [
+            {   description: "ПАСПОРТ РФ",
+                name: "passport",
+                attrs: [
+                    {description: "Номер паспорта", value: "1234 567890"},
+                    {description: "Дата выдачи", value: "1977-01-15"}
+                ]
+            }
         ]
     }
+
+    $scope.systemLogin = {
+        oid: "4.0.0.1",
+        password: "a"
+    }
+
+    $scope.createRes = {
+    }
+
+    $scope.login = function () {
+        $http.post("api/login", $scope.systemLogin).
+            success(function (data) {
+                $scope.newPerson.token = data.id;
+            });
+    }
+
     $scope.create = function () {
-        $http.post("create", $scope.newPerson);
+        $http.post("api/create", $scope.newPerson).
+            success(function (data) {
+                $scope.createRes.id = data.id;
+            });
     }
 
     $scope.addValue = function (list, newValue) {
@@ -43,24 +89,30 @@ function createController($scope, $http) {
         $scope.newDoc = null;
     }
 
-    $scope.removeTelecom = function(index) {
+    $scope.addAttr = function (doc, newAttr) {
+        doc.attrs.push(angular.copy(newAttr));
+        $scope.newAttr = null;
+    }
+
+    $scope.removeAttr = function (doc, index) {
+        doc.attrs.splice(index, 1);
+    }
+
+
+    $scope.removeTelecom = function (index) {
         $scope.newPerson.telecoms.splice(index, 1);
     }
 
-    $scope.removeAddress = function(index) {
+    $scope.removeAddress = function (index) {
         $scope.newPerson.address.splice(index, 1);
     }
 
-    $scope.removeDoc = function(index) {
+    $scope.removeDoc = function (index) {
         $scope.newPerson.documents.splice(index, 1);
     }
 
-    $scope.sizeAttrs = function(index) {
+    $scope.sizeAttrs = function (index) {
         return $scope.newPerson.documents[index].attrs.length;
     }
 
-    /* $scope.reset = function() {
-     $scope.newPerson =  $scope.personInfo;
-     }
-     */
 }

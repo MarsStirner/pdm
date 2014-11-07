@@ -51,8 +51,8 @@
                         <input id="houseNumber" class="form-control" data-ng-model="${param.value}.houseNumber"/>
                         <label for="buildingNumberSuffix">Корпус:</label>
                         <input id="buildingNumberSuffix" class="form-control" data-ng-model="${param.value}.buildingNumberSuffix"/>
-                        <label for="houseNumberNumeric">Квартира:</label>
-                        <input id="houseNumberNumeric" class="form-control" data-ng-model="${param.value}.houseNumberNumeric"/>
+                        <label for="additionalLocator">Квартира:</label>
+                        <input id="additionalLocator" class="form-control" data-ng-model="${param.value}.additionalLocator"/>
                     </div>
                     <div class="form-group">
                         <label for="streetAddressLine">Полный адрес:</label>

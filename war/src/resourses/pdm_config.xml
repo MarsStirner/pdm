@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--login / password - a/a-->
 <pdmConfig>
-    <admin login="a" password="KP4iVWGokjg="/>
+    <admin login="a" passwordKey="gdO9HMP8w6RkOlQBnvsh4Q==" salt1="R68uEE3Uzl0TBDWBG69MjC3UNl0lwxSC/ontNwQ5qthLaPji0dZAXMj47kwd6ed3RUhgLdcUlhBdEgnmxiEz2w==" salt2="mEjV4flRAaXN04vtb2FMypRv8xv9GuWVztmLW1WF0MD+6YYlfeXDZop9+BTGIFJisdKvCHQ5mq3U4KsN6XadEg=="/>
     <systems>
-        <system name="TMIS" oid="4.0.0.1" passwordKey="KP4iVWGokjg="/>
-        <system name="TRFU" oid="4.0.0.2" passwordKey="KP4iVWGokjg="/>
+        <system name="TMIS" oid="4.0.0.1" passwordKey="+NaSGGKr+pL3C3CgKGUcXA==" salt1="TF+p6GXmixTpb/9wFYtbewyEnJFbMCG/znr0sCfzjogK8s+uTwNBTDd+/8ESUyX87rM7gkNfQEHzvz2ccvRzxw==" salt2="HCQ9xxqXb/XQ+Bt3c+fTe6nABZFX6PdRgETjMYFclnozVioWzMaEXNJNTnpU90z0zoFYjQ/KfscBbIErf6EQzg=="/>
+        <system name="TRFU" oid="4.0.0.13" passwordKey="VOTdSW3JQJZuLYxP0yahSQ==" salt1="BRepnZCF4g9SojJv6jiuc/jDeetjr9sWS3RTA0wA53LgMDKnXL5XPzcAQQObAVirabDXpyojBFftdbnQpSVHew==" salt2="y0RmNdgA/u9GU91EkZM6i0598wgbjIKNGy4iyLWuN7/e8CSOLuvD8gLOJ52g3WTja2Wy5Y7Gk4JJ484bOofIkw=="/>
+        <system name="тест" oid="4.1.1.1.1" passwordKey="DUgvMV/fr6RAyS7N5ZZTRQ==" salt1="D1p1axzLIJvZWc1YuvNiUizQqY0sbwyT5w6fkOaObg/NRHr3Nn+GAp0hny/J5X/PRDbU3H2YDh+vXcQ902c3Sw==" salt2="ynm+G3/LCmfy2HNd3zj/O6xblLxG8FOTLy4w5KSwugD47TzNtomQy8DbbgC/TM51aYe3NcVsTFWcPnK2uu7+vQ=="/>
     </systems>
     <docs>
         <doc name="passport" description="ПАСПОРТ РФ">
@@ -11,10 +13,13 @@
             <attribute name="begDate" oid="3.0.0.2" description="Дата выдачи"/>
         </doc>
         <doc name="inn" description="ИНН">
-            <attribute name="innNumber" oid="3.0.0.6" description="Номер ИНН"/>
+            <attribute name="innNumber" oid="3.0.0.3" description="Номер ИНН"/>
+            <attribute name="date" oid="3.0.0.4" description="дата"/>
+            <attribute name="test" oid="3.0.0.5" description="тест"/>
         </doc>
     </docs>
     <files>
         <file name="scan" oid="3.1.0.1" description="Скан документа"/>
+        <file name="foto" oid="3.1.0.2" description="Фото"/>
     </files>
 </pdmConfig>

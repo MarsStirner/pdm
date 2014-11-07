@@ -7,14 +7,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import ru.korus.tmis.pdm.model.*;
+import ru.korus.tmis.pdm.model.PdmMessage;
+import ru.korus.tmis.pdm.model.PdmSystemInfo;
+import ru.korus.tmis.pdm.model.PdmSystems;
 import ru.korus.tmis.pdm.service.PdmSystemsService;
-import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 

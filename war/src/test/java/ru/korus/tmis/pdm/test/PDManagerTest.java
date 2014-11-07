@@ -30,7 +30,8 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
     private static final String IVANOVICH = "Ivanovich";
     private static final String IVANOV = "Ivanov";
     private static final String TEST_STREET = "TestStreet";
-    private static final String SENDER_ID ="4.0.0.0";
+    private static final String SENDER_ID ="4.0.0.1";
+    private static final String SENDER_PASSWORD ="a";
     private String newId = "5240172396004e5123a975ce";
     private Map<String, String> newDocId =  new HashMap<String, String>();
 
@@ -120,6 +121,7 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
         person.setAdministrativeGenderCode(ce);
 
         /* Ресгистрация новой персоны в ЗХПД */
+        pdManager.login(SENDER_ID, SENDER_PASSWORD);
         PRPAIN101312UV02 res = pdManager.add(prm);
         final II ii = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().
                 getIdentifiedPerson().getId().get(0);

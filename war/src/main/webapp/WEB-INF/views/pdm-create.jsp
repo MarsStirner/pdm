@@ -14,8 +14,25 @@
                 <form role="form">
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary" placeholder="добавить" data-ng-click="create()">Добавить</button>
+                        публичный ключ: <span class="label label-info">{{createRes.id}}</span>
                         <button type="reset" class="btn btn-default pull-right" placeholder="отмена">Отмена</button>
                     </div>
+                    <fieldset class="form-group">
+                        <legend></legend>
+                        <div class="col-xs-2">
+                            <label for="oid">OID подсистемы:</label>
+                            <input type="text" id="oid" class="form-control" placeholder="OID подсистемы" data-ng-model="systemLogin.oid"/>
+                        </div>
+                        <div class="col-xs-5">
+                            <label for="password">Пароль подсистемы:</label>
+                            <input type="password" id="password" class="form-control" placeholder="пароль подсистемы" data-ng-model="systemLogin.password"/>
+                        </div>
+                        <div class="col-xs-5">
+                            <button type="submit" class="btn btn-primary  pull-right" placeholder="авторизация подсистемы" data-ng-click="login()">Авторизация</button>
+                            token:<span class="label label-info">{{newPerson.token}}</span>
+                        </div>
+                    </fieldset>
+
                     <fieldset class="form-group">
                         <legend></legend>
                         <div class="col-xs-2">
@@ -32,10 +49,10 @@
                         </div>
                         <div class="col-xs-1">
                             <label for="sex">Пол:</label>
-                            <select id="sex" class="form-control" placeholder="пол" data-ng-model="newPerson.sex">
-                                <option value="none"></option>
-                                <option value="male">М</option>
-                                <option value="female">Ж</option>
+                            <select id="sex" class="form-control" placeholder="пол" data-ng-model="newPerson.gender.value">
+                                <option value="UN"></option>
+                                <option value="M">М</option>
+                                <option value="F">Ж</option>
                             </select>
                         </div>
                         <div class="col-xs-2">
@@ -46,7 +63,7 @@
                         <div class="col-xs-3">
                             <label for="birthPlace">Место рождения:</label>
                             <input type="text" id="birthPlace" class="form-control"
-                                   placeholder="место рождения" data-ng-model="newPerson.birthPlace"/>
+                                   placeholder="место рождения" data-ng-model="newPerson.birthPlace.streetAddressLine"/>
                         </div>
                     </fieldset>
                     <fieldset class="form-group">
@@ -113,7 +130,7 @@
                             </th>
                             </thead>
                             <tbody>
-                            <tr data-ng-repeat="addr in newPerson.address">
+                            <tr data-ng-repeat="addr in newPerson.addressList">
                                 <td>
                                     {{addr.description}}
                                 </td>
@@ -150,7 +167,7 @@
                         <jsp:include page="modal_new_person_address.jsp">
                             <jsp:param name="id" value="newPersonAddressAdd"/>
                             <jsp:param name="value" value="newAddress"/>
-                            <jsp:param name="action" value="addAddress(newPerson.address, newAddress)"/>
+                            <jsp:param name="action" value="addAddress(newPerson.addressList, newAddress)"/>
                         </jsp:include>
                     </fieldset>
                     <fieldset class="form-group">
@@ -171,25 +188,21 @@
                                     </td>
                                     <td>
                                         <code>{{doc.attrs[0].value}}</code>
-                                        <button class="btn btn-sm pull-right" data-toggle="modal"
-                                           data-target="#newAttrDelete{{doc.name}}_{{$index}}"
+                                        <button class="btn btn-sm pull-right" data-ng-click="removeAttr(doc,0)"
                                            placeholder="удалить">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                         <button class="btn btn-sm pull-right" data-toggle="modal"
-                                           data-target="#newAttrUpdate{{$index}}_0"
+                                           data-target="#newAttrUpdate{{doc.name}}_0"
                                            placeholder="редактировать">
                                             <span class="glyphicon glyphicon-pencil"></span>
                                         </button>
-                                       <%-- <jsp:include page="modal_attr_update.jsp">
-                                            <jsp:param name="docIndex" value="${status.index}"/>
-                                            <jsp:param name="index" value="0"/>
-                                        </jsp:include>--%>
-                                        <%--<jsp:include page="modal_attr_delete.jsp">
-                                            <jsp:param name="index" value="0"/>
-                                            <jsp:param name="description" value="${doc.attrs[0].description}"/>
-                                            <jsp:param name="docName" value="${doc.name}"/>
-                                        </jsp:include>--%>
+                                        <jsp:include page="modal_new_person_doc_attr.jsp">
+                                            <jsp:param name="id" value="newAttrUpdate{{doc.name}}_0"/>
+                                            <jsp:param name="value" value="doc.attrs[0]"/>
+                                            <jsp:param name="docName" value="doc.name"/>
+                                            <jsp:param name="action" value=""/>
+                                        </jsp:include>
                                     </td>
 
                                 </tr>
@@ -199,9 +212,8 @@
                                         </td>
                                         <td>
                                             <code>{{attr.value}}</code>
-                                            <button class="btn btn-sm pull-right" data-toggle="modal"
-                                               data-target="#newAttrDelete{{doc.name}}_{{$index}}"
-                                               placeholder="удалить">
+                                            <button class="btn btn-sm pull-right" data-ng-click="removeAttr(doc,$index)"
+                                                    placeholder="удалить">
                                                 <span class="glyphicon glyphicon-remove"></span>
                                             </button>
                                             <button class="btn btn-sm pull-right" data-toggle="modal"
@@ -209,15 +221,12 @@
                                                placeholder="редактировать">
                                                 <span class="glyphicon glyphicon-pencil"></span>
                                             </button>
-                                            <%--<jsp:include page="modal_attr_update.jsp">
-                                                <jsp:param name="docIndex" value="${status.index}"/>
-                                                <jsp:param name="index" value="${statusAttr.index}"/>
-                                            </jsp:include>--%>
-                                            <%--<jsp:include page="modal_attr_delete.jsp">
-                                                <jsp:param name="docName" value="${doc.name}"/>
-                                                <jsp:param name="index" value="${statusAttr.index}"/>
-                                                <jsp:param name="description" value="${attr.description}"/>
-                                            </jsp:include>--%>
+                                            <jsp:include page="modal_new_person_doc_attr.jsp">
+                                                <jsp:param name="id" value="newAttrUpdate{{doc.name}}_{{$index}}"/>
+                                                <jsp:param name="value" value="attr"/>
+                                                <jsp:param name="docName" value="doc.name"/>
+                                                <jsp:param name="action" value=""/>
+                                            </jsp:include>
                                         </td>
                                     </tr>
                                 <tr data-ng-repeat-end>
@@ -226,9 +235,12 @@
                                            placeholder="добавить">
                                             добавить атрибут
                                         </button>
-                                        <%--<jsp:include page="modal_new_person_attr_new.jsp">
-                                            <jsp:param name="docIndex" value="${status.index}"/>
-                                        </jsp:include>--%>
+                                       <jsp:include page="modal_new_person_doc_attr.jsp">
+                                            <jsp:param name="id" value="newAttrAdd{{doc.name}}"/>
+                                            <jsp:param name="value" value="newAttr"/>
+                                            <jsp:param name="docName" value="doc.name"/>
+                                            <jsp:param name="action" value="addAttr(newPerson.documents[$index], newAttr)"/>
+                                        </jsp:include>
                                     </td>
                                 </tr>
                             </tbody>

@@ -9,44 +9,66 @@ import javax.xml.bind.JAXBElement;
 import java.io.Serializable;
 
 /**
-* Author:      Sergey A. Zagrebelny <br>
-* Date:        06.10.2014, 17:14 <br>
-* Company:     Korus Consulting IT<br>
-* Description:  <br>
-*/
-@Entity
+ * Author:      Sergey A. Zagrebelny <br>
+ * Date:        06.10.2014, 17:14 <br>
+ * Company:     Korus Consulting IT<br>
+ * Description:  <br>
+ */
+@Entity(name = "addr")
 public class Addr extends Use {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Long id;
-
     private String country;
+
     private String streetAddressLine;
+
     private String direction;
+
     private String postBox;
+
     private String unitType;
+
     private String delimiter;
+
     private String deliveryInstallationArea;
+
     private String deliveryModeIdentifier;
+
     private String postalCode;
+
     private String deliveryAddressLine;
+
     private String streetName;
+
     private String unitID;
+
     private String additionalLocator;
+
     private String deliveryMode;
+
     private String streetNameBase;
+
     private String deliveryInstallationQualifier;
+
     private String county;
+
     private String precinct;
+
     private String careOf;
+
     private String houseNumber;
+
     private String censusTract;
+
     private String buildingNumberSuffix;
+
     private String houseNumberNumeric;
+
     private String streetNameType;
+
     private String deliveryInstallationType;
+
     private String state;
+
     private String city;
 
     static public Addr fromJson(String json) {
@@ -269,5 +291,113 @@ public class Addr extends Use {
 
     public String toJson() {
         return (new Gson()).toJson(this);
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public void setStreetAddressLine(String streetAddressLine) {
+        this.streetAddressLine = streetAddressLine;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    public void setPostBox(String postBox) {
+        this.postBox = postBox;
+    }
+
+    public void setUnitType(String unitType) {
+        this.unitType = unitType;
+    }
+
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
+    }
+
+    public void setDeliveryInstallationArea(String deliveryInstallationArea) {
+        this.deliveryInstallationArea = deliveryInstallationArea;
+    }
+
+    public void setDeliveryModeIdentifier(String deliveryModeIdentifier) {
+        this.deliveryModeIdentifier = deliveryModeIdentifier;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public void setDeliveryAddressLine(String deliveryAddressLine) {
+        this.deliveryAddressLine = deliveryAddressLine;
+    }
+
+    public void setStreetName(String streetName) {
+        this.streetName = streetName;
+    }
+
+    public void setUnitID(String unitID) {
+        this.unitID = unitID;
+    }
+
+    public void setAdditionalLocator(String additionalLocator) {
+        this.additionalLocator = additionalLocator;
+    }
+
+    public void setDeliveryMode(String deliveryMode) {
+        this.deliveryMode = deliveryMode;
+    }
+
+    public void setStreetNameBase(String streetNameBase) {
+        this.streetNameBase = streetNameBase;
+    }
+
+    public void setDeliveryInstallationQualifier(String deliveryInstallationQualifier) {
+        this.deliveryInstallationQualifier = deliveryInstallationQualifier;
+    }
+
+    public void setCounty(String county) {
+        this.county = county;
+    }
+
+    public void setPrecinct(String precinct) {
+        this.precinct = precinct;
+    }
+
+    public void setCareOf(String careOf) {
+        this.careOf = careOf;
+    }
+
+    public void setHouseNumber(String houseNumber) {
+        this.houseNumber = houseNumber;
+    }
+
+    public void setCensusTract(String censusTract) {
+        this.censusTract = censusTract;
+    }
+
+    public void setBuildingNumberSuffix(String buildingNumberSuffix) {
+        this.buildingNumberSuffix = buildingNumberSuffix;
+    }
+
+    public void setHouseNumberNumeric(String houseNumberNumeric) {
+        this.houseNumberNumeric = houseNumberNumeric;
+    }
+
+    public void setStreetNameType(String streetNameType) {
+        this.streetNameType = streetNameType;
+    }
+
+    public void setDeliveryInstallationType(String deliveryInstallationType) {
+        this.deliveryInstallationType = deliveryInstallationType;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

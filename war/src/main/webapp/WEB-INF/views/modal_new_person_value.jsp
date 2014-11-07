@@ -16,7 +16,12 @@
                 <form role="form">
                     <div class="form-group">
                         <label for="description">тип:</label>
-                        <input id="description" class="form-control" data-ng-model=" ${param.value}.description"/>
+                        <select id="description" class="form-control" data-ng-model=" ${param.value}.description">
+                            <option value="HP">Телефон домашний</option>
+                            <option value="MC">Телефон мобильный</option>
+                            <option value="WP">Телефон рабочий</option>
+                            <option value="e-mail">e-mail</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="value">${param.valueName}:</label>

@@ -16,4 +16,6 @@ public interface AuthService {
     boolean checkAdminPassword(String password);
 
     boolean logout(String token);
+
+    String checkToken(String token);
 }

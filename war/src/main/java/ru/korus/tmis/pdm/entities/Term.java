@@ -8,14 +8,11 @@ import javax.persistence.*;
 * Company:     Korus Consulting IT<br>
 * Description:  <br>
 */
-//TODO REMOVE!
-@Entity
-public class Term {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+@Entity(name = "term")
+public class Term extends PrivateKey{
 
     private String code;
+
     private String codeSystem;
 
     static public Term newInstance(String code, String codeSystem) {
@@ -31,5 +28,13 @@ public class Term {
 
     public String getCodeSystem() {
         return codeSystem;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setCodeSystem(String codeSystem) {
+        this.codeSystem = codeSystem;
     }
 }

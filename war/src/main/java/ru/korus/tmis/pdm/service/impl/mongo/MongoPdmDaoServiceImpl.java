@@ -3,14 +3,14 @@ package ru.korus.tmis.pdm.service.impl.mongo;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.config.SpringMongoConfig;
+import ru.korus.tmis.pdm.model.DocsInfo;
+import ru.korus.tmis.pdm.model.PersonalInfo;
 import ru.korus.tmis.pdm.service.PdmDaoService;
-import ru.korus.tmis.pdm.entities.PersonalData;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -36,21 +36,24 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public void save(PersonalData personalData) {
-        mongoOperation.save(personalData);
+    public List<Byte> save(PersonalInfo personalData) {
+        //mongoOperation.save(personalData);
+        //TODO implement!
+        throw new RuntimeException("TODO!!");
     }
 
     @Override
-    public boolean find(Map.Entry<String, String> doc) {
-        BasicQuery query = new BasicQuery(String.format("{docs: { $elemMatch: {code:'%s' , codeSystem : '%s'}}}", doc.getValue(), doc.getKey()));
+    public boolean find(DocsInfo docsInfo) {
+        //TODO implement!
+        /*BasicQuery query = new BasicQuery(String.format("{docs: { $elemMatch: {code:'%s' , codeSystem : '%s'}}}", doc.getValue(), doc.getKey()));
         if (!mongoOperation.find(query, PersonalData.class).isEmpty()){
             throw new RuntimeException("The person already added");
-        }
-        return true;
+        }*/
+        throw new RuntimeException("TODO!!");
     }
 
     @Override
-    public PersonalData findById(byte[] privateKey) {
+    public PersonalInfo findById(byte[] privateKey) {
         throw new RuntimeException("TODO!!");
         /*PersonalData person = mongoOperation.findById(id, PersonalData.class);
         if( person == null ) {
@@ -60,8 +63,8 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public List<PersonalData> find(PersonalData person) {
-        String query = "";
+    public List<PersonalInfo> find(PersonalInfo person, String senderId) {
+      /*  String query = "";
         query += addFindPrm("given", person.getGiven());
         query += addFindPrm("middleName", person.getMiddleName());
         query += addFindPrm("family", person.getFamily());
@@ -78,11 +81,12 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
         query = mongoOr(query, docsQuery);
         System.out.println("findPerson mogo query: " + query);
         BasicQuery basicQuery = new BasicQuery(query);
-        return mongoOperation.find(basicQuery, PersonalData.class);
+        return mongoOperation.find(basicQuery, PersonalData.class);*/
+        return null;
     }
 
     @Override
-    public List<PersonalData> findPersonLike(PersonalData person) {
+    public List<PersonalInfo> findPersonLike(PersonalInfo person, String senderId) {
        throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
     }
 

@@ -1,10 +1,8 @@
 package ru.korus.tmis.pdm.service;
 
+import ru.korus.tmis.pdm.model.PersonalInfo;
+import ru.korus.tmis.pdm.model.api.Identifier;
 import ru.korus.tmis.pdm.ws.hl7.*;
-
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -15,6 +13,8 @@ import javax.jws.WebResult;
 public interface PdmService {
 
     PRPAIN101312UV02 add(PRPAIN101311UV02 parameters);
+
+    Identifier add(PersonalInfo personalInfo, String senderOid);
 
     PRPAIN101306UV02 findCandidates(PRPAIN101305UV02 parameters);
 
@@ -27,4 +27,5 @@ public interface PdmService {
     String login(String oid, String password);
 
     boolean logout(String token);
+
 }

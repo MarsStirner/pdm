@@ -26,6 +26,47 @@ import java.util.Properties;
 @EnableJpaRepositories("ru.korus.tmis.pdm.repositories")
 public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
 
+    /*** Spring Data JPA config **************************************************************************************/
+    private static final String PROPERTY_NAME_DATABASE_DRIVER_MYSQL = "com.mysql.jdbc.Driver";
+    private static final String PROPERTY_NAME_DATABASE_URL_MYSQL = "jdbc:mysql://localhost:3306/pdm?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
+
+    private static final String PROPERTY_NAME_DATABASE_DRIVER_POSTGRESQL = "org.postgresql.Driver\n";
+    private static final String PROPERTY_NAME_DATABASE_URL_POSTGRESQL = "jdbc:postgresql://localhost:5432/pdm";
+
+    private static final String PROPERTY_NAME_DATABASE_USERNAME = "root";
+    private static final String PROPERTY_NAME_DATABASE_PASSWORD = "root";
+
+    private static final String PROPERTY_NAME_HIBERNATE_DIALECT_MYSQL = "org.hibernate.dialect.MySQL5InnoDBDialect";
+
+    private static final String PROPERTY_NAME_HIBERNATE_DIALECT_POSTGRESQL = "org.hibernate.dialect.PostgreSQLDialect";
+
+    private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "true";
+    private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "ru.korus.tmis.pdm.entities";
+
+    private enum DataBaseType {
+
+        POSTGRESQL(PROPERTY_NAME_DATABASE_DRIVER_POSTGRESQL,
+                PROPERTY_NAME_DATABASE_URL_POSTGRESQL,
+                PROPERTY_NAME_HIBERNATE_DIALECT_POSTGRESQL),
+
+        MYSQL(PROPERTY_NAME_DATABASE_DRIVER_MYSQL,
+                PROPERTY_NAME_DATABASE_URL_MYSQL,
+                PROPERTY_NAME_HIBERNATE_DIALECT_MYSQL);
+
+        private final String driver;
+
+        private final String url;
+
+        private final String dialect;
+
+        DataBaseType(String driver, String url, String dialect) {
+            this.driver = driver;
+            this.url = url;
+            this.dialect = dialect;
+        }
+    }
+
+    private final DataBaseType dataBaseType = DataBaseType.MYSQL;
 
     @Autowired
     private AuthInterceptor authInterceptor;
@@ -49,29 +90,14 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
     }
 
 
-    /*** Spring Data JPA config **************************************************************************************/
-    private static final String PROPERTY_NAME_DATABASE_DRIVER_MYSQL = "com.mysql.jdbc.Driver";
-    private static final String PROPERTY_NAME_DATABASE_URL_MYSQL = "jdbc:mysql://localhost:3306/pdm?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
 
-    private static final String PROPERTY_NAME_DATABASE_DRIVER_POSTGRESQL = "org.postgresql.Driver\n";
-    private static final String PROPERTY_NAME_DATABASE_URL_POSTGRESQL = "jdbc:postgresql://localhost:5432/pdm";
-
-    private static final String PROPERTY_NAME_DATABASE_USERNAME = "root";
-    private static final String PROPERTY_NAME_DATABASE_PASSWORD = "root";
-
-    private static final String PROPERTY_NAME_HIBERNATE_DIALECT_MYSQL = "org.hibernate.dialect.MySQL5InnoDBDialect";
-
-    private static final String PROPERTY_NAME_HIBERNATE_DIALECT_POSTGRESQL = "org.hibernate.dialect.PostgreSQLDialect";
-
-    private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "true";
-    private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "ru.korus.tmis.pdm.entities";
 
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
-        dataSource.setDriverClassName(PROPERTY_NAME_DATABASE_DRIVER_POSTGRESQL);
-        dataSource.setUrl(PROPERTY_NAME_DATABASE_URL_POSTGRESQL);
+        dataSource.setDriverClassName(dataBaseType.driver);
+        dataSource.setUrl(dataBaseType.url);
 
         dataSource.setUsername(PROPERTY_NAME_DATABASE_USERNAME);
         dataSource.setPassword(PROPERTY_NAME_DATABASE_PASSWORD);
@@ -95,7 +121,7 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
         Properties properties = new Properties();
 
         properties.put("hibernate.hbm2ddl.auto", "update");
-        properties.put("hibernate.dialect", PROPERTY_NAME_HIBERNATE_DIALECT_POSTGRESQL);
+        properties.put("hibernate.dialect", dataBaseType.dialect);
         properties.put("hibernate.show_sql", true);
         properties.put("hibernate.globally_quoted_identifiers", "true");
         properties.put("hibernate.connection.useUnicode", "true");
@@ -113,7 +139,5 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
 
         return transactionManager;
     }
-
-    /*****************************************************************************************************************/
 
 }
