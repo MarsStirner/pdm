@@ -6,11 +6,9 @@ package ru.korus.tmis.pdm.model.api;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class Identifier {
+public class Identifier extends WithErrorStatus {
 
     private String id;
-
-    private ErrorStatus status;
 
     public String getId() {
         return id;
@@ -20,11 +18,4 @@ public class Identifier {
         this.id = id;
     }
 
-    public ErrorStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ErrorStatus status) {
-        this.status = status;
-    }
 }

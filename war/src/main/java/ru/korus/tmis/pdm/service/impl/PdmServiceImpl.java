@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.model.*;
 import ru.korus.tmis.pdm.model.api.Identifier;
+import ru.korus.tmis.pdm.model.api.PersonalInfo;
 import ru.korus.tmis.pdm.service.*;
+import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 import ru.korus.tmis.pdm.utilities.Crypting;
 import ru.korus.tmis.pdm.ws.hl7.*;
 
@@ -76,7 +78,7 @@ public class PdmServiceImpl implements PdmService {
             initNames(res, names.get(0));
         }
         CE genderCode = identifiedPerson.getAdministrativeGenderCode();
-        res.setGender(genderCode == null ? null : new ValueInfo(genderCode.getCodeSystem(), genderCode.getCode()));
+        res.setGender(genderCode == null ? null : new ValueInfo(null, genderCode.getCode(), genderCode.getCodeSystem()));
         TS birthTime = identifiedPerson.getBirthTime();
         res.setBirthDate(birthTime == null ? null : birthTime.getValue());
 
@@ -145,16 +147,17 @@ public class PdmServiceImpl implements PdmService {
             II ii = (II) obj;
             final String root = ii.getRoot();
             if (root != null) {
-                String docName = pdmXmlConfigService.getDocsNameByAttrOid(root);
-                if (docName != null) {
-                    DocsInfo docsInfo = docs.get(docName);
-                    if (docsInfo == null) {
+                PdmConfig.Docs.Doc doc = pdmXmlConfigService.getDocsNameByAttrOid(root);
+                if (doc != null) {
+                    DocsInfo docsInfo = docs.get(doc.getName());
+                    String name = doc.getName();
+                    if (docsInfo == null && name != null) {
                         docsInfo = new DocsInfo();
-                        docsInfo.setName(docName);
-
-                        docs.put(docName, docsInfo);
+                        docsInfo.setName(name);
+                        docsInfo.setDescription(docsInfo.getDescription());
+                        docs.put(name, docsInfo);
                     }
-                    docsInfo.getAttrs().add(new ValueInfo(codeOID(root), ii.getExtension()));
+                    docsInfo.getAttrs().add(new ValueInfo(null, ii.getExtension(), root));
                 }
             }
         }
@@ -196,7 +199,7 @@ public class PdmServiceImpl implements PdmService {
         if (!personAdministrativeGender.isEmpty() &&
                 !personAdministrativeGender.get(0).getValue().isEmpty()) { //если задан пол персоны
             CV genderCode = personAdministrativeGender.get(0).getValue().get(0);
-            res.setGender(genderCode == null ? null : new ValueInfo(genderCode.getCodeSystem(), genderCode.getCode()));
+            res.setGender(genderCode == null ? null : new ValueInfo(null, genderCode.getCode(), genderCode.getCodeSystem()));
         }
         Map<String, DocsInfo> docs = new HashMap<>();
         for (PRPAMT101306UV02OtherIDsScopingOrganization otherId : parameterList.getOtherIDsScopingOrganization()) {
@@ -220,14 +223,6 @@ public class PdmServiceImpl implements PdmService {
         return res;
     }
 
-    public static String decodeOID(String root) {
-        return root.replace(DOT_CH, '.').substring(OID_PREFIX.length());
-    }
-
-    public static String codeOID(String root) {
-        return OID_PREFIX + root.replace('.', DOT_CH);
-    }
-
     public PersonalInfo update(PersonalInfo personalInfo, PRPAIN101314UV02 prm) {
 
         PRPAMT101302UV02IdentifiedPersonIdentifiedPerson identifiedPerson = prm.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson();
@@ -237,7 +232,7 @@ public class PdmServiceImpl implements PdmService {
             initNames(personalInfo, names.get(0));
         }
         CE genderCode = identifiedPerson.getAdministrativeGenderCode();
-        personalInfo.setGender(genderCode == null ? null : new ValueInfo(genderCode.getCodeSystem(), genderCode.getCode()));
+        personalInfo.setGender(genderCode == null ? null : new ValueInfo(null, genderCode.getCode(), genderCode.getCodeSystem()));
         TS birthTime = identifiedPerson.getBirthTime();
         personalInfo.setBirthDate(birthTime == null ? null : birthTime.getValue());
 
@@ -321,17 +316,24 @@ public class PdmServiceImpl implements PdmService {
     public PRPAIN101308UV02 getDemographics(PRPAIN101307UV02 parameters) {
         logger.info("Get demographics info by id. Parsing input parameters...");
         //TODO add verification
-        final List<PRPAMT101307UV02IdentifiedPersonIdentifier> identifiedPersons = parameters.getControlActProcess().getQueryByParameter().getValue().
-                getParameterList().getIdentifiedPersonIdentifier();
+
+        final List<PRPAMT101307UV02IdentifiedPersonIdentifier> identifiedPersons =
+                parameters.getControlActProcess()
+                        .getQueryByParameter()
+                        .getValue()
+                        .getParameterList()
+                        .getIdentifiedPersonIdentifier();
+
         logger.info("Get demographics info by id. Count of inputsIDs : ", identifiedPersons == null ? "not set" : ("" + identifiedPersons.size()));
+
         List<PersonalInfo> personalDataList = new Vector<PersonalInfo>(identifiedPersons.size());
         for (PRPAMT101307UV02IdentifiedPersonIdentifier curPerson : identifiedPersons) {
-            String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
-            String publicKey = curPerson.getValue().get(0).getRoot();
-            byte[] privateKey = toPrivateKey( publicKey, senderId);
+            final String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
+            final String publicKey = curPerson.getValue().get(0).getRoot();
+
             logger.info("Get demographics info by id. Find demographics info for id = " + publicKey);
             try {
-                personalDataList.add(findById(privateKey, senderId));
+                personalDataList.add(findById(publicKey, senderId));
             } catch (BadPaddingException
                     | NoSuchAlgorithmException
                     | NoSuchPaddingException
@@ -357,10 +359,9 @@ public class PdmServiceImpl implements PdmService {
                 if (OID_PDM.equals(ii.getRoot())) {
                     String publicKey = ii.getExtension();
                     String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
-                    byte[] privateKey = toPrivateKey(publicKey, senderId);
                     final PersonalInfo personalInfo;
                     try {
-                        personalInfo = findById(privateKey, senderId);
+                        personalInfo = findById(publicKey, senderId);
                     } catch (BadPaddingException
                             | NoSuchAlgorithmException
                             | NoSuchPaddingException
@@ -403,6 +404,11 @@ public class PdmServiceImpl implements PdmService {
     @Override
     public boolean logout(String token) {
         return authService.logout(token) && pdmXmlConfigService.logout(token);
+    }
+
+    @Override
+    public List<PersonalInfo> getPersons(String senderOid) {
+        return pdmDaoServiceLocator.getPdmDaoService().getPersons(senderOid);
     }
 
 
@@ -675,7 +681,7 @@ public class PdmServiceImpl implements PdmService {
     }
 
     private II createII(ValueInfo attr) {
-        return createII(attr.getValue(), decodeOID(attr.getDescription()));
+        return createII(attr.getValue(), attr.getOid());
     }
 
 
@@ -687,27 +693,38 @@ public class PdmServiceImpl implements PdmService {
         if (!isAdded) {
             try {
                 return pdmDaoServiceLocator.getPdmDaoService().save(personalInfo);
-            } catch (BadPaddingException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (IllegalBlockSizeException e) {
-                e.printStackTrace();
-            } catch (NoSuchPaddingException e) {
-                e.printStackTrace();
-            } catch (InvalidKeyException e) {
-                e.printStackTrace();
-            } catch (InvalidKeySpecException e) {
-                e.printStackTrace();
+            } catch (BadPaddingException
+                    | NoSuchAlgorithmException
+                    | IllegalBlockSizeException
+                    | NoSuchPaddingException
+                    | InvalidKeyException
+                    | InvalidKeySpecException e) {
+                logger.error("security exception", e);
             }
         }
         throw new RuntimeException("Cannot register a new person!");
     }
 
-
-    private PersonalInfo findById(byte[] id, String senderId) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeyException, InvalidKeySpecException {
-        return pdmDaoServiceLocator.getPdmDaoService().findById(id, senderId);
+    @Override
+    public PersonalInfo getPerson(String publicKey, String senderId) {
+        try {
+            return findById(publicKey, senderId);
+        } catch (BadPaddingException
+                | NoSuchAlgorithmException
+                | IllegalBlockSizeException
+                | NoSuchPaddingException
+                | InvalidKeyException
+                | InvalidKeySpecException e) {
+            logger.error("security exception", e);
+        }
+        return null;
     }
+
+    private PersonalInfo findById(String publicKey, String senderId) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeyException, InvalidKeySpecException {
+        byte[] privateKey = toPrivateKey(publicKey, senderId);
+        return pdmDaoServiceLocator.getPdmDaoService().findById(privateKey, senderId);
+    }
+
 
     private II createPdmII(String id) {
         return createII(id, OID_PDM);

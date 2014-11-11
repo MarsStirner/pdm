@@ -102,4 +102,18 @@ public class Crypting {
 
         return res;
     }
+
+    public static String decodeOID(String root) {
+        if(root == null) {
+            return null;
+        }
+        return root.replace(PdmServiceImpl.DOT_CH, '.').substring(PdmServiceImpl.OID_PREFIX.length());
+    }
+
+    public static String codeOID(String root) {
+        if(root == null) {
+            return null;
+        }
+        return PdmServiceImpl.OID_PREFIX + root.replace('.', PdmServiceImpl.DOT_CH);
+    }
 }

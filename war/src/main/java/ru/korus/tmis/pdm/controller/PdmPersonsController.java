@@ -18,9 +18,9 @@ import java.util.Map;
  * Description:  <br>
  */
 @Controller
-@RequestMapping(value = "create")
+@RequestMapping(value = "persons")
 @Scope("session")
-public class PdmCreateController implements Serializable {
+public class PdmPersonsController implements Serializable {
 
     @Autowired
     PdmDocsService pdmDocsService;
@@ -29,9 +29,9 @@ public class PdmCreateController implements Serializable {
 
     @RequestMapping(method = RequestMethod.GET)
     public String get(Map<String, Object> model) {
-        model.put("state", ViewState.CREATE);
-        model.put("newPerson", personalInfo);
-        model.put("pdmDocs", pdmDocsService.getDocsInfo());
+        model.put("state", ViewState.PERSONS);
+       /* model.put("newPerson", personalInfo);
+        model.put("pdmDocs", pdmDocsService.getDocsInfo());*/
         return ConfigController.MAIN_JSP;
     }
 

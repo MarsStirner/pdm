@@ -15,6 +15,6 @@ public class Telecoms extends EntityList {
     public Telecoms() { super();}
 
     public Telecoms(byte[] privateKey) {
-        setPrivateKey(privateKey);
+        super(privateKey);
     }
 }

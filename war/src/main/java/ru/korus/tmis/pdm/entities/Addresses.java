@@ -15,6 +15,6 @@ public class Addresses extends EntityList {
     public Addresses() { super();}
 
     public Addresses(byte[] privateKey) {
-        setPrivateKey(privateKey);
+        super(privateKey);
     }
 }

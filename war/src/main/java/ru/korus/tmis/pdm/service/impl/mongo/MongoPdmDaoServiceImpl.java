@@ -6,10 +6,9 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.config.SpringMongoConfig;
 import ru.korus.tmis.pdm.model.DocsInfo;
-import ru.korus.tmis.pdm.model.PersonalInfo;
+import ru.korus.tmis.pdm.model.api.PersonalInfo;
 import ru.korus.tmis.pdm.service.PdmDaoService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,12 +81,17 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
         System.out.println("findPerson mogo query: " + query);
         BasicQuery basicQuery = new BasicQuery(query);
         return mongoOperation.find(basicQuery, PersonalData.class);*/
-        return null;
+        throw new RuntimeException("TODO!!");
     }
 
     @Override
     public List<PersonalInfo> findPersonLike(PersonalInfo person, String senderId) {
        throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public List<PersonalInfo> getPersons(String senderOid) {
+        throw new RuntimeException("TODO!!");
     }
 
 
@@ -119,6 +123,5 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
         }
         return String.format("'%s': '%s', ", name, value);
     }
-
 
 }

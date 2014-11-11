@@ -11,9 +11,9 @@
     <meta name="author" content="ВТР">
     <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 
-    <link rel="stylesheet" href="resources/css/style.min.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.min.css" />
 
-    <script type="text/javascript" src="resources/angular/angular.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/angular/angular.min.js"></script>
 
     <title>ЗХПД</title>
     <meta name="description" content="Защищенное хранилище персональных данных">
@@ -30,10 +30,13 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">ЗХПД<b class="caret"></b></a>
                 <ul class="dropdown-menu global_nav">
                     <li>
-                        <a href="create">Новая запись</a>
+                        <a href="${pageContext.request.contextPath}/create">Новая запись</a>
                     </li>
                     <li>
-                        <a href="find">Поиск</a>
+                        <a href="${pageContext.request.contextPath}/persons">Просмотр</a>
+                    </li>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/find">Поиск</a>
                     </li>
                 </ul>
             </li>

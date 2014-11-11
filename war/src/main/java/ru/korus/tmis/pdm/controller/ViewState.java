@@ -14,7 +14,9 @@ public enum ViewState {
     SYSTEMS("/systems", "Подсистемы"),
     DOCS("/docs", "Документы"),
     FILES("/files", "Файлы"),
-    CREATE("/create", "Новая запись");
+    CREATE("/create", "Новая запись"),
+    PERSONS("/persons", "Персональные данные"),
+    PERSON("/person", "Персональные данные");
     /*CREATE("/create", "Новая запись"),
     FIND("/find", "Поиск и редактирование");*/
 

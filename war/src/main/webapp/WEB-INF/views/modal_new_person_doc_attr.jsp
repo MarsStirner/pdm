@@ -20,7 +20,7 @@
                                 data-ng-model="${param.value}.description">
                             <c:forEach items="${pdmDocs.docs}" var="doc" varStatus="status">
                                 <c:forEach items="${doc.attrs}" var="attr" varStatus="statusAttr">
-                                    <option value="${attr.description}" data-ng-if="${param.docName} == '${doc.name}'">${attr.description}</option>
+                                    <option value="${attr.oid}" data-ng-if="${param.docName} == '${doc.name}'">${attr.description}</option>
                                 </c:forEach>
                             </c:forEach>
                         </select>

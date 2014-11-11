@@ -8,32 +8,36 @@
     <div class="col">
         <div class="panel panel-info">
             <div class="panel-heading">
-                Персональные данные
+                Основная информация
             </div>
             <div class="panel-body">
                 <form role="form">
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary" placeholder="добавить" data-ng-click="create()">Добавить</button>
-                        публичный ключ: <span class="label label-info">{{createRes.id}}</span>
-                        <button type="reset" class="btn btn-default pull-right" placeholder="отмена">Отмена</button>
-                    </div>
                     <fieldset class="form-group">
                         <legend></legend>
                         <div class="col-xs-2">
-                            <label for="oid">OID подсистемы:</label>
-                            <input type="text" id="oid" class="form-control" placeholder="OID подсистемы" data-ng-model="systemLogin.oid"/>
+                            <label for="systemOidPD">OID подсистемы:</label>
+                            <input type="text" id="systemOidPD" class="form-control" placeholder="OID подсистемы" data-ng-model="systemLogin.oid" data-ng-init="systemLogin.oid = '${systemOid}'"/>
                         </div>
                         <div class="col-xs-5">
                             <label for="password">Пароль подсистемы:</label>
-                            <input type="password" id="password" class="form-control" placeholder="пароль подсистемы" data-ng-model="systemLogin.password"/>
+                            <input type="password" id="password" class="form-control"  placeholder="пароль подсистемы" data-ng-model="systemLogin.password"/>
                         </div>
                         <div class="col-xs-5">
-                            <button type="submit" class="btn btn-primary  pull-right" placeholder="авторизация подсистемы" data-ng-click="login()">Авторизация</button>
-                            token:<span class="label label-info">{{newPerson.token}}</span>
+                            <button type="submit" class="btn btn-primary  pull-right" placeholder="авторизация подсистемы" data-ng-click="loginAndLoad()">Авторизация</button>
+                            token:<span class="label label-info" data-ng-init="newPerson.token = '${token}'">{{newPerson.token}}</span>
                         </div>
                     </fieldset>
 
                     <fieldset class="form-group">
+                        <legend></legend>
+                        <div class="col-xs-12">
+                            <label for="publikKey">Публичный <code>id</code>:</label>
+                            <input type="text" id="publikKey" class="form-control" placeholder="public key" data-ng-model="personInfo.publicKey" data-ng-init="personInfo.publicKey = '${publicKey}'"/>
+                            <button type="submit" class="btn btn-primary" placeholder="получить персональные данные" data-ng-click="loginPersonInfo()">Загрузить</button>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="form-group" data-ng-init="loadPersonInfo(newPerson.token, personInfo.publicKey)">
                         <legend></legend>
                         <div class="col-xs-2">
                             <label for="family">Фамилия:</label>
@@ -78,37 +82,37 @@
                             </th>
                             </thead>
                             <tbody>
-                                <tr data-ng-repeat="telecom in newPerson.telecoms">
-                                    <td>
-                                            {{telecom.description}}
-                                    </td>
-                                    <td>
-                                            {{telecom.value}}
-                                        <a class="btn btn-default pull-right"  data-ng-click="removeTelecom($index)"
-                                           placeholder="удалить">
-                                            <span class="glyphicon glyphicon-remove"></span>
-                                        </a>
-                                        <a class="btn btn-default pull-right" data-toggle="modal"
-                                           data-target="#newPersonTelecomUpdate{{$index}}"
-                                           placeholder="редактировать">
-                                            <span class="glyphicon glyphicon-pencil"></span>
-                                        </a>
-                                        <jsp:include page="modal_new_person_value.jsp">
-                                            <jsp:param name="id" value="newPersonTelecomUpdate{{$index}}"/>
-                                            <jsp:param name="valueName" value="контакт"/>
-                                            <jsp:param name="value" value="telecom"/>
-                                            <jsp:param name="action" value=""/>
-                                        </jsp:include>
-                                            <%--
-                                             <jsp:include page="modal_addr_delete.jsp">
-                                                 <jsp:param name="index" value="${status.index}"/>
-                                             </jsp:include>--%>
-                                    </td>
-                                </tr>
+                            <tr data-ng-repeat="telecom in newPerson.telecoms">
+                                <td>
+                                    {{telecom.description}}
+                                </td>
+                                <td>
+                                    {{telecom.value}}
+                                    <a class="btn btn-default pull-right"  data-ng-click="removeTelecom($index)"
+                                       placeholder="удалить">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </a>
+                                    <a class="btn btn-default pull-right" data-toggle="modal"
+                                       data-target="#newPersonTelecomUpdate{{$index}}"
+                                       placeholder="редактировать">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                    <jsp:include page="modal_new_person_value.jsp">
+                                        <jsp:param name="id" value="newPersonTelecomUpdate{{$index}}"/>
+                                        <jsp:param name="valueName" value="контакт"/>
+                                        <jsp:param name="value" value="telecom"/>
+                                        <jsp:param name="action" value=""/>
+                                    </jsp:include>
+                                    <%--
+                                     <jsp:include page="modal_addr_delete.jsp">
+                                         <jsp:param name="index" value="${status.index}"/>
+                                     </jsp:include>--%>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                         <a class="btn btn-default" data-toggle="modal" data-target="#newPersonTelecomAdd"
-                                placeholder="добавить">
+                           placeholder="добавить">
                             Добавить
                         </a>
                         <jsp:include page="modal_new_person_value.jsp">
@@ -179,74 +183,74 @@
                             <th>Значение</th>
                             </thead>
                             <tbody>
-                                <tr data-ng-repeat-start="doc in newPerson.documents">
-                                    <td rowspan="{{sizeAttrs($index) + 1}}">
-                                        <strong>{{doc.description}}</strong>
-                                    </td>
-                                    <td>
-                                        <i>{{doc.attrs[0].description}}</i>
-                                    </td>
-                                    <td>
-                                        <code>{{doc.attrs[0].value}}</code>
-                                        <button class="btn btn-sm pull-right" data-ng-click="removeAttr(doc,0)"
-                                           placeholder="удалить">
-                                            <span class="glyphicon glyphicon-remove"></span>
-                                        </button>
-                                        <button class="btn btn-sm pull-right" data-toggle="modal"
-                                           data-target="#newAttrUpdate{{doc.name}}_0"
-                                           placeholder="редактировать">
-                                            <span class="glyphicon glyphicon-pencil"></span>
-                                        </button>
-                                        <jsp:include page="modal_new_person_doc_attr.jsp">
-                                            <jsp:param name="id" value="newAttrUpdate{{doc.name}}_0"/>
-                                            <jsp:param name="value" value="doc.attrs[0]"/>
-                                            <jsp:param name="docName" value="doc.name"/>
-                                            <jsp:param name="action" value=""/>
-                                        </jsp:include>
-                                    </td>
+                            <tr data-ng-repeat-start="doc in newPerson.documents">
+                                <td rowspan="{{sizeAttrs($index) + 1}}">
+                                    <strong>{{doc.description}}</strong>
+                                </td>
+                                <td>
+                                    <i>{{doc.attrs[0].description}}</i>
+                                </td>
+                                <td>
+                                    <code>{{doc.attrs[0].value}}</code>
+                                    <button class="btn btn-sm pull-right" data-ng-click="removeAttr(doc,0)"
+                                            placeholder="удалить">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </button>
+                                    <button class="btn btn-sm pull-right" data-toggle="modal"
+                                            data-target="#newAttrUpdate{{doc.name}}_0"
+                                            placeholder="редактировать">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </button>
+                                    <jsp:include page="modal_new_person_doc_attr.jsp">
+                                        <jsp:param name="id" value="newAttrUpdate{{doc.name}}_0"/>
+                                        <jsp:param name="value" value="doc.attrs[0]"/>
+                                        <jsp:param name="docName" value="doc.name"/>
+                                        <jsp:param name="action" value=""/>
+                                    </jsp:include>
+                                </td>
 
-                                </tr>
-                                    <tr data-ng-repeat="attr in doc.attrs" ng-if="$index > 0">
-                                        <td>
-                                            <i>{{attr.description}}</i>
-                                        </td>
-                                        <td>
-                                            <code>{{attr.value}}</code>
-                                            <button class="btn btn-sm pull-right" data-ng-click="removeAttr(doc,$index)"
-                                                    placeholder="удалить">
-                                                <span class="glyphicon glyphicon-remove"></span>
-                                            </button>
-                                            <button class="btn btn-sm pull-right" data-toggle="modal"
-                                               data-target="#newAttrUpdate{{doc.name}}_{{$index}}"
-                                               placeholder="редактировать">
-                                                <span class="glyphicon glyphicon-pencil"></span>
-                                            </button>
-                                            <jsp:include page="modal_new_person_doc_attr.jsp">
-                                                <jsp:param name="id" value="newAttrUpdate{{doc.name}}_{{$index}}"/>
-                                                <jsp:param name="value" value="attr"/>
-                                                <jsp:param name="docName" value="doc.name"/>
-                                                <jsp:param name="action" value=""/>
-                                            </jsp:include>
-                                        </td>
-                                    </tr>
-                                <tr data-ng-repeat-end>
-                                    <td colspan="3">
-                                        <button class="btn btn-sm" data-toggle="modal" data-target="#newAttrAdd{{doc.name}}"
-                                           placeholder="добавить">
-                                            добавить атрибут
-                                        </button>
-                                       <jsp:include page="modal_new_person_doc_attr.jsp">
-                                            <jsp:param name="id" value="newAttrAdd{{doc.name}}"/>
-                                            <jsp:param name="value" value="newAttr"/>
-                                            <jsp:param name="docName" value="doc.name"/>
-                                            <jsp:param name="action" value="addAttr(newPerson.documents[$index], newAttr)"/>
-                                        </jsp:include>
-                                    </td>
-                                </tr>
+                            </tr>
+                            <tr data-ng-repeat="attr in doc.attrs" ng-if="$index > 0">
+                                <td>
+                                    <i>{{attr.description}}</i>
+                                </td>
+                                <td>
+                                    <code>{{attr.value}}</code>
+                                    <button class="btn btn-sm pull-right" data-ng-click="removeAttr(doc,$index)"
+                                            placeholder="удалить">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </button>
+                                    <button class="btn btn-sm pull-right" data-toggle="modal"
+                                            data-target="#newAttrUpdate{{doc.name}}_{{$index}}"
+                                            placeholder="редактировать">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </button>
+                                    <jsp:include page="modal_new_person_doc_attr.jsp">
+                                        <jsp:param name="id" value="newAttrUpdate{{doc.name}}_{{$index}}"/>
+                                        <jsp:param name="value" value="attr"/>
+                                        <jsp:param name="docName" value="doc.name"/>
+                                        <jsp:param name="action" value=""/>
+                                    </jsp:include>
+                                </td>
+                            </tr>
+                            <tr data-ng-repeat-end>
+                                <td colspan="3">
+                                    <button class="btn btn-sm" data-toggle="modal" data-target="#newAttrAdd{{doc.name}}"
+                                            placeholder="добавить">
+                                        добавить атрибут
+                                    </button>
+                                    <jsp:include page="modal_new_person_doc_attr.jsp">
+                                        <jsp:param name="id" value="newAttrAdd{{doc.name}}"/>
+                                        <jsp:param name="value" value="newAttr"/>
+                                        <jsp:param name="docName" value="doc.name"/>
+                                        <jsp:param name="action" value="addAttr(newPerson.documents[$index], newAttr)"/>
+                                    </jsp:include>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                         <button class="btn btn-default" data-toggle="modal" data-target="#newPersonDocAdd"
-                           placeholder="добавить">
+                                placeholder="добавить">
                             Добавить документ
                         </button>
                         <jsp:include page="modal_new_person_doc.jsp">
@@ -259,17 +263,4 @@
             </div>
         </div>
     </div>
-
-    <%-- <div class="col">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                Файлы
-            </div>
-            <div class="panel-body">
-                //TODO
-            </div>
-        </div>
-    </div>--%>
-
-
 </div>

@@ -15,6 +15,6 @@ public class Docs extends EntityList {
     public Docs() { super();}
 
     public Docs(byte[] privateKey) {
-        setPrivateKey(privateKey);
+        super(privateKey);
     }
 }

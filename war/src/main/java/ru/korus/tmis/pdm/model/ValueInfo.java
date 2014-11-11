@@ -12,11 +12,15 @@ public class ValueInfo implements UseInfo {
 
     private String value;
 
+    private String oid;
+        
+
     public ValueInfo() {
 
     }
 
-    public ValueInfo(String description, String value) {
+    public ValueInfo(String description, String value, String oid) {
+        this.oid = oid;
         this.description = description;
         this.value = value;
     }
@@ -40,5 +44,13 @@ public class ValueInfo implements UseInfo {
     @Override
     public String getUse() {
         return description;
+    }
+
+    public String getOid() {
+        return oid;
+    }
+
+    public void setOid(String oid) {
+        this.oid = oid;
     }
 }

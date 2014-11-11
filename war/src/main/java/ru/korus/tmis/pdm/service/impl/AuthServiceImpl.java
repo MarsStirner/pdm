@@ -2,6 +2,7 @@ package ru.korus.tmis.pdm.service.impl;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.service.AuthService;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
@@ -126,7 +127,7 @@ public class AuthServiceImpl implements AuthService {
         return authData;
     }
 
-    private void clearToken() {
+    synchronized private void clearToken() {
         Date deadline = new Date((new Date()).getTime() - MAX_IDLE_MINUTES * 60 * 1000);
         for (Map.Entry<String, AuthData> token : tokens.entrySet()) {
             if (token.getValue().loginTime.before(deadline)) {

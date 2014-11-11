@@ -31,7 +31,7 @@
                                            data-ng-init="${param.value}.attrs = []"/>
                                     <c:forEach items="${doc.attrs}" var="attr" varStatus="statusAttr">
                                         <input type="hidden"
-                                               data-ng-init="${param.value}.attrs.push({description:'${attr.description}', value: null})"/>
+                                               data-ng-init="${param.value}.attrs.push({description:'${attr.description}', value: null, oid: '${attr.oid}'})"/>
                                     </c:forEach>
                                 </div>
                             </c:forEach>

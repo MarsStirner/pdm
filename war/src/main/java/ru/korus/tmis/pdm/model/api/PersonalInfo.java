@@ -1,7 +1,10 @@
-package ru.korus.tmis.pdm.model;
+package ru.korus.tmis.pdm.model.api;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.korus.tmis.pdm.entities.Term;
+import ru.korus.tmis.pdm.model.AddrInfo;
+import ru.korus.tmis.pdm.model.DocsInfo;
+import ru.korus.tmis.pdm.model.ValueInfo;
 import ru.korus.tmis.pdm.ws.PdmSysProperties;
 
 import java.util.Date;

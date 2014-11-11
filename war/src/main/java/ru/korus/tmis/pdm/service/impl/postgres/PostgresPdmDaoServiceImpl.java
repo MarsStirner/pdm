@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.entities.Person;
 import ru.korus.tmis.pdm.model.DocsInfo;
-import ru.korus.tmis.pdm.model.PersonalInfo;
+import ru.korus.tmis.pdm.model.api.PersonalInfo;
 import ru.korus.tmis.pdm.repositories.PersonDataRepository;
 import ru.korus.tmis.pdm.service.PdmDaoService;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
@@ -63,6 +63,11 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
     @Override
     public List<PersonalInfo> findPersonLike(PersonalInfo person, String senderId) {
         return null;
+    }
+
+    @Override
+    public List<PersonalInfo> getPersons(String senderOid) {
+        return personalDataBuilderService.createPersonalInfoShort(personDataRepository.findAll(), senderOid);
     }
 
 }

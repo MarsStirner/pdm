@@ -1,8 +1,10 @@
 package ru.korus.tmis.pdm.service;
 
-import ru.korus.tmis.pdm.model.PersonalInfo;
+import ru.korus.tmis.pdm.model.api.PersonalInfo;
 import ru.korus.tmis.pdm.model.api.Identifier;
 import ru.korus.tmis.pdm.ws.hl7.*;
+
+import java.util.List;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -28,4 +30,7 @@ public interface PdmService {
 
     boolean logout(String token);
 
+    List<PersonalInfo> getPersons(String senderOid);
+
+    PersonalInfo getPerson(String publicKey, String senderOid);
 }

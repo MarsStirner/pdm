@@ -1,7 +1,7 @@
 package ru.korus.tmis.pdm.service;
 
 import ru.korus.tmis.pdm.model.DocsInfo;
-import ru.korus.tmis.pdm.model.PersonalInfo;
+import ru.korus.tmis.pdm.model.api.PersonalInfo;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -44,4 +44,6 @@ public interface PdmDaoService {
     List<PersonalInfo> find(PersonalInfo person, String senderId);
 
     List<PersonalInfo> findPersonLike(PersonalInfo person, String senderId);
+
+    List<PersonalInfo> getPersons(String senderOid);
 }

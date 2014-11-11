@@ -13,17 +13,11 @@ import java.util.List;
  */
 public class DocsInfo {
 
+    private String description;
+
     private String name;
 
     private List<ValueInfo> attrs;
-
-    public String getDescription() {
-        return name;
-    }
-
-    public void setDescription(String name) {
-        this.name = name;
-    }
 
     public List<ValueInfo> getAttrs() {
         if(attrs == null) {
@@ -44,4 +38,11 @@ public class DocsInfo {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

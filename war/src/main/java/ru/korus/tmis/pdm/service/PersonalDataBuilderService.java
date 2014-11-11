@@ -3,7 +3,7 @@ package ru.korus.tmis.pdm.service;
 import ru.korus.tmis.pdm.entities.*;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
-import ru.korus.tmis.pdm.model.PersonalInfo;
+import ru.korus.tmis.pdm.model.api.PersonalInfo;
 import ru.korus.tmis.pdm.model.ValueInfo;
 
 import javax.crypto.BadPaddingException;
@@ -12,6 +12,7 @@ import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -44,4 +45,6 @@ public interface PersonalDataBuilderService {
     Birth createBirthInfo(PersonalInfo personalInfo);
 
     Addr createAddr(AddrInfo addrInfo);
+
+    List<PersonalInfo> createPersonalInfoShort(Iterable<Person> persons, String senderOid);
 }

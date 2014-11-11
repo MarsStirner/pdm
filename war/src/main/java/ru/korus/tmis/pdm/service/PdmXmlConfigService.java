@@ -54,6 +54,6 @@ public interface PdmXmlConfigService {
 
     List<PdmConfig.Files.File> getFiles();
 
-    String getDocsNameByAttrOid(String root);
+    PdmConfig.Docs.Doc getDocsNameByAttrOid(String root);
 
 }

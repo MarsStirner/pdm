@@ -60,11 +60,37 @@ function createController($scope, $http) {
     $scope.createRes = {
     }
 
+    $scope.loadPersonInfo = function (token, publicKey) {
+        var prm = {token: token, publicKey: publicKey};
+        $http.post("../api/get", prm).
+            success(function (data) {
+                $scope.newPerson = data;
+            }
+        );
+    }
+
+    $scope.loginAndLoad = function () {
+        $http.post("api/login", $scope.systemLogin).
+            success(function (data) {
+                $scope.newPerson.token = data.id;
+                $http.get("api/persons/?token=" + data.id).
+                    success(function (data) {
+                        $scope.persons = data.personList;
+                        for(var i = 0; i < $scope.persons.length; i++) {
+                            $scope.persons[i].publicKey = encodeURIComponent($scope.persons[i].publicKey);
+                        }
+                    }
+                )
+            }
+        );
+    }
+
     $scope.login = function () {
         $http.post("api/login", $scope.systemLogin).
             success(function (data) {
                 $scope.newPerson.token = data.id;
-            });
+            }
+        );
     }
 
     $scope.create = function () {

@@ -3,17 +3,10 @@ package ru.korus.tmis.pdm.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import ru.korus.tmis.pdm.model.PersonalInfo;
-import ru.korus.tmis.pdm.model.api.ErrorStatus;
-import ru.korus.tmis.pdm.model.api.Identifier;
-import ru.korus.tmis.pdm.model.api.SystemLogin;
+import org.springframework.web.bind.annotation.*;
+import ru.korus.tmis.pdm.model.api.*;
 import ru.korus.tmis.pdm.service.AuthService;
 import ru.korus.tmis.pdm.service.PdmService;
-import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -54,6 +47,26 @@ public class PdmRestApiController {
             res.setStatus(ErrorStatus.ACCESS_DENIED);
         }
         return res;
+    }
+
+    @RequestMapping(value = "persons", method = RequestMethod.GET)
+    @ResponseBody
+    public Persons persons(@RequestParam String token) {
+        String senderOid = authService.checkToken(token);
+        Persons res = new Persons();
+        if (senderOid == null) {
+            res.setStatus(ErrorStatus.ACCESS_DENIED);
+        } else {
+            res.setPersonList(pdmService.getPersons(senderOid));
+        }
+        return res;
+    }
+
+    @RequestMapping(value = "get", method = RequestMethod.POST)
+    @ResponseBody
+    public PersonalInfo get(@RequestBody PersonInfoReq personInfoReq ) {
+        String senderOid = authService.checkToken(personInfoReq.getToken());
+        return pdmService.getPerson(personInfoReq.getPublicKey(), senderOid);
     }
 
 }

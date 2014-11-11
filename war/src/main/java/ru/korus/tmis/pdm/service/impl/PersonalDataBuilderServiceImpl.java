@@ -5,12 +5,13 @@ import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.entities.*;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
-import ru.korus.tmis.pdm.model.PersonalInfo;
+import ru.korus.tmis.pdm.model.api.PersonalInfo;
 import ru.korus.tmis.pdm.model.ValueInfo;
 import ru.korus.tmis.pdm.model.api.Identifier;
 import ru.korus.tmis.pdm.repositories.*;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 import ru.korus.tmis.pdm.service.PersonalDataBuilderService;
+import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 import ru.korus.tmis.pdm.utilities.Crypting;
 
 import javax.crypto.BadPaddingException;
@@ -20,6 +21,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -94,6 +96,9 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
 
     @Override
     public PersonalInfo createPersonalInfo(Person personalData, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+        if(personalData == null) {
+            return null;
+        }
         PersonalInfo res = new PersonalInfo();
         final byte[] key = pdmXmlConfigService.getInternalKey();
         final byte[] keySystem = pdmXmlConfigService.getSystemDbKey(senderId);
@@ -161,9 +166,10 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
 
         for (Attr attr : doc.getAttribute()) {
             if (attr.getOid() != null) {
-                String name = pdmXmlConfigService.getDocsNameByAttrOid(attr.getOid());
-                if (name != null) {
-                    res.setName(name);
+                PdmConfig.Docs.Doc docConfig = pdmXmlConfigService.getDocsNameByAttrOid(Crypting.decodeOID(attr.getOid()));
+                if (docConfig != null) {
+                    res.setName(docConfig.getName());
+                    res.setDescription(docConfig.getDescription());
                     break;
                 }
             }
@@ -180,10 +186,14 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         }
         ValueInfo res = new ValueInfo();
         res.setValue(attr.getValue());
-        res.setDescription(attr.getOid());
+        String oid = Crypting.decodeOID(attr.getOid());
+        res.setOid(oid);
+        PdmConfig.Docs.Doc.Attribute attrXml = pdmXmlConfigService.getObjectByOid(oid);
+        if(attrXml != null) {
+            res.setDescription(attrXml.getDescription());
+        }
         return res;
     }
-
 
     @Override
     public ValueInfo createValueInfo(Telecom telecom) {
@@ -237,7 +247,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         }
         Attr res = new Attr();
         res.setValue(attr.getValue());
-        res.setOid(attr.getDescription());
+        res.setOid(Crypting.codeOID(attr.getOid()));
         return res;
     }
 
@@ -292,6 +302,24 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         res.setState(addrInfo.getState());
         res.setStreetAddressLine(addrInfo.getStreetAddressLine());
         res.setStreetName(addrInfo.getStreetName());
+        return res;
+    }
+
+    @Override
+    public List<PersonalInfo> createPersonalInfoShort(Iterable<Person> persons, String senderOid) {
+        List<PersonalInfo> res = new LinkedList<>();
+        final byte[] keySystem = pdmXmlConfigService.getSystemDbKey(senderOid);
+        if(keySystem != null) {
+            for (Person p : persons) {
+                PersonalInfo personalInfo = new PersonalInfo();
+                personalInfo.setFamily(p.getFamily());
+                personalInfo.setGiven(p.getGiven());
+                personalInfo.setMiddleName(p.getMiddleName());
+                Identifier identifier = Crypting.toPublicKey(Crypting.toListByte(p.getPrivateKey()), keySystem);
+                personalInfo.setPublicKey(identifier == null ? null : identifier.getId());
+                res.add(personalInfo);
+            }
+        }
         return res;
     }
 

@@ -283,12 +283,12 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
     }
 
     @Override
-    public String getDocsNameByAttrOid(String root) {
+    public PdmConfig.Docs.Doc getDocsNameByAttrOid(String root) {
         PdmConfig.Docs.Doc doc = getDocByAttrOid(root);
         if (doc == null) {
             return null;
         }
-        return doc.getName();
+        return doc;
     }
 
     private PdmConfig.Docs.Doc getDocByAttrOid(String oid) {
