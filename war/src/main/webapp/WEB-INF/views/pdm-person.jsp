@@ -23,7 +23,7 @@
                             <input type="password" id="password" class="form-control"  placeholder="пароль подсистемы" data-ng-model="systemLogin.password"/>
                         </div>
                         <div class="col-xs-5">
-                            <button type="submit" class="btn btn-primary  pull-right" placeholder="авторизация подсистемы" data-ng-click="loginAndLoad()">Авторизация</button>
+                            <button type="submit" class="btn btn-primary  pull-right" placeholder="авторизация подсистемы" data-ng-click="login()">Авторизация</button>
                             token:<span class="label label-info" data-ng-init="newPerson.token = '${token}'">{{newPerson.token}}</span>
                         </div>
                     </fieldset>
@@ -39,35 +39,67 @@
 
                     <fieldset class="form-group" data-ng-init="loadPersonInfo(newPerson.token, personInfo.publicKey)">
                         <legend></legend>
-                        <div class="col-xs-2">
-                            <label for="family">Фамилия:</label>
-                            <input type="text" id="family" class="form-control" placeholder="Фамилия" data-ng-model="newPerson.family"/>
+                        <div class="form-group">
+                            <div class="col-xs-2">
+                                <label for="family">Фамилия:</label>
+                                <input type="text" id="family" class="form-control" placeholder="Фамилия" data-ng-model="newPerson.family"/>
+                            </div>
+                            <div class="col-xs-2">
+                                <label for="given">Имя:</label>
+                                <input type="text" id="given" class="form-control" placeholder="Имя" data-ng-model="newPerson.given"/>
+                            </div>
+                            <div class="col-xs-2">
+                                <label for="middleName">Отчество:</label>
+                                <input type="text" id="middleName" class="form-control" placeholder="Отчество" data-ng-model="newPerson.middleName"/>
+                            </div>
+                            <div class="col-xs-2">
+                                <label for="updateTypeName">Причина обновления:</label>
+                                <select id="updateTypeName" class="form-control" placeholder="тип обновления"
+                                        data-ng-model="updateTypeName" data-ng-options="type.name for type in updateTypes"></select>
+                            </div>
+                            <div class="col-xs-2">
+                                <button type="submit" class="btn btn-primary" placeholder="Обновить ФИО" data-ng-click="updateNames()">Обновить ФИО</button>
+                            </div>
                         </div>
-                        <div class="col-xs-2">
-                            <label for="given">Имя:</label>
-                            <input type="text" id="given" class="form-control" placeholder="Имя" data-ng-model="newPerson.given"/>
-                        </div>
-                        <div class="col-xs-2">
-                            <label for="middleName">Отчество:</label>
-                            <input type="text" id="middleName" class="form-control" placeholder="Отчество" data-ng-model="newPerson.middleName"/>
-                        </div>
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <legend></legend>
                         <div class="col-xs-1">
-                            <label for="sex">Пол:</label>
-                            <select id="sex" class="form-control" placeholder="пол" data-ng-model="newPerson.gender.value">
+                            <label for="gender">Пол:</label>
+                            <select id="gender" class="form-control" placeholder="пол" data-ng-model="newPerson.gender.value">
                                 <option value="UN"></option>
                                 <option value="M">М</option>
                                 <option value="F">Ж</option>
                             </select>
                         </div>
                         <div class="col-xs-2">
+                            <label for="updateTypeGender">Причина обновления:</label>
+                            <select id="updateTypeGender" class="form-control" placeholder="тип обновления"
+                                    data-ng-model="updateTypeGender" data-ng-options="type.name for type in updateTypes"></select>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="submit" class="btn btn-primary" placeholder="сохранить" data-ng-click="updateGender()">Обновить пол</button>
+                        </div>
+
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <div class="col-xs-2">
                             <label for="birthDate">Дата рождения:</label>
                             <input type="date" id="birthDate" class="form-control"
-                                   placeholder="дата рождения" data-ng-model="newPerson.birthDate"/>
+                                   placeholder="дата рождения" data-ng-model="newPerson.birthInfo.birthDate"/>
                         </div>
                         <div class="col-xs-3">
                             <label for="birthPlace">Место рождения:</label>
                             <input type="text" id="birthPlace" class="form-control"
-                                   placeholder="место рождения" data-ng-model="newPerson.birthPlace.streetAddressLine"/>
+                                   placeholder="место рождения" data-ng-model="newPerson.birthInfo.birthPlace.streetAddressLine"/>
+                        </div>
+                        <div class="col-xs-2">
+                            <label for="updateTypeBirth">Причина обновления:</label>
+                            <select id="updateTypeBirth" class="form-control" placeholder="тип обновления"
+                                    data-ng-model="updateTypeBirthInfo" data-ng-options="type.name for type in updateTypes"></select>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="submit" class="btn btn-primary" placeholder="сохранить" data-ng-click="updateBirth()">Обновить дату/место рождения</button>
                         </div>
                     </fieldset>
                     <fieldset class="form-group">
@@ -88,10 +120,7 @@
                                 </td>
                                 <td>
                                     {{telecom.value}}
-                                    <a class="btn btn-default pull-right"  data-ng-click="removeTelecom($index)"
-                                       placeholder="удалить">
-                                        <span class="glyphicon glyphicon-remove"></span>
-                                    </a>
+
                                     <a class="btn btn-default pull-right" data-toggle="modal"
                                        data-target="#newPersonTelecomUpdate{{$index}}"
                                        placeholder="редактировать">
@@ -174,6 +203,7 @@
                             <jsp:param name="action" value="addAddress(newPerson.addressList, newAddress)"/>
                         </jsp:include>
                     </fieldset>
+
                     <fieldset class="form-group">
                         <legend>Документы</legend>
                         <table class="table table-bordered">
@@ -205,6 +235,7 @@
                                         <jsp:param name="id" value="newAttrUpdate{{doc.name}}_0"/>
                                         <jsp:param name="value" value="doc.attrs[0]"/>
                                         <jsp:param name="docName" value="doc.name"/>
+                                        <jsp:param name="attrList" value="doc.attrs"/>
                                         <jsp:param name="action" value=""/>
                                     </jsp:include>
                                 </td>
@@ -229,6 +260,7 @@
                                         <jsp:param name="id" value="newAttrUpdate{{doc.name}}_{{$index}}"/>
                                         <jsp:param name="value" value="attr"/>
                                         <jsp:param name="docName" value="doc.name"/>
+                                        <jsp:param name="attrList" value="doc.attrs"/>
                                         <jsp:param name="action" value=""/>
                                     </jsp:include>
                                 </td>
@@ -243,6 +275,7 @@
                                         <jsp:param name="id" value="newAttrAdd{{doc.name}}"/>
                                         <jsp:param name="value" value="newAttr"/>
                                         <jsp:param name="docName" value="doc.name"/>
+                                        <jsp:param name="attrList" value="attrs"/>
                                         <jsp:param name="action" value="addAttr(newPerson.documents[$index], newAttr)"/>
                                     </jsp:include>
                                 </td>

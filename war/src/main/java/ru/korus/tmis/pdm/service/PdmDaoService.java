@@ -46,4 +46,10 @@ public interface PdmDaoService {
     List<PersonalInfo> findPersonLike(PersonalInfo person, String senderId);
 
     List<PersonalInfo> getPersons(String senderOid);
+
+    void updateNames(byte[] privateKey, PersonalInfo personalInfo);
+
+    void updateGender(byte[] privateKey, PersonalInfo personalInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
+
+    void updateBirth(byte[] privateKey, PersonalInfo personalInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
 }

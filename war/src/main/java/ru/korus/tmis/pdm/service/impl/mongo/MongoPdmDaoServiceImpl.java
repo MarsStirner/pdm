@@ -94,6 +94,21 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
         throw new RuntimeException("TODO!!");
     }
 
+    @Override
+    public void updateNames(byte[] privateKey, PersonalInfo personalInfo) {
+        throw new RuntimeException("TODO!!");
+    }
+
+    @Override
+    public void updateGender(byte[] privateKey, PersonalInfo personalInfo) {
+            throw new RuntimeException("TODO!!");
+    }
+
+    @Override
+    public void updateBirth(byte[] privateKey, PersonalInfo personalInfo) {
+        throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
 
     private String mongoOr(String... values) {
         String res = "{$or:[";

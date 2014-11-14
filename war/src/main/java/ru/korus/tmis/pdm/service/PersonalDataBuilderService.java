@@ -4,7 +4,7 @@ import ru.korus.tmis.pdm.entities.*;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
-import ru.korus.tmis.pdm.model.ValueInfo;
+import ru.korus.tmis.pdm.model.api.ValueInfo;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -42,7 +42,7 @@ public interface PersonalDataBuilderService {
 
     Term createGender(ValueInfo gender);
 
-    Birth createBirthInfo(PersonalInfo personalInfo);
+    Birth createBirth(PersonalInfo personalInfo);
 
     Addr createAddr(AddrInfo addrInfo);
 

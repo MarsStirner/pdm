@@ -19,6 +19,7 @@ public class Attr {
     @Id
     @GeneratedValue
     private Integer id;
+    //private String id = DatatypeConverter.printBase64Binary(Crypting.getSecureRandomBytes(PrivateKey.PRIVATE_KEY_SIZE));
 
     private String oid;
 

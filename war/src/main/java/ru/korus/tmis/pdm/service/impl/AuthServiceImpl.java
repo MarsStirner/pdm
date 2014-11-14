@@ -73,7 +73,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String addToken(String username) {
+    synchronized public String addToken(String username) {
         AuthData authData = new AuthData();
         authData.login = username;
         authData.loginTime = new Date();
@@ -127,6 +127,7 @@ public class AuthServiceImpl implements AuthService {
         return authData;
     }
 
+    //TODO java.util.ConcurrentModificationException!
     synchronized private void clearToken() {
         Date deadline = new Date((new Date()).getTime() - MAX_IDLE_MINUTES * 60 * 1000);
         for (Map.Entry<String, AuthData> token : tokens.entrySet()) {

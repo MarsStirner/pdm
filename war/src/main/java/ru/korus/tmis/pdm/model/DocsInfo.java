@@ -1,6 +1,6 @@
 package ru.korus.tmis.pdm.model;
 
-import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
+import ru.korus.tmis.pdm.model.api.ValueInfo;
 
 import java.util.LinkedList;
 import java.util.List;

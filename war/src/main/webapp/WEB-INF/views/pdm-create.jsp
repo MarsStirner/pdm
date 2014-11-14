@@ -58,12 +58,12 @@
                         <div class="col-xs-2">
                             <label for="birthDate">Дата рождения:</label>
                             <input type="date" id="birthDate" class="form-control"
-                                   placeholder="дата рождения" data-ng-model="newPerson.birthDate"/>
+                                   placeholder="дата рождения" data-ng-model="newPerson.birthInfo.birthDate"/>
                         </div>
                         <div class="col-xs-3">
                             <label for="birthPlace">Место рождения:</label>
                             <input type="text" id="birthPlace" class="form-control"
-                                   placeholder="место рождения" data-ng-model="newPerson.birthPlace.streetAddressLine"/>
+                                   placeholder="место рождения" data-ng-model="newPerson.birthInfo.birthPlace.streetAddressLine"/>
                         </div>
                     </fieldset>
                     <fieldset class="form-group">
@@ -201,6 +201,7 @@
                                             <jsp:param name="id" value="newAttrUpdate{{doc.name}}_0"/>
                                             <jsp:param name="value" value="doc.attrs[0]"/>
                                             <jsp:param name="docName" value="doc.name"/>
+                                            <jsp:param name="attrList" value="doc.attrs"/>
                                             <jsp:param name="action" value=""/>
                                         </jsp:include>
                                     </td>
@@ -225,6 +226,7 @@
                                                 <jsp:param name="id" value="newAttrUpdate{{doc.name}}_{{$index}}"/>
                                                 <jsp:param name="value" value="attr"/>
                                                 <jsp:param name="docName" value="doc.name"/>
+                                                <jsp:param name="attrList" value="doc.attrs"/>
                                                 <jsp:param name="action" value=""/>
                                             </jsp:include>
                                         </td>
@@ -239,6 +241,7 @@
                                             <jsp:param name="id" value="newAttrAdd{{doc.name}}"/>
                                             <jsp:param name="value" value="newAttr"/>
                                             <jsp:param name="docName" value="doc.name"/>
+                                           <jsp:param name="attrList" value="attrs"/>
                                             <jsp:param name="action" value="addAttr(newPerson.documents[$index], newAttr)"/>
                                         </jsp:include>
                                     </td>

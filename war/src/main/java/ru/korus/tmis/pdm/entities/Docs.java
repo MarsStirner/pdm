@@ -10,7 +10,7 @@ import javax.persistence.Entity;
  * Description:  <br>
  */
 @Entity(name = "docs")
-public class Docs extends EntityList {
+public class Docs extends EntityList<Docs> {
 
     public Docs() { super();}
 

@@ -17,9 +17,11 @@ function createController($scope, $http) {
         gender: {
             value: "M", description: "2.16.840.1.113883.5.1"
         },
-        birthDate: "1970-01-30",
-        birthPlace: {
-            streetAddressLine: "Марс"
+        birthInfo: {
+            birthDate: "1970-01-30",
+            birthPlace: {
+                streetAddressLine: "Марс"
+            }
         },
         telecoms: [
             { description: "WP", value: "tel:+7 (495) 229-53-70" },
@@ -45,12 +47,26 @@ function createController($scope, $http) {
             {   description: "ПАСПОРТ РФ",
                 name: "passport",
                 attrs: [
-                    {description: "Номер паспорта", value: "1234 567890"},
-                    {description: "Дата выдачи", value: "1977-01-15"}
+                    {description: "Номер паспорта", value: "1234 567890", oid: "3.0.0.1"},
+                    {description: "Дата выдачи", value: "1977-01-15", oid: "3.0.0.2"}
                 ]
             }
         ]
     }
+
+    $scope.updateTypes = [
+        {name: "ошибка ввода", code: "MISPRINT" },
+        {name: "изменение", code: "EXPIRED" },
+        {name: "удалние", code: "DELETED" }
+    ]
+
+    $scope.updateTypeName = $scope.updateTypes[0];
+
+    $scope.updateTypeGender = $scope.updateTypes[0];
+
+    $scope.updateTypeBirthInfo = $scope.updateTypes[0];
+
+    $scope.attrs = {}
 
     $scope.systemLogin = {
         oid: "4.0.0.1",
@@ -58,6 +74,59 @@ function createController($scope, $http) {
     }
 
     $scope.createRes = {
+    }
+
+    $scope.clearAttrOption = function () {
+        $scope.attrs = [];
+    }
+
+    $scope.updateNames = function () {
+        var prm = {
+            family: $scope.newPerson.family,
+            given: $scope.newPerson.given,
+            middleName: $scope.newPerson.middleName,
+            token: $scope.newPerson.token,
+            publicKey: $scope.personInfo.publicKey,
+            updateInfo : {
+                type: $scope.updateTypeName.code
+            }
+        }
+        $http.put("../api/update", prm)
+    }
+
+    $scope.updateGender = function () {
+        var prm = {
+            token: $scope.newPerson.token,
+            publicKey: $scope.personInfo.publicKey,
+            gender: {
+                value: $scope.newPerson.gender.value, description: "2.16.840.1.113883.5.1",
+                updateInfo : {
+                    type: $scope.updateTypeGender.code
+                }
+            }
+        }
+        $http.put("../api/update", prm)
+    }
+
+    $scope.updateBirth = function () {
+        var prm = {
+            token: $scope.newPerson.token,
+            publicKey: $scope.personInfo.publicKey,
+            birthInfo: {
+                birthDate: $scope.newPerson.birthInfo.birthDate,
+                birthPlace: $scope.newPerson.birthInfo.birthPlace,
+                updateInfo : {
+                    type: $scope.updateTypeGender.code
+                }
+            }
+        }
+        $http.put("../api/update", prm)
+    }
+
+
+    $scope.addAttrOption = function (oid, description) {
+        var a = {description: description, oid: oid};
+        $scope.attrs.push(a);
     }
 
     $scope.loadPersonInfo = function (token, publicKey) {
@@ -76,7 +145,7 @@ function createController($scope, $http) {
                 $http.get("api/persons/?token=" + data.id).
                     success(function (data) {
                         $scope.persons = data.personList;
-                        for(var i = 0; i < $scope.persons.length; i++) {
+                        for (var i = 0; i < $scope.persons.length; i++) {
                             $scope.persons[i].publicKey = encodeURIComponent($scope.persons[i].publicKey);
                         }
                     }
@@ -86,7 +155,7 @@ function createController($scope, $http) {
     }
 
     $scope.login = function () {
-        $http.post("api/login", $scope.systemLogin).
+        $http.post(window.location.origin + "/api/login", $scope.systemLogin).
             success(function (data) {
                 $scope.newPerson.token = data.id;
             }

@@ -33,4 +33,6 @@ public interface PdmService {
     List<PersonalInfo> getPersons(String senderOid);
 
     PersonalInfo getPerson(String publicKey, String senderOid);
+
+    PersonalInfo update(PersonalInfo personalInfo, String type);
 }

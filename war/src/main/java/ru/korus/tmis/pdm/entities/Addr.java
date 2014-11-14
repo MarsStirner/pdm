@@ -15,7 +15,7 @@ import java.io.Serializable;
  * Description:  <br>
  */
 @Entity(name = "addr")
-public class Addr extends Use {
+public class Addr extends Use<Addr> {
 
     private String country;
 

@@ -8,6 +8,6 @@ import ru.korus.tmis.pdm.entities.Document;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public interface DocumentRepository extends PrivateKeyRepository<Document> {
+public interface DocumentRepository extends PrivateKeyAndHistoryRepository<Document> {
 
 }

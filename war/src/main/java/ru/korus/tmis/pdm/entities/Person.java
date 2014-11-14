@@ -4,6 +4,7 @@ package ru.korus.tmis.pdm.entities;
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -19,8 +20,7 @@ import java.util.Vector;
  */
 //@Document(collection = "users")
 @Entity(name = "person")
-public class Person extends PrivateKey {
-
+public class Person extends PrivateKeyAndHistory<Person> {
 
     /**
      * Имя
@@ -73,6 +73,8 @@ public class Person extends PrivateKey {
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Addresses> address = new Vector<Addresses>();
+
+
 
     public String getGiven() {
         return given;

@@ -10,6 +10,6 @@ import ru.korus.tmis.pdm.entities.EntityList;
  * Description:  <br>
  */
 @NoRepositoryBean
-public interface ListByteRepository<T extends EntityList> extends PrivateKeyRepository<T> {
+public interface ListByteRepository<T extends EntityList<T>> extends PrivateKeyRepository<T> {
 
 }

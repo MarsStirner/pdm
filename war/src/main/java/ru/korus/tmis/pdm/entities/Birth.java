@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
  * Description:  <br>
  */
 @Entity(name = "birth")
-public class Birth extends PrivateKey {
+public class Birth extends PrivateKeyAndHistory<Birth> {
     /**
      * Дата рождения в фомате yyyyMMdd
      */

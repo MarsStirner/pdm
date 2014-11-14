@@ -8,6 +8,6 @@ import ru.korus.tmis.pdm.entities.Telecom;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public interface TelecomRepository extends PrivateKeyRepository<Telecom> {
+public interface TelecomRepository extends PrivateKeyAndHistoryRepository<Telecom> {
 
 }

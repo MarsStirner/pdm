@@ -8,6 +8,6 @@ import ru.korus.tmis.pdm.entities.Addr;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public interface AddrRepository extends PrivateKeyRepository<Addr> {
+public interface AddrRepository extends PrivateKeyAndHistoryRepository<Addr> {
 
 }

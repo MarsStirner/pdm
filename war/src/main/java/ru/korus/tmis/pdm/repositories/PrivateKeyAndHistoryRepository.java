@@ -3,6 +3,7 @@ package ru.korus.tmis.pdm.repositories;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import ru.korus.tmis.pdm.entities.PrivateKey;
+import ru.korus.tmis.pdm.entities.PrivateKeyAndHistory;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -11,8 +12,8 @@ import ru.korus.tmis.pdm.entities.PrivateKey;
  * Description:  <br>
  */
 @NoRepositoryBean
-public interface PrivateKeyRepository <T extends PrivateKey<T>> extends PagingAndSortingRepository<T, String> {
+public interface PrivateKeyAndHistoryRepository<T extends PrivateKeyAndHistory<T>> extends PrivateKeyRepository<T> {
 
-    //T findByPrivateKey(byte[] privateKey);
+    T findByPrivateKeyAndPrevIsNull(byte[] privateKey);
 
 }

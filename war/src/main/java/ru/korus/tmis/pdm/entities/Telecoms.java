@@ -10,7 +10,7 @@ import javax.persistence.Entity;
  * Description:  <br>
  */
 @Entity(name="telecoms" )
-public class Telecoms extends EntityList {
+public class Telecoms extends EntityList<Telecoms> {
 
     public Telecoms() { super();}
 

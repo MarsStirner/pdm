@@ -36,6 +36,7 @@ public class PdmPersonController implements Serializable {
         model.put("state", ViewState.PERSON);
         model.put("publicKey", publicKey);
         model.put("systemOid", systemOid);
+        model.put("pdmDocs", pdmDocsService.getDocsInfo());
         model.put("token", token);
         return ConfigController.MAIN_JSP;
     }

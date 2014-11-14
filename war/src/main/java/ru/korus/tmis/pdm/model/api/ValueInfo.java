@@ -1,4 +1,7 @@
-package ru.korus.tmis.pdm.model;
+package ru.korus.tmis.pdm.model.api;
+
+import ru.korus.tmis.pdm.model.UseInfo;
+import ru.korus.tmis.pdm.model.api.UpdateInfo;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -13,7 +16,8 @@ public class ValueInfo implements UseInfo {
     private String value;
 
     private String oid;
-        
+
+    private UpdateInfo updateInfo;
 
     public ValueInfo() {
 
@@ -52,5 +56,21 @@ public class ValueInfo implements UseInfo {
 
     public void setOid(String oid) {
         this.oid = oid;
+    }
+
+    public UpdateInfo getUpdateInfo() {
+        return updateInfo;
+    }
+
+    public void setUpdateInfo(UpdateInfo updateInfo) {
+        this.updateInfo = updateInfo;
+    }
+
+    public boolean isNeedUpdate(ValueInfo valueInfo) {
+        if(valueInfo == null || valueInfo.getUpdateInfo() == null) {
+            return false;
+        }
+        Object[][] ar = { {description, valueInfo.description}, {value, valueInfo.value}, {oid, valueInfo.oid}};
+        return valueInfo.getUpdateInfo().isForceUpdate() || PersonalInfo.isNeedUpdate(ar);
     }
 }

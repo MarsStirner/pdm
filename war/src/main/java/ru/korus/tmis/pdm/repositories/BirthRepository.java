@@ -8,6 +8,6 @@ import ru.korus.tmis.pdm.entities.Birth;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public interface BirthInfoRepository extends PrivateKeyRepository<Birth> {
+public interface BirthRepository extends PrivateKeyAndHistoryRepository<Birth> {
 
 }

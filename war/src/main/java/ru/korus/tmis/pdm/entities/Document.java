@@ -13,7 +13,7 @@ import java.util.List;
  * Description:  <br>
  */
 @Entity(name = "document")
-public class Document extends PrivateKey {
+public class Document extends PrivateKeyAndHistory<Document> {
 
     @OneToMany(fetch = FetchType.EAGER)
     private List<Attr> attribute;

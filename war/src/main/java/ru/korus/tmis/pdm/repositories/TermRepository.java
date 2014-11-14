@@ -8,6 +8,6 @@ import ru.korus.tmis.pdm.entities.Term;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public interface TermRepository extends PrivateKeyRepository<Term> {
+public interface TermRepository extends PrivateKeyAndHistoryRepository<Term> {
 
 }

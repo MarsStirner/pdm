@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.model.*;
 import ru.korus.tmis.pdm.model.api.Identifier;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
+import ru.korus.tmis.pdm.model.api.ValueInfo;
 import ru.korus.tmis.pdm.service.*;
 import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 import ru.korus.tmis.pdm.utilities.Crypting;
@@ -80,7 +81,7 @@ public class PdmServiceImpl implements PdmService {
         CE genderCode = identifiedPerson.getAdministrativeGenderCode();
         res.setGender(genderCode == null ? null : new ValueInfo(null, genderCode.getCode(), genderCode.getCodeSystem()));
         TS birthTime = identifiedPerson.getBirthTime();
-        res.setBirthDate(birthTime == null ? null : birthTime.getValue());
+        res.getBirthInfo().setBirthDate(birthTime == null ? null : birthTime.getValue());
 
         initTelecom(res, identifiedPerson.getTelecom());
 
@@ -94,7 +95,7 @@ public class PdmServiceImpl implements PdmService {
 
         if (identifiedPerson.getBirthPlace() instanceof JAXBElement &&
                 identifiedPerson.getBirthPlace().getValue() instanceof PRPAMT101301UV02BirthPlace) {
-            res.setBirthPlace(AddrInfo.newInstance(identifiedPerson.getBirthPlace().getValue().getAddr(), null));
+            res.getBirthInfo().setBirthPlace(AddrInfo.newInstance(identifiedPerson.getBirthPlace().getValue().getAddr(), null));
         }
         return res;
     }
@@ -217,7 +218,7 @@ public class PdmServiceImpl implements PdmService {
         List<PRPAMT101306UV02PersonBirthPlaceAddress> birthPlaceAddressList = parameterList.getPersonBirthPlaceAddress();
         if (!birthPlaceAddressList.isEmpty() &&
                 !birthPlaceAddressList.get(0).getValue().isEmpty()) {
-            res.setBirthPlace(AddrInfo.newInstance(birthPlaceAddressList.get(0).getValue().get(0), null));
+            res.getBirthInfo().setBirthPlace(AddrInfo.newInstance(birthPlaceAddressList.get(0).getValue().get(0), null));
         }
 
         return res;
@@ -234,7 +235,7 @@ public class PdmServiceImpl implements PdmService {
         CE genderCode = identifiedPerson.getAdministrativeGenderCode();
         personalInfo.setGender(genderCode == null ? null : new ValueInfo(null, genderCode.getCode(), genderCode.getCodeSystem()));
         TS birthTime = identifiedPerson.getBirthTime();
-        personalInfo.setBirthDate(birthTime == null ? null : birthTime.getValue());
+        personalInfo.getBirthInfo().setBirthDate(birthTime == null ? null : birthTime.getValue());
 
         initTelecom(personalInfo, identifiedPerson.getTelecom());
 
@@ -249,7 +250,7 @@ public class PdmServiceImpl implements PdmService {
 
         if (identifiedPerson.getBirthPlace() instanceof JAXBElement &&
                 identifiedPerson.getBirthPlace().getValue() instanceof PRPAMT101302UV02PersonBirthPlace) {
-            personalInfo.setBirthPlace(AddrInfo.newInstance(identifiedPerson.getBirthPlace().getValue().getAddr(), null));
+            personalInfo.getBirthInfo().setBirthPlace(AddrInfo.newInstance(identifiedPerson.getBirthPlace().getValue().getAddr(), null));
         }
 
         return personalInfo;
@@ -526,9 +527,9 @@ public class PdmServiceImpl implements PdmService {
                 person.getIdentifiedPerson().getAddr().add(getHL7Addr(addrInfo));
             }
 
-            if (personalInfo.getBirthPlace() != null) {
+            if (personalInfo.getBirthInfo().getBirthPlace() != null) {
                 PRPAMT101310UV02BirthPlace birthPlace = factoryHL7.createPRPAMT101310UV02BirthPlace();
-                birthPlace.setAddr(getHL7Addr(personalInfo.getBirthPlace()));
+                birthPlace.setAddr(getHL7Addr(personalInfo.getBirthInfo().getBirthPlace()));
                 person.getIdentifiedPerson().setBirthPlace(factoryHL7.createPRPAMT101310UV02PersonBirthPlace(birthPlace));
             }
 
@@ -583,9 +584,9 @@ public class PdmServiceImpl implements PdmService {
                 person.getIdentifiedPerson().getAddr().add(getHL7Addr(addr));
             }
 
-            if (personalInfo.getBirthPlace() != null) {
+            if (personalInfo.getBirthInfo().getBirthPlace() != null) {
                 PRPAMT101303UV02BirthPlace birthPlace = factoryHL7.createPRPAMT101303UV02BirthPlace();
-                birthPlace.setAddr(getHL7Addr(personalInfo.getBirthPlace()));
+                birthPlace.setAddr(getHL7Addr(personalInfo.getBirthInfo().getBirthPlace()));
                 person.getIdentifiedPerson().setBirthPlace(factoryHL7.createPRPAMT101303UV02PersonBirthPlace(birthPlace));
             }
         }
@@ -720,9 +721,37 @@ public class PdmServiceImpl implements PdmService {
         return null;
     }
 
-    private PersonalInfo findById(String publicKey, String senderId) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeyException, InvalidKeySpecException {
-        byte[] privateKey = toPrivateKey(publicKey, senderId);
-        return pdmDaoServiceLocator.getPdmDaoService().findById(privateKey, senderId);
+    @Override
+    public PersonalInfo update(PersonalInfo personalInfo, String senderOid) {
+        try {
+            PersonalInfo personalInfoOld = findById(personalInfo.getPublicKey(), senderOid);
+            byte[] privateKey = toPrivateKey(personalInfo.getPublicKey(), senderOid);
+            if (personalInfoOld.isNeedUpdateNames(personalInfo)) {
+                pdmDaoServiceLocator.getPdmDaoService().updateNames(privateKey, personalInfo);
+            }
+            if (personalInfoOld.getGender() != null && personalInfoOld.getGender().isNeedUpdate(personalInfo.getGender())) {
+                pdmDaoServiceLocator.getPdmDaoService().updateGender(privateKey, personalInfo);
+            }
+            if (personalInfoOld.getBirthInfo() != null && personalInfoOld.getBirthInfo().isNeedUpdate(personalInfo.getBirthInfo())) {
+                pdmDaoServiceLocator.getPdmDaoService().updateBirth(privateKey, personalInfo);
+            }
+            return personalInfo;
+        } catch (BadPaddingException
+                | NoSuchAlgorithmException
+                | IllegalBlockSizeException
+                | NoSuchPaddingException
+                | InvalidKeyException
+                | InvalidKeySpecException e) {
+            logger.error("security exception", e);
+        }
+        //TODO send error info!
+        return null;
+    }
+
+
+    private PersonalInfo findById(String publicKey, String senderOid) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeyException, InvalidKeySpecException {
+        byte[] privateKey = toPrivateKey(publicKey, senderOid);
+        return pdmDaoServiceLocator.getPdmDaoService().findById(privateKey, senderOid);
     }
 
 
@@ -767,7 +796,7 @@ public class PdmServiceImpl implements PdmService {
     }
 
     private TS getHL7BirthDate(PersonalInfo personalInfo) {
-        String birthDate = personalInfo.getBirthDate();
+        String birthDate = personalInfo.getBirthInfo().getBirthDate();
         if (birthDate == null) {
             return null;
         }

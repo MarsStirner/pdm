@@ -22,10 +22,10 @@
 <header>
     <nav>
         <ul class="pdm-navlist">
-            <li><a href="config">Настройки</a></li>
-            <li><a href="systems">Подсистемы</a></li>
-            <li><a href="docs">Документы</a></li>
-            <li><a href="files">Файлы</a></li>
+            <li><a href="${pageContext.request.contextPath}/config">Настройки</a></li>
+            <li><a href="${pageContext.request.contextPath}/systems">Подсистемы</a></li>
+            <li><a href="${pageContext.request.contextPath}/docs">Документы</a></li>
+            <li><a href="${pageContext.request.contextPath}/files">Файлы</a></li>
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">ЗХПД<b class="caret"></b></a>
                 <ul class="dropdown-menu global_nav">

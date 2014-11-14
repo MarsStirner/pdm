@@ -6,7 +6,7 @@ import ru.korus.tmis.pdm.entities.*;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
-import ru.korus.tmis.pdm.model.ValueInfo;
+import ru.korus.tmis.pdm.model.api.ValueInfo;
 import ru.korus.tmis.pdm.model.api.Identifier;
 import ru.korus.tmis.pdm.repositories.*;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
@@ -40,7 +40,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
     PdmXmlConfigService pdmXmlConfigService;
 
     @Autowired
-    private BirthInfoRepository birthInfoRepository;
+    private BirthRepository birthInfoRepository;
 
     @Autowired
     private AddrRepository addrRepository;
@@ -65,7 +65,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         termRepository.save(gender);
         res.setGender(Crypting.crypt(key, gender.getPrivateKey()));
 
-        Birth birthInfo = createBirthInfo(personalInfo);
+        Birth birthInfo = createBirth(personalInfo);
         birthInfoRepository.save(birthInfo);
         res.setBirthInfo(Crypting.crypt(key, birthInfo.getPrivateKey()));
 
@@ -96,52 +96,58 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
 
     @Override
     public PersonalInfo createPersonalInfo(Person personalData, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
-        if(personalData == null) {
+        if (personalData == null) {
             return null;
         }
+        Person personNames = personalData.top();
         PersonalInfo res = new PersonalInfo();
         final byte[] key = pdmXmlConfigService.getInternalKey();
         final byte[] keySystem = pdmXmlConfigService.getSystemDbKey(senderId);
 
         Identifier identifier = Crypting.toPublicKey(Crypting.toListByte(personalData.getPrivateKey()), keySystem);
-        res.setPublicKey(identifier == null ? null :identifier.getId());
+        res.setPublicKey(identifier == null ? null : identifier.getId());
 
-        res.setGiven(personalData.getGiven());
-        res.setFamily(personalData.getFamily());
-        res.setMiddleName(personalData.getMiddleName());
+        res.setGiven(personNames.getGiven());
+        res.setFamily(personNames.getFamily());
+        res.setMiddleName(personNames.getMiddleName());
 
         byte[] privateKey = Crypting.decrypt(key, personalData.getGender());
-        Term gender = termRepository.findByPrivateKey(privateKey);
+        Term gender = termRepository.findByPrivateKeyAndPrevIsNull(privateKey);
         if (gender != null) {
-            res.setGender(createValueInfo(gender));
+            res.setGender(createValueInfo(gender.top()));
         }
 
-        privateKey = Crypting.decrypt(key, personalData.getBirthInfo());
-        Birth birthInfo = birthInfoRepository.findByPrivateKey(privateKey);
-        if (birthInfo != null) {
-            res.setBirthDate(birthInfo.getBirthDate());
-            res.setBirthPlace(createAddrInfo(birthInfo.getBirthPlace()));
+        privateKey = Crypting.decrypt(key, personalData.getBirthInfo()); Birth birthInfo = birthInfoRepository.findByPrivateKeyAndPrevIsNull(privateKey); if (birthInfo != null) {
+            Birth birth = birthInfo.top();
+            res.getBirthInfo().setBirthDate(birth.getBirthDate());
+            res.getBirthInfo().setBirthPlace(createAddrInfo(birth.getBirthPlace()));
         }
 
         res.setAddressList(new ArrayList<AddrInfo>(personalData.getAddress().size()));
         for (EntityList internalKeyAddr : personalData.getAddress()) {
             privateKey = Crypting.decrypt(key, internalKeyAddr.getPrivateKey());
-            Addr addr = addrRepository.findByPrivateKey(privateKey);
-            res.getAddressList().add(createAddrInfo(addr));
+            Addr addr = addrRepository.findByPrivateKeyAndPrevIsNull(privateKey);
+            if (addr != null) {
+                res.getAddressList().add(createAddrInfo(addr.top()));
+            }
         }
 
         res.setTelecoms(new ArrayList<ValueInfo>(personalData.getTelecoms().size()));
         for (EntityList internalKeyTel : personalData.getTelecoms()) {
             privateKey = Crypting.decrypt(key, internalKeyTel.getPrivateKey());
-            Telecom telecom = telecomRepository.findByPrivateKey(privateKey);
-            res.getTelecoms().add(createValueInfo(telecom));
+            Telecom telecom = telecomRepository.findByPrivateKeyAndPrevIsNull(privateKey);
+            if(telecom != null) {
+                res.getTelecoms().add(createValueInfo(telecom.top()));
+            }
         }
 
         res.setDocuments(new ArrayList<DocsInfo>(personalData.getDocs().size()));
         for (EntityList internalKeyDoc : personalData.getDocs()) {
             privateKey = Crypting.decrypt(key, internalKeyDoc.getPrivateKey());
-            Document doc = documentRepository.findByPrivateKey(privateKey);
-            res.getDocuments().add(createDocsInfo(doc));
+            Document doc = documentRepository.findByPrivateKeyAndPrevIsNull(privateKey);
+            if(doc != null) {
+                res.getDocuments().add(createDocsInfo(doc.top()));
+            }
         }
         return res;
     }
@@ -189,7 +195,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         String oid = Crypting.decodeOID(attr.getOid());
         res.setOid(oid);
         PdmConfig.Docs.Doc.Attribute attrXml = pdmXmlConfigService.getObjectByOid(oid);
-        if(attrXml != null) {
+        if (attrXml != null) {
             res.setDescription(attrXml.getDescription());
         }
         return res;
@@ -274,13 +280,13 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
     }
 
     @Override
-    public Birth createBirthInfo(PersonalInfo personalInfo) {
+    public Birth createBirth(PersonalInfo personalInfo) {
         if (personalInfo == null) {
             return null;
         }
         Birth res = new Birth();
-        res.setBirthDate(personalInfo.getBirthDate());
-        res.setBirthPlace(createAddr(personalInfo.getBirthPlace()));
+        res.setBirthDate(personalInfo.getBirthInfo().getBirthDate());
+        res.setBirthPlace(createAddr(personalInfo.getBirthInfo().getBirthPlace()));
         return res;
     }
 
@@ -309,13 +315,14 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
     public List<PersonalInfo> createPersonalInfoShort(Iterable<Person> persons, String senderOid) {
         List<PersonalInfo> res = new LinkedList<>();
         final byte[] keySystem = pdmXmlConfigService.getSystemDbKey(senderOid);
-        if(keySystem != null) {
-            for (Person p : persons) {
+        if (keySystem != null) {
+            for (Person person: persons) {
+                Person personTop = person.top();
                 PersonalInfo personalInfo = new PersonalInfo();
-                personalInfo.setFamily(p.getFamily());
-                personalInfo.setGiven(p.getGiven());
-                personalInfo.setMiddleName(p.getMiddleName());
-                Identifier identifier = Crypting.toPublicKey(Crypting.toListByte(p.getPrivateKey()), keySystem);
+                personalInfo.setFamily(personTop.getFamily());
+                personalInfo.setGiven(personTop.getGiven());
+                personalInfo.setMiddleName(personTop.getMiddleName());
+                Identifier identifier = Crypting.toPublicKey(Crypting.toListByte(person.getPrivateKey()), keySystem);
                 personalInfo.setPublicKey(identifier == null ? null : identifier.getId());
                 res.add(personalInfo);
             }

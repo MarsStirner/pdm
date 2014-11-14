@@ -1,13 +1,8 @@
 package ru.korus.tmis.pdm.model.api;
 
-import org.springframework.format.annotation.DateTimeFormat;
-import ru.korus.tmis.pdm.entities.Term;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
-import ru.korus.tmis.pdm.model.ValueInfo;
-import ru.korus.tmis.pdm.ws.PdmSysProperties;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,9 +26,9 @@ public class PersonalInfo {
 
     private ValueInfo gender;
 
-    private String birthDate;
+    private BirthInfo birthInfo;
 
-    private AddrInfo birthPlace;
+    private UpdateInfo updateInfo;
 
     private List<ValueInfo> telecoms;
 
@@ -73,20 +68,15 @@ public class PersonalInfo {
         this.gender = gender;
     }
 
-    public String getBirthDate() {
-        return birthDate;
+    public BirthInfo getBirthInfo() {
+        if(birthInfo == null) {
+            birthInfo = new BirthInfo();
+        }
+        return birthInfo;
     }
 
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public AddrInfo getBirthPlace() {
-        return birthPlace;
-    }
-
-    public void setBirthPlace(AddrInfo birthPlace) {
-        this.birthPlace = birthPlace;
+    public void setBirthInfo(BirthInfo birthInfo) {
+        this.birthInfo = birthInfo;
     }
 
     public List<ValueInfo> getTelecoms() {
@@ -145,4 +135,33 @@ public class PersonalInfo {
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
     }
+
+    public UpdateInfo getUpdateInfo() {
+        return updateInfo;
+    }
+
+    public void setUpdateInfo(UpdateInfo updateInfo) {
+        this.updateInfo = updateInfo;
+    }
+
+    public boolean isNeedUpdateNames(PersonalInfo that) {
+        if(that == null || that.getUpdateInfo() == null) {
+            return false;
+        }
+        Object ar[][] = { {family, that.family}, {given, that.given}, {middleName, that.middleName} };
+        return that.updateInfo.isForceUpdate() || isNeedUpdate(ar);
+    }
+
+    public static boolean isNeedUpdate(Object[][] objects) {
+        boolean res = false;
+        boolean allObjIsNull = true;
+        for (Object obj : objects) {
+            Object o1 = ((Object[])obj)[0];
+            Object o2 = ((Object[])obj)[1];
+            allObjIsNull &= o2 == null;
+            res |= (o1 == null ? o2 != null : !o1.equals(o2) );
+        }
+        return !allObjIsNull && res;
+    }
+
 }

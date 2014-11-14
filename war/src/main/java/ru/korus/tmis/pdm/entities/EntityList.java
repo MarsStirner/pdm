@@ -10,7 +10,7 @@ import javax.persistence.MappedSuperclass;
  * Description:  <br>
  */
 @MappedSuperclass
-public class EntityList extends PrivateKey {
+public class EntityList<T> extends PrivateKey<T> {
 
     public EntityList() {
         super();

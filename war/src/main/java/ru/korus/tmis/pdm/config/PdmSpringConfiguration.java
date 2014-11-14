@@ -89,9 +89,6 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
         registry.addInterceptor(authInterceptor);
     }
 
-
-
-
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();

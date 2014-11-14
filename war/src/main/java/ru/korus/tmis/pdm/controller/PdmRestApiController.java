@@ -69,4 +69,11 @@ public class PdmRestApiController {
         return pdmService.getPerson(personInfoReq.getPublicKey(), senderOid);
     }
 
+    @RequestMapping(value = "update", method = RequestMethod.PUT)
+    @ResponseBody
+    public PersonalInfo update(@RequestBody PersonalInfo personalInfo ) {
+        String senderOid = authService.checkToken(personalInfo.getToken());
+        return pdmService.update(personalInfo, senderOid);
+    }
+
 }

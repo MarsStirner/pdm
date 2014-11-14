@@ -12,7 +12,7 @@ import javax.persistence.Id;
 * Description:  <br>
 */
 @Entity(name = "telecom")
-public class Telecom extends Use {
+public class Telecom extends Use<Telecom> {
 
     private String value;
 

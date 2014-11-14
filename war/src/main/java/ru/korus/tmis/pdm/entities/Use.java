@@ -11,7 +11,7 @@ import javax.persistence.*;
 * Description:  <br>
 */
 @MappedSuperclass
-public class Use extends PrivateKey {
+public class Use<T extends Use> extends PrivateKeyAndHistory<T> {
 
     @Enumerated(value = EnumType.STRING)
     private UseType use;

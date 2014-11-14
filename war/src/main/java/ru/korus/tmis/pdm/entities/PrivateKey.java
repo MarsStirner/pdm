@@ -5,7 +5,9 @@ import ru.korus.tmis.pdm.utilities.Crypting;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToOne;
 import javax.xml.bind.DatatypeConverter;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,7 +17,7 @@ import java.util.List;
  * Description:  <br>
  */
 @MappedSuperclass
-public class PrivateKey {
+public class PrivateKey<T> {
 
     public static final int PRIVATE_KEY_SIZE = 32;
 
@@ -51,4 +53,5 @@ public class PrivateKey {
     public void setPrivateKey(List<Byte> privateKey) {
         this.privateKey = Crypting.toByteArray(privateKey);
     }
+
 }

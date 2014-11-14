@@ -9,7 +9,7 @@ import javax.persistence.*;
 * Description:  <br>
 */
 @Entity(name = "term")
-public class Term extends PrivateKey{
+public class Term extends PrivateKeyAndHistory<Term>{
 
     private String code;
 
