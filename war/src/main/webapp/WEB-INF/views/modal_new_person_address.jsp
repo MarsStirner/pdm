@@ -58,6 +58,13 @@
                         <label for="streetAddressLine">Полный адрес:</label>
                         <input id="streetAddressLine" class="form-control" data-ng-model="${param.value}.streetAddressLine"/>
                     </div>
+                    <div class="form-group" data-ng-if="${param.isUpdate}" >
+                        <label for="updateTypeTelecom">Причина обновления:</label>
+                        <select id="updateTypeTelecom" class="form-control" placeholder="тип обновления"
+                                data-ng-model="${param.value}.updateTypeAddr"
+                                data-ng-options="type.name for type in updateTypes"
+                                data-ng-init="${param.value}.updateTypeAddr=updateTypes[0]"></select>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">

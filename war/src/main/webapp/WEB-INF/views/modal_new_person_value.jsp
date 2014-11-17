@@ -14,6 +14,7 @@
             </div>
             <div class="modal-body">
                 <form role="form">
+
                     <div class="form-group">
                         <label for="description">тип:</label>
                         <select id="description" class="form-control" data-ng-model=" ${param.value}.description">
@@ -26,6 +27,13 @@
                     <div class="form-group">
                         <label for="value">${param.valueName}:</label>
                         <input id="value" class="form-control" data-ng-model="${param.value}.value"/>
+                    </div>
+                    <div class="form-group" data-ng-if="${param.isUpdate}" >
+                        <label for="updateTypeTelecom">Причина обновления:</label>
+                        <select id="updateTypeTelecom" class="form-control" placeholder="тип обновления"
+                                data-ng-model="${param.value}.updateTypeTelecom"
+                                data-ng-options="type.name for type in updateTypes"
+                                data-ng-init="${param.value}.updateTypeTelecom=updateTypes[0]"></select>
                     </div>
                 </form>
             </div>

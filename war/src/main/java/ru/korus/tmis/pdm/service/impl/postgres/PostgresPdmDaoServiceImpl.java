@@ -2,16 +2,13 @@ package ru.korus.tmis.pdm.service.impl.postgres;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.korus.tmis.pdm.entities.Birth;
-import ru.korus.tmis.pdm.entities.HistoryState;
-import ru.korus.tmis.pdm.entities.Person;
-import ru.korus.tmis.pdm.entities.Term;
+import ru.korus.tmis.pdm.entities.*;
+import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
 import ru.korus.tmis.pdm.model.api.UpdateInfo;
-import ru.korus.tmis.pdm.repositories.BirthRepository;
-import ru.korus.tmis.pdm.repositories.PersonDataRepository;
-import ru.korus.tmis.pdm.repositories.TermRepository;
+import ru.korus.tmis.pdm.model.api.ValueInfo;
+import ru.korus.tmis.pdm.repositories.*;
 import ru.korus.tmis.pdm.service.PdmDaoService;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 import ru.korus.tmis.pdm.service.PersonalDataBuilderService;
@@ -43,6 +40,11 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
     @Autowired
     BirthRepository birthRepository;
 
+    @Autowired
+    TelecomRepository telecomRepository;
+
+    @Autowired
+    AddrRepository addrRepository;
 
     @Autowired
     PersonalDataBuilderService personalDataBuilderService;
@@ -154,6 +156,55 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
             personalData.setBirthInfo(Crypting.crypt(key, birthNew.getPrivateKey()));
             personDataRepository.save(personalData);
         }
+    }
+
+    @Override
+    public void updateTelecom(byte[] privateKeyTelecom, ValueInfo telecomInfo) {
+        Telecom telecomTop = telecomRepository.findByPrivateKeyAndPrevIsNull(privateKeyTelecom).top();
+        UpdateInfo updateInfo = telecomInfo.getUpdateInfo();
+        HistoryState historyState = HistoryState.valueOf(updateInfo.getType());
+        Telecom telecomNew = historyState == HistoryState.DELETED ? null :
+                personalDataBuilderService.createTelecom(telecomInfo);
+        telecomTop.initNextPrev(telecomNew, updateInfo.getBegDate());
+        if(telecomNew != null) {
+            telecomRepository.save(telecomNew);
+        }
+        telecomTop.setHistoryState(historyState);
+        telecomRepository.save(telecomTop);
+    }
+
+    @Override
+    public void addTelecom(byte[] privateKey, ValueInfo telecomInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+        Telecom telecom = personalDataBuilderService.createTelecom(telecomInfo);
+        telecomRepository.save(telecom);
+        final byte[] key = pdmXmlConfigService.getInternalKey();
+        Person personalData = personDataRepository.findByPrivateKeyAndPrevIsNull(privateKey);
+        personalData.getTelecoms().add(new Telecoms(Crypting.crypt(key, telecom.getPrivateKey())));
+        personDataRepository.save(personalData);
+    }
+
+    @Override
+    public void updateAddr(byte[] privateKeyAddr, AddrInfo addrInfo) {
+        Addr addrTop = addrRepository.findByPrivateKeyAndPrevIsNull(privateKeyAddr).top();
+        UpdateInfo updateInfo = addrInfo.getUpdateInfo();
+        HistoryState historyState = HistoryState.valueOf(updateInfo.getType());
+        Addr addrNew = historyState == HistoryState.DELETED ? null : personalDataBuilderService.createAddr(addrInfo);
+        addrTop.initNextPrev(addrNew, updateInfo.getBegDate());
+        if(addrNew != null) {
+            addrRepository.save(addrNew);
+        }
+        addrTop.setHistoryState(historyState);
+        addrRepository.save(addrTop);
+    }
+
+    @Override
+    public void addAddr(byte[] privateKey, AddrInfo addrInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+        Addr addr = personalDataBuilderService.createAddr(addrInfo);
+        addrRepository.save(addr);
+        final byte[] key = pdmXmlConfigService.getInternalKey();
+        Person personalData = personDataRepository.findByPrivateKeyAndPrevIsNull(privateKey);
+        personalData.getAddress().add(new Addresses(Crypting.crypt(key, addr.getPrivateKey())));
+        personDataRepository.save(personalData);
     }
 
 }

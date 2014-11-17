@@ -109,8 +109,10 @@
                             <th class="col-xs-2">
                                 тип
                             </th>
-                            <th class="col-xs-10">
+                            <th class="col-xs-6">
                                 контакт
+                            </th>
+                            <th class="col-xs-2">
                             </th>
                             </thead>
                             <tbody>
@@ -120,7 +122,8 @@
                                 </td>
                                 <td>
                                     {{telecom.value}}
-
+                                </td>
+                                <td>
                                     <a class="btn btn-default pull-right" data-toggle="modal"
                                        data-target="#newPersonTelecomUpdate{{$index}}"
                                        placeholder="редактировать">
@@ -130,7 +133,8 @@
                                         <jsp:param name="id" value="newPersonTelecomUpdate{{$index}}"/>
                                         <jsp:param name="valueName" value="контакт"/>
                                         <jsp:param name="value" value="telecom"/>
-                                        <jsp:param name="action" value=""/>
+                                        <jsp:param name="isUpdate" value="true"/>
+                                        <jsp:param name="action" value="updateTelecom(telecom)"/>
                                     </jsp:include>
                                     <%--
                                      <jsp:include page="modal_addr_delete.jsp">
@@ -148,7 +152,7 @@
                             <jsp:param name="id" value="newPersonTelecomAdd"/>
                             <jsp:param name="valueName" value="контакт"/>
                             <jsp:param name="value" value="newValue"/>
-                            <jsp:param name="action" value="addValue(newPerson.telecoms, newValue)"/>
+                            <jsp:param name="action" value="updateTelecomAdd(newValue)"/>
                         </jsp:include>
                     </fieldset>
                     <fieldset class="form-group">
@@ -169,26 +173,17 @@
                                 </td>
                                 <td>
                                     {{addr.streetAddressLine}}
-                                    <a class="btn btn-default pull-right" data-ng-click="removeAddress($index)"
-                                       placeholder="удалить">
-                                        <span class="glyphicon glyphicon-remove"></span>
-                                    </a>
                                     <a class="btn btn-default pull-right" data-toggle="modal"
                                        data-target="#newPersonAddressUpdate${status.index}"
                                        placeholder="редактировать">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </a>
                                     <jsp:include page="modal_new_person_address.jsp">
-                                        <jsp:param name="id" value="newPersonAddressUpdate${status.index}"/>
+                                        <jsp:param name="id" value="newPersonAddressUpdate"/>
                                         <jsp:param name="value" value="addr"/>
-                                        <jsp:param name="action" value=""/>
+                                        <jsp:param name="isUpdate" value="true"/>
+                                        <jsp:param name="action" value="updateAddr(addr)"/>
                                     </jsp:include>
-                                    <%-- <jsp:include page="modal_addr_update.jsp">
-                                         <jsp:param name="index" value="${status.index}"/>
-                                     </jsp:include>
-                                     <jsp:include page="modal_addr_delete.jsp">
-                                         <jsp:param name="index" value="${status.index}"/>
-                                     </jsp:include>--%>
                                 </td>
                             </tr>
                             </tbody>
@@ -200,7 +195,7 @@
                         <jsp:include page="modal_new_person_address.jsp">
                             <jsp:param name="id" value="newPersonAddressAdd"/>
                             <jsp:param name="value" value="newAddress"/>
-                            <jsp:param name="action" value="addAddress(newPerson.addressList, newAddress)"/>
+                            <jsp:param name="action" value="updateAddrAdd(newAddress)"/>
                         </jsp:include>
                     </fieldset>
 

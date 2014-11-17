@@ -3,6 +3,7 @@ package ru.korus.tmis.pdm.model.api;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 
+import java.security.PublicKey;
 import java.util.LinkedList;
 import java.util.List;
 

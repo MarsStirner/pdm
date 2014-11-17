@@ -66,6 +66,8 @@ function createController($scope, $http) {
 
     $scope.updateTypeBirthInfo = $scope.updateTypes[0];
 
+    //  $scope.updateTypeTelecom;
+
     $scope.attrs = {}
 
     $scope.systemLogin = {
@@ -87,7 +89,7 @@ function createController($scope, $http) {
             middleName: $scope.newPerson.middleName,
             token: $scope.newPerson.token,
             publicKey: $scope.personInfo.publicKey,
-            updateInfo : {
+            updateInfo: {
                 type: $scope.updateTypeName.code
             }
         }
@@ -100,7 +102,7 @@ function createController($scope, $http) {
             publicKey: $scope.personInfo.publicKey,
             gender: {
                 value: $scope.newPerson.gender.value, description: "2.16.840.1.113883.5.1",
-                updateInfo : {
+                updateInfo: {
                     type: $scope.updateTypeGender.code
                 }
             }
@@ -115,10 +117,91 @@ function createController($scope, $http) {
             birthInfo: {
                 birthDate: $scope.newPerson.birthInfo.birthDate,
                 birthPlace: $scope.newPerson.birthInfo.birthPlace,
-                updateInfo : {
-                    type: $scope.updateTypeGender.code
+                updateInfo: {
+                    type: $scope.updateTypeBirthInfo.code
                 }
             }
+        }
+        $http.put("../api/update", prm)
+    }
+
+    $scope.updateTelecom = function (telecom) {
+        var prm = {
+            token: $scope.newPerson.token,
+            publicKey: $scope.personInfo.publicKey,
+            telecoms: [
+                {   description: telecom.description,
+                    value: telecom.value,
+                    publicKey: telecom.publicKey,
+                    updateInfo: {
+                        type: telecom.updateTypeTelecom.code
+                    }
+                }
+            ]
+        }
+        $http.put("../api/update", prm)
+    }
+
+    $scope.updateTelecomAdd = function (telecom) {
+        var prm = {
+            token: $scope.newPerson.token,
+            publicKey: $scope.personInfo.publicKey,
+            telecoms: [
+                {   description: telecom.description,
+                    value: telecom.value
+                }
+            ]
+        }
+        $http.put("../api/update", prm)
+
+    }
+
+    $scope.updateAddr = function (addr) {
+        var prm = {
+            token: $scope.newPerson.token,
+            publicKey: $scope.personInfo.publicKey,
+            addressList: [
+                {   description: addr.description,
+                    country: addr.country,
+                    state: addr.state,
+                    county: addr.county,
+                    precinct: addr.precinct,
+                    city: addr.city,
+                    streetName: addr.streetName,
+                    postalCode: addr.postalCode,
+                    houseNumber: addr.houseNumber,
+                    buildingNumberSuffix: addr.buildingNumberSuffix,
+                    additionalLocator: addr.additionalLocator,
+                    streetAddressLine: addr.streetAddressLine,
+                    publicKey: addr.publicKey,
+                    updateInfo: {
+                        type: addr.updateTypeAddr.code
+                    }
+                }
+            ]
+        }
+        $http.put("../api/update", prm)
+    }
+
+    $scope.updateAddrAdd = function (addr) {
+        var prm = {
+            token: $scope.newPerson.token,
+            publicKey: $scope.personInfo.publicKey,
+            addressList: [
+                {   description: addr.description,
+                    country: addr.country,
+                    state: addr.state,
+                    county: addr.county,
+                    precinct: addr.precinct,
+                    city: addr.city,
+                    streetName: addr.streetName,
+                    postalCode: addr.postalCode,
+                    houseNumber: addr.houseNumber,
+                    buildingNumberSuffix: addr.buildingNumberSuffix,
+                    additionalLocator: addr.additionalLocator,
+                    streetAddressLine: addr.streetAddressLine
+                }
+            ]
         }
         $http.put("../api/update", prm)
     }

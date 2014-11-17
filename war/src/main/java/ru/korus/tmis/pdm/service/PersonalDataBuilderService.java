@@ -30,9 +30,9 @@ public interface PersonalDataBuilderService {
 
     ValueInfo createValueInfo(Attr attr);
 
-    ValueInfo createValueInfo(Telecom telecom);
+    ValueInfo createValueInfo(Telecom telecom, String senderId);
 
-    AddrInfo createAddrInfo(Addr addr);
+    AddrInfo createAddrInfo(Addr addr, String senderOid);
 
     Document createDocument(DocsInfo docsInfo);
 

@@ -5,8 +5,10 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.config.SpringMongoConfig;
+import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
+import ru.korus.tmis.pdm.model.api.ValueInfo;
 import ru.korus.tmis.pdm.service.PdmDaoService;
 
 import java.util.List;
@@ -106,6 +108,26 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
 
     @Override
     public void updateBirth(byte[] privateKey, PersonalInfo personalInfo) {
+        throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void updateTelecom(byte[] privateKeyTelecom, ValueInfo telecom) {
+        throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void addTelecom(byte[] privateKey, ValueInfo telecom) {
+        throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void updateAddr(byte[] privateKeyAddr, AddrInfo addrInfo) {
+        throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void addAddr(byte[] privateKey, AddrInfo addrInfo) {
         throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
     }
 

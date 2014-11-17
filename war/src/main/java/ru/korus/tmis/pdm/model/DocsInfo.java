@@ -1,5 +1,7 @@
 package ru.korus.tmis.pdm.model;
 
+import ru.korus.tmis.pdm.model.api.PdmUpdateble;
+import ru.korus.tmis.pdm.model.api.UpdateInfo;
 import ru.korus.tmis.pdm.model.api.ValueInfo;
 
 import java.util.LinkedList;
@@ -11,7 +13,7 @@ import java.util.List;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class DocsInfo {
+public class DocsInfo implements PdmUpdateble {
 
     private String description;
 
@@ -19,11 +21,21 @@ public class DocsInfo {
 
     private List<ValueInfo> attrs;
 
+    private UpdateInfo updateInfo;
+
     public List<ValueInfo> getAttrs() {
         if(attrs == null) {
             attrs = new LinkedList<>();
         }
         return attrs;
+    }
+
+    public UpdateInfo getUpdateInfo() {
+        return updateInfo;
+    }
+
+    public void setUpdateInfo(UpdateInfo updateInfo) {
+        this.updateInfo = updateInfo;
     }
 
     public void setAttrs(List<ValueInfo> attrs) {

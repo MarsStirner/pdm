@@ -1,5 +1,8 @@
 package ru.korus.tmis.pdm.model;
 
+import ru.korus.tmis.pdm.model.api.PdmUpdateble;
+import ru.korus.tmis.pdm.model.api.PublicKeyInfo;
+import ru.korus.tmis.pdm.model.api.UpdateInfo;
 import ru.korus.tmis.pdm.ws.hl7.*;
 
 import javax.xml.bind.JAXBElement;
@@ -11,7 +14,7 @@ import java.io.Serializable;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class AddrInfo implements UseInfo {
+public class AddrInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
 
     //Тип
     private String description;
@@ -48,6 +51,10 @@ public class AddrInfo implements UseInfo {
 
     //Квартира
     private String additionalLocator;
+
+    private String publicKey;
+
+    private UpdateInfo updateInfo;
 
     public String getDescription() {
         return description;
@@ -133,6 +140,14 @@ public class AddrInfo implements UseInfo {
         return buildingNumberSuffix;
     }
 
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
     public void setBuildingNumberSuffix(String buildingNumberSuffix) {
         this.buildingNumberSuffix = buildingNumberSuffix;
     }
@@ -143,6 +158,14 @@ public class AddrInfo implements UseInfo {
 
     public void setAdditionalLocator(String additionalLocator) {
         this.additionalLocator = additionalLocator;
+    }
+
+    public UpdateInfo getUpdateInfo() {
+        return updateInfo;
+    }
+
+    public void setUpdateInfo(UpdateInfo updateInfo) {
+        this.updateInfo = updateInfo;
     }
 
     static public AddrInfo newInstance(ADExplicit addr, String use) {
@@ -246,5 +269,12 @@ public class AddrInfo implements UseInfo {
         result = 31 * result + (buildingNumberSuffix != null ? buildingNumberSuffix.hashCode() : 0);
         result = 31 * result + (additionalLocator != null ? additionalLocator.hashCode() : 0);
         return result;
+    }
+
+    public boolean isNeedUpdate(AddrInfo addrInfo) {
+        if(this.getUse() != null && !this.getUse().equals(addrInfo.getUse())) {
+            return true;
+        }
+        return !this.equals(addrInfo) || streetAddressLine != addrInfo.getStreetAddressLine();
     }
 }

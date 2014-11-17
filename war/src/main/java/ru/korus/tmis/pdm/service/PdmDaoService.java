@@ -1,7 +1,9 @@
 package ru.korus.tmis.pdm.service;
 
+import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
+import ru.korus.tmis.pdm.model.api.ValueInfo;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -52,4 +54,12 @@ public interface PdmDaoService {
     void updateGender(byte[] privateKey, PersonalInfo personalInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
 
     void updateBirth(byte[] privateKey, PersonalInfo personalInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
+
+    void updateTelecom(byte[] privateKeyTelecom, ValueInfo telecom);
+
+    void addTelecom(byte[] privateKey, ValueInfo telecom) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
+
+    void updateAddr(byte[] privateKeyAddr, AddrInfo addrInfo);
+
+    void addAddr(byte[] privateKey, AddrInfo addrInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
 }

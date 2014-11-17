@@ -4,9 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.korus.tmis.pdm.entities.Addr;
+import ru.korus.tmis.pdm.entities.PrivateKey;
+import ru.korus.tmis.pdm.entities.Telecom;
 import ru.korus.tmis.pdm.model.*;
 import ru.korus.tmis.pdm.model.api.Identifier;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
+import ru.korus.tmis.pdm.model.api.PublicKeyInfo;
 import ru.korus.tmis.pdm.model.api.ValueInfo;
 import ru.korus.tmis.pdm.service.*;
 import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
@@ -21,6 +25,7 @@ import javax.xml.bind.JAXBElement;
 import java.io.Serializable;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
@@ -726,15 +731,50 @@ public class PdmServiceImpl implements PdmService {
         try {
             PersonalInfo personalInfoOld = findById(personalInfo.getPublicKey(), senderOid);
             byte[] privateKey = toPrivateKey(personalInfo.getPublicKey(), senderOid);
+
+            // update Name, MiddleName, Family
             if (personalInfoOld.isNeedUpdateNames(personalInfo)) {
                 pdmDaoServiceLocator.getPdmDaoService().updateNames(privateKey, personalInfo);
             }
+            // update gender
             if (personalInfoOld.getGender() != null && personalInfoOld.getGender().isNeedUpdate(personalInfo.getGender())) {
                 pdmDaoServiceLocator.getPdmDaoService().updateGender(privateKey, personalInfo);
             }
+
+            // update birth info
             if (personalInfoOld.getBirthInfo() != null && personalInfoOld.getBirthInfo().isNeedUpdate(personalInfo.getBirthInfo())) {
                 pdmDaoServiceLocator.getPdmDaoService().updateBirth(privateKey, personalInfo);
             }
+
+            // update telecom
+            Map<String, ValueInfo> telecomByPublicKey = initObjByPublicKey(personalInfoOld.getTelecoms());
+            for (ValueInfo telecom : personalInfo.getTelecoms()) {
+                if(telecom.getPublicKey() == null) {
+                    pdmDaoServiceLocator.getPdmDaoService().addTelecom(privateKey, telecom);
+                } else {
+                    ValueInfo telecomOld = telecomByPublicKey.get(telecom.getPublicKey());
+                    if (telecomOld != null && telecomOld.isNeedUpdate(telecom)) {
+                        byte[] privateKeyTelecom = toPrivateKey(telecomOld.getPublicKey(), senderOid);
+                        pdmDaoServiceLocator.getPdmDaoService().updateTelecom(privateKeyTelecom, telecom);
+                    }
+                }
+            }
+
+            //update Address
+            Map<String, AddrInfo> addrByPublicKey = initObjByPublicKey(personalInfoOld.getAddressList());
+            for (AddrInfo addrInfo : personalInfo.getAddressList()) {
+                if(addrInfo.getPublicKey() == null) {
+                    pdmDaoServiceLocator.getPdmDaoService().addAddr(privateKey, addrInfo);
+                } else {
+                    AddrInfo addrOld = addrByPublicKey.get(addrInfo.getPublicKey());
+                    if (addrOld != null && addrOld.isNeedUpdate(addrInfo)) {
+                        byte[] privateKeyTelecom = toPrivateKey(addrOld.getPublicKey(), senderOid);
+                        pdmDaoServiceLocator.getPdmDaoService().updateAddr(privateKeyTelecom, addrInfo);
+                    }
+                }
+            }
+
+
             return personalInfo;
         } catch (BadPaddingException
                 | NoSuchAlgorithmException
@@ -746,6 +786,16 @@ public class PdmServiceImpl implements PdmService {
         }
         //TODO send error info!
         return null;
+    }
+
+
+
+    private <T extends PublicKeyInfo> Map<String, T> initObjByPublicKey(List<T> publicKeyInfos) {
+        Map<String, T> res = new HashMap<>();
+        for (T t : publicKeyInfos) {
+            res.put(t.getPublicKey(), t);
+        }
+        return res;
     }
 
 

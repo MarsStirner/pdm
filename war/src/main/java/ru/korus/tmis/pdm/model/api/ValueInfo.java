@@ -3,13 +3,17 @@ package ru.korus.tmis.pdm.model.api;
 import ru.korus.tmis.pdm.model.UseInfo;
 import ru.korus.tmis.pdm.model.api.UpdateInfo;
 
+import java.security.PublicKey;
+
 /**
  * Author:      Sergey A. Zagrebelny <br>
  * Date:        27.10.2014, 15:33 <br>
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class ValueInfo implements UseInfo {
+public class ValueInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
+
+    private String publicKey;
 
     private String description;
 
@@ -64,6 +68,14 @@ public class ValueInfo implements UseInfo {
 
     public void setUpdateInfo(UpdateInfo updateInfo) {
         this.updateInfo = updateInfo;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 
     public boolean isNeedUpdate(ValueInfo valueInfo) {

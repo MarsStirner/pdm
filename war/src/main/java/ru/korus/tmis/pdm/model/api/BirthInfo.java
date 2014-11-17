@@ -8,7 +8,7 @@ import ru.korus.tmis.pdm.model.AddrInfo;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class BirthInfo {
+public class BirthInfo implements PdmUpdateble {
 
     private String birthDate;
 
