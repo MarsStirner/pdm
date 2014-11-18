@@ -1,9 +1,6 @@
 package ru.korus.tmis.pdm.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -15,7 +12,7 @@ import java.util.List;
 @Entity(name = "document")
 public class Document extends PrivateKeyAndHistory<Document> {
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Attr> attribute;
 
     public List<Attr> getAttribute()

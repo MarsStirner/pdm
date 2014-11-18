@@ -52,6 +52,9 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
     @Autowired
     private PdmXmlConfigService pdmXmlConfigService;
 
+    @Autowired
+    private  DocumentRepository documentRepository;
+
     @Override
     public List<Byte> save(PersonalInfo personalInfo) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
         Person personalData = personalDataBuilderService.createPersonalData(personalInfo);
@@ -206,5 +209,30 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
         personalData.getAddress().add(new Addresses(Crypting.crypt(key, addr.getPrivateKey())));
         personDataRepository.save(personalData);
     }
+
+    @Override
+    public void updateDoc(byte[] privateKeyDoc, DocsInfo docsInfo) {
+        Document docTop = documentRepository.findByPrivateKeyAndPrevIsNull(privateKeyDoc).top();
+        UpdateInfo updateInfo = docsInfo.getUpdateInfo();
+        HistoryState historyState = HistoryState.valueOf(updateInfo.getType());
+        Document docNew = historyState == HistoryState.DELETED ? null : personalDataBuilderService.createDocument(docsInfo);
+        docTop.initNextPrev(docNew, updateInfo.getBegDate());
+        if(docNew != null) {
+            documentRepository.save(docNew);
+        }
+        docTop.setHistoryState(historyState);
+        documentRepository.save(docTop);
+    }
+
+    @Override
+    public void addDocs(byte[] privateKey, DocsInfo docsInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+        Document doc = personalDataBuilderService.createDocument(docsInfo);
+        documentRepository.save(doc);
+        final byte[] key = pdmXmlConfigService.getInternalKey();
+        Person personalData = personDataRepository.findByPrivateKeyAndPrevIsNull(privateKey);
+        personalData.getDocs().add(new Docs(Crypting.crypt(key, doc.getPrivateKey())));
+        personDataRepository.save(personalData);
+    }
+
 
 }

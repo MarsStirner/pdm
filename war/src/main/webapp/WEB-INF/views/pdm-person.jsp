@@ -262,30 +262,44 @@
                             </tr>
                             <tr data-ng-repeat-end>
                                 <td colspan="3">
-                                    <button class="btn btn-sm" data-toggle="modal" data-target="#newAttrAdd{{doc.name}}"
-                                            placeholder="добавить">
-                                        добавить атрибут
-                                    </button>
-                                    <jsp:include page="modal_new_person_doc_attr.jsp">
-                                        <jsp:param name="id" value="newAttrAdd{{doc.name}}"/>
-                                        <jsp:param name="value" value="newAttr"/>
-                                        <jsp:param name="docName" value="doc.name"/>
-                                        <jsp:param name="attrList" value="attrs"/>
-                                        <jsp:param name="action" value="addAttr(newPerson.documents[$index], newAttr)"/>
-                                    </jsp:include>
+                                    <div class="col-xs-2">
+                                        <button class="btn btn-sm" data-toggle="modal" data-target="#newAttrAdd{{doc.name}}"
+                                                placeholder="добавить">
+                                            добавить атрибут
+                                        </button>
+                                        <jsp:include page="modal_new_person_doc_attr.jsp">
+                                            <jsp:param name="id" value="newAttrAdd{{doc.name}}"/>
+                                            <jsp:param name="value" value="newAttr"/>
+                                            <jsp:param name="docName" value="doc.name"/>
+                                            <jsp:param name="attrList" value="attrs"/>
+                                            <jsp:param name="action" value="addAttr(newPerson.documents[$index], newAttr)"/>
+                                        </jsp:include>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <button type="submit" class="btn btn-default" data-dismiss="modal"
+                                                data-ng-click="updateDocument(doc)">Сохранить
+                                        </button>
+                                    </div>
+                                    <div class="col-xs-8 form-inline">
+                                        <label for="updateTypeDoc">Причина обновления:</label>
+                                        <select id="updateTypeDoc" class="form-control" placeholder="тип обновления"
+                                                data-ng-init="doc.updateInfo.type=updateTypes[0]" data-ng-model="doc.updateInfo.type" data-ng-options="type.code as type.name for type in updateTypes"></select>
+                                    </div>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
-                        <button class="btn btn-default" data-toggle="modal" data-target="#newPersonDocAdd"
-                                placeholder="добавить">
-                            Добавить документ
-                        </button>
-                        <jsp:include page="modal_new_person_doc.jsp">
-                            <jsp:param name="id" value="newPersonDocAdd"/>
-                            <jsp:param name="value" value="newDoc"/>
-                            <jsp:param name="action" value="addDoc(newPerson.docs, newDoc)"/>
-                        </jsp:include>
+                        <div class="col-xs-2">
+                            <button class="btn btn-default" data-toggle="modal" data-target="#newPersonDocAdd"
+                                    placeholder="добавить">
+                                Добавить документ
+                            </button>
+                            <jsp:include page="modal_new_person_doc.jsp">
+                                <jsp:param name="id" value="newPersonDocAdd"/>
+                                <jsp:param name="value" value="newDoc"/>
+                                <jsp:param name="action" value="addDoc(newPerson.docs, newDoc)"/>
+                            </jsp:include>
+                        </div>
                     </fieldset>
                 </form>
             </div>

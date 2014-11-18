@@ -82,7 +82,11 @@ public class ValueInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
         if(valueInfo == null || valueInfo.getUpdateInfo() == null) {
             return false;
         }
+        return valueInfo.getUpdateInfo().isForceUpdate() || isNeedUpdateValue(valueInfo);
+    }
+
+    public boolean isNeedUpdateValue(ValueInfo valueInfo) {
         Object[][] ar = { {description, valueInfo.description}, {value, valueInfo.value}, {oid, valueInfo.oid}};
-        return valueInfo.getUpdateInfo().isForceUpdate() || PersonalInfo.isNeedUpdate(ar);
+        return PersonalInfo.isNeedUpdate(ar);
     }
 }

@@ -206,6 +206,17 @@ function createController($scope, $http) {
         $http.put("../api/update", prm)
     }
 
+    $scope.updateDocument = function (doc) {
+        var prm = {
+            token: $scope.newPerson.token,
+            publicKey: $scope.personInfo.publicKey,
+            documents: [
+                 doc
+            ]
+        }
+        $http.put("../api/update", prm)
+    }
+
 
     $scope.addAttrOption = function (oid, description) {
         var a = {description: description, oid: oid};

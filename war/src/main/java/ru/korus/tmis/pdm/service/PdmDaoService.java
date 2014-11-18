@@ -62,4 +62,9 @@ public interface PdmDaoService {
     void updateAddr(byte[] privateKeyAddr, AddrInfo addrInfo);
 
     void addAddr(byte[] privateKey, AddrInfo addrInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
+
+    void updateDoc(byte[] privateKeyDoc, DocsInfo docsInfo);
+
+    void addDocs(byte[] privateKey, DocsInfo docsInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
+
 }

@@ -27,7 +27,7 @@
             <li><a href="${pageContext.request.contextPath}/docs">Документы</a></li>
             <li><a href="${pageContext.request.contextPath}/files">Файлы</a></li>
             <li>
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">ЗХПД<b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Тестирование ЗХПД<b class="caret"></b></a>
                 <ul class="dropdown-menu global_nav">
                     <li>
                         <a href="${pageContext.request.contextPath}/create">Новая запись</a>

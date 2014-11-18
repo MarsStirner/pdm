@@ -774,7 +774,19 @@ public class PdmServiceImpl implements PdmService {
                 }
             }
 
-
+            //update documents
+            Map<String, DocsInfo> docByPublicKey = initObjByPublicKey(personalInfoOld.getDocuments());
+            for (DocsInfo docsInfo : personalInfo.getDocuments()) {
+                if(docsInfo.getPublicKey() == null) {
+                    pdmDaoServiceLocator.getPdmDaoService().addDocs(privateKey, docsInfo);
+                } else {
+                    DocsInfo docOld = docByPublicKey.get(docsInfo.getPublicKey());
+                    if (docOld != null && docOld.isNeedUpdate(docsInfo)) {
+                        byte[] privateKeyDoc = toPrivateKey(docOld.getPublicKey(), senderOid);
+                        pdmDaoServiceLocator.getPdmDaoService().updateDoc(privateKeyDoc, docsInfo);
+                    }
+                }
+            }
             return personalInfo;
         } catch (BadPaddingException
                 | NoSuchAlgorithmException

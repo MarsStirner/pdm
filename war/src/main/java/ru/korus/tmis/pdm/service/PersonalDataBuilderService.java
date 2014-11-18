@@ -26,7 +26,7 @@ public interface PersonalDataBuilderService {
 
     PersonalInfo createPersonalInfo(Person personalData, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
 
-    DocsInfo createDocsInfo(Document doc);
+    DocsInfo createDocsInfo(Document doc, String senderOid);
 
     ValueInfo createValueInfo(Attr attr);
 

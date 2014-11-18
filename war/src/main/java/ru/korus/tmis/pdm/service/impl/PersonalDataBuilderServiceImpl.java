@@ -148,7 +148,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
             privateKey = Crypting.decrypt(key, internalKeyDoc.getPrivateKey());
             Document doc = documentRepository.findByPrivateKeyAndPrevIsNull(privateKey);
             if(doc != null) {
-                res.getDocuments().add(createDocsInfo(doc.top()));
+                res.getDocuments().add(createDocsInfo(doc, senderId));
             }
         }
         return res;
@@ -162,17 +162,18 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
     }
 
     @Override
-    public DocsInfo createDocsInfo(Document doc) {
+    public DocsInfo createDocsInfo(Document doc, String senderOid) {
         if (doc == null) {
             return null;
         }
+        Document docTop = doc.top();
         DocsInfo res = new DocsInfo();
-        res.setAttrs(new ArrayList<ValueInfo>(doc.getAttribute().size()));
-        for (Attr attr : doc.getAttribute()) {
+        res.setAttrs(new ArrayList<ValueInfo>(docTop.getAttribute().size()));
+        for (Attr attr : docTop.getAttribute()) {
             res.getAttrs().add(createValueInfo(attr));
         }
 
-        for (Attr attr : doc.getAttribute()) {
+        for (Attr attr : docTop.getAttribute()) {
             if (attr.getOid() != null) {
                 PdmConfig.Docs.Doc docConfig = pdmXmlConfigService.getDocsNameByAttrOid(Crypting.decodeOID(attr.getOid()));
                 if (docConfig != null) {
@@ -181,8 +182,9 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
                     break;
                 }
             }
-
         }
+
+        initPublicKey(doc, senderOid, res);
 
         return res;
     }

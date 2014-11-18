@@ -14,15 +14,16 @@
             </div>
             <div class="modal-body">
                 <form role="form">
-                    <div class="form-group">
-                        <label for="name" data-ng-init="clearAttrOption()">атрибут:</label>
-                        <c:forEach items="${pdmDocs.docs}" var="doc" varStatus="status">
+
+                   <div class="form-group">
+                       <label for="name" data-ng-init="clearAttrOption()">атрибут:</label>
+                       <c:forEach items="${pdmDocs.docs}" var="doc" varStatus="status">
                             <c:forEach items="${doc.attrs}" var="attr" varStatus="statusAttr">
                                 <input type="hidden" data-ng-init="addAttrOption('${attr.oid}','${attr.description}')" data-ng-if="${param.docName} == '${doc.name}'"/>
                             </c:forEach>
                         </c:forEach>
                         <select id="name" class="form-control" placeholder="тип атрибута"
-                                data-ng-model="${param.value}" data-ng-options="attr.description for attr in ${param.attrList}"/>
+                                data-ng-model="${param.value}" data-ng-options="attr.description for attr in ${param.attrList}"></select>
                     </div>
                     <div class="form-group">
                         <label for="value">занчение:</label>
