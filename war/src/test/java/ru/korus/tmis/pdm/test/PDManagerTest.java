@@ -265,7 +265,7 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
     }
 
 
-    @Test
+    //@Test
     public void update() {
         ObjectFactory factory = new ObjectFactory();
         final PRPAIN101314UV02 prm = factory.createPRPAIN101314UV02();
