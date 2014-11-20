@@ -8,10 +8,7 @@ import ru.korus.tmis.pdm.entities.Addr;
 import ru.korus.tmis.pdm.entities.PrivateKey;
 import ru.korus.tmis.pdm.entities.Telecom;
 import ru.korus.tmis.pdm.model.*;
-import ru.korus.tmis.pdm.model.api.Identifier;
-import ru.korus.tmis.pdm.model.api.PersonalInfo;
-import ru.korus.tmis.pdm.model.api.PublicKeyInfo;
-import ru.korus.tmis.pdm.model.api.ValueInfo;
+import ru.korus.tmis.pdm.model.api.*;
 import ru.korus.tmis.pdm.service.*;
 import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 import ru.korus.tmis.pdm.utilities.Crypting;
@@ -800,6 +797,20 @@ public class PdmServiceImpl implements PdmService {
         return null;
     }
 
+    @Override
+    public List<PersonalInfo> find(FindQuery findQuery, String senderOid) {
+        try {
+            return pdmDaoServiceLocator.getPdmDaoService().find(findQuery.getQuery(), senderOid);
+        } catch (BadPaddingException
+                | NoSuchAlgorithmException
+                | IllegalBlockSizeException
+                | NoSuchPaddingException
+                | InvalidKeyException
+                | InvalidKeySpecException e) {
+            logger.error("security exception", e);
+        }
+        return null;
+    }
 
 
     private <T extends PublicKeyInfo> Map<String, T> initObjByPublicKey(List<T> publicKeyInfos) {

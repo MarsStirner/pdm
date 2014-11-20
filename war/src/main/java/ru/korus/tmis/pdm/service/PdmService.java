@@ -1,5 +1,6 @@
 package ru.korus.tmis.pdm.service;
 
+import ru.korus.tmis.pdm.model.api.FindQuery;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
 import ru.korus.tmis.pdm.model.api.Identifier;
 import ru.korus.tmis.pdm.ws.hl7.*;
@@ -35,4 +36,6 @@ public interface PdmService {
     PersonalInfo getPerson(String publicKey, String senderOid);
 
     PersonalInfo update(PersonalInfo personalInfo, String type);
+
+    List<PersonalInfo> find(FindQuery findQuery, String senderOid);
 }

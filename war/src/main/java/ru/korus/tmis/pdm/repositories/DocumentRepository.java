@@ -1,6 +1,11 @@
 package ru.korus.tmis.pdm.repositories;
 
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ru.korus.tmis.pdm.entities.Document;
+import ru.korus.tmis.pdm.entities.Person;
+
+import java.util.List;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -10,4 +15,9 @@ import ru.korus.tmis.pdm.entities.Document;
  */
 public interface DocumentRepository extends PrivateKeyAndHistoryRepository<Document> {
 
+    @Query(value = "SELECT DISTINCT `document`.* FROM `document` " +
+            "INNER JOIN `document_attr` ON `document`.id = `document_attr`.document_id " +
+            "INNER JOIN `attr` ON `attr`.id = `document_attr`.attribute_id  " +
+            "WHERE MATCH(`value`) AGAINST(:query  IN BOOLEAN MODE)", nativeQuery=true)
+    List<Document> findFullTextMySQL(@Param("query") String query);
 }

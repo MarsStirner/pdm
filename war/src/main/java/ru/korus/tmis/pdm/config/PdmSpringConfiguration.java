@@ -43,7 +43,7 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
     private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "true";
     private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "ru.korus.tmis.pdm.entities";
 
-    private enum DataBaseType {
+    public enum DataBaseType {
 
         POSTGRESQL(PROPERTY_NAME_DATABASE_DRIVER_POSTGRESQL,
                 PROPERTY_NAME_DATABASE_URL_POSTGRESQL,
@@ -66,7 +66,7 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
         }
     }
 
-    private final DataBaseType dataBaseType = DataBaseType.MYSQL;
+    public static final DataBaseType dataBaseType = DataBaseType.MYSQL;
 
     @Autowired
     private AuthInterceptor authInterceptor;

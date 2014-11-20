@@ -87,6 +87,11 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
+    public List<PersonalInfo> find(String query, String senderOid) {
+        throw new RuntimeException("TODO!!");
+    }
+
+    @Override
     public List<PersonalInfo> findPersonLike(PersonalInfo person, String senderId) {
        throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
     }

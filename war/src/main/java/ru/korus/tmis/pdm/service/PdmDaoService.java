@@ -45,6 +45,14 @@ public interface PdmDaoService {
      */
     List<PersonalInfo> find(PersonalInfo person, String senderId);
 
+    /**
+     * Полнотекстовый поиск
+     * @param query - поисковый запрос
+     * @param senderOid - OID подсистемы
+     * @return
+     */
+    List<PersonalInfo> find(String query, String senderOid) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException;
+
     List<PersonalInfo> findPersonLike(PersonalInfo person, String senderId);
 
     List<PersonalInfo> getPersons(String senderOid);

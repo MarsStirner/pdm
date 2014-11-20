@@ -248,6 +248,21 @@ function createController($scope, $http) {
         );
     }
 
+    $scope.find = function (query) {
+        var prm = {
+            query: query,
+            token: $scope.newPerson.token
+        }
+        $http.post("api/find", prm).
+            success(function (data) {
+                $scope.persons = data.personList;
+                for (var i = 0; i < $scope.persons.length; i++) {
+                    $scope.persons[i].publicKey = encodeURIComponent($scope.persons[i].publicKey);
+                }
+            }
+        );
+    }
+
     $scope.login = function () {
         $http.post(window.location.origin + "/api/login", $scope.systemLogin).
             success(function (data) {

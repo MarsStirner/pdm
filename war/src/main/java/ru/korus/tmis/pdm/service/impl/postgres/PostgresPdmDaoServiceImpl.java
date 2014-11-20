@@ -2,6 +2,7 @@ package ru.korus.tmis.pdm.service.impl.postgres;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.korus.tmis.pdm.config.PdmSpringConfiguration;
 import ru.korus.tmis.pdm.entities.*;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
@@ -20,6 +21,8 @@ import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -47,13 +50,13 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
     AddrRepository addrRepository;
 
     @Autowired
+    private  DocumentRepository documentRepository;
+
+    @Autowired
     PersonalDataBuilderService personalDataBuilderService;
 
     @Autowired
     private PdmXmlConfigService pdmXmlConfigService;
-
-    @Autowired
-    private  DocumentRepository documentRepository;
 
     @Override
     public List<Byte> save(PersonalInfo personalInfo) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
@@ -77,6 +80,50 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
     public List<PersonalInfo> find(PersonalInfo person, String senderId) {
         return null;
     }
+
+    @Override
+    public List<PersonalInfo> find(String query, String senderOid) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
+        if(PdmSpringConfiguration.dataBaseType ==  PdmSpringConfiguration.DataBaseType.MYSQL) {
+            List<Person> persons = personDataRepository.findByNamesFullTextMySQL(query);
+            persons.addAll(getPersonsByDocAttr(documentRepository.findFullTextMySQL(query)));
+            persons.addAll(getPersonsByAddr(addrRepository.findFullTextMySQL(query)));
+            persons.addAll(getPersonsByAddr(addrRepository.findFullTextMySQLExt(query)));
+            persons.addAll(getPersonsByTelecom(telecomRepository.findFullTextMySQL(query)));
+            return personalDataBuilderService.createPersonalInfoShort(persons, senderOid);
+        }
+        return null;
+    }
+
+    private Collection<? extends Person> getPersonsByTelecom(List<Telecom> telecomList) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+        List<Person> res = new LinkedList<>();
+        final byte[] key = pdmXmlConfigService.getInternalKey();
+        for(Telecom d : telecomList) {
+            List<Person> personByTelecom = personDataRepository.findPersonByTelecom(Crypting.crypt(key, d.getPrivateKey()));
+            res.addAll(personByTelecom);
+        }
+        return res;
+    }
+
+    private List<Person> getPersonsByDocAttr(List<Document> documentList) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+        List<Person> res = new LinkedList<>();
+        final byte[] key = pdmXmlConfigService.getInternalKey();
+        for(Document d : documentList) {
+            List<Person> personByDoc = personDataRepository.findPersonByDoc(Crypting.crypt(key, d.getPrivateKey()));
+            res.addAll(personByDoc);
+        }
+        return res;
+    }
+
+    private List<Person> getPersonsByAddr(List<Addr> addrList) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+        List<Person> res = new LinkedList<>();
+        final byte[] key = pdmXmlConfigService.getInternalKey();
+        for(Addr addr : addrList) {
+            List<Person> personByAddr = personDataRepository.findPersonByAddr(Crypting.crypt(key, addr.getPrivateKey()));
+            res.addAll(personByAddr);
+        }
+        return res;
+    }
+
 
     @Override
     public List<PersonalInfo> findPersonLike(PersonalInfo person, String senderId) {

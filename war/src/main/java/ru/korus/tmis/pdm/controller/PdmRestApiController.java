@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ru.korus.tmis.pdm.model.api.FindQuery;
 import ru.korus.tmis.pdm.model.api.*;
 import ru.korus.tmis.pdm.service.AuthService;
 import ru.korus.tmis.pdm.service.PdmService;
@@ -74,6 +75,19 @@ public class PdmRestApiController {
     public PersonalInfo update(@RequestBody PersonalInfo personalInfo ) {
         String senderOid = authService.checkToken(personalInfo.getToken());
         return pdmService.update(personalInfo, senderOid);
+    }
+
+    @RequestMapping(value = "find", method = RequestMethod.POST)
+    @ResponseBody
+    public Persons find(@RequestBody FindQuery findQuery ) {
+        String senderOid = authService.checkToken(findQuery.getToken());
+        Persons res = new Persons();
+        if (senderOid == null) {
+            res.setStatus(ErrorStatus.ACCESS_DENIED);
+        } else {
+            res.setPersonList(pdmService.find(findQuery, senderOid));
+        }
+        return res;
     }
 
 }
