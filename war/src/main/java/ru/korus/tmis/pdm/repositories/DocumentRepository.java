@@ -20,4 +20,10 @@ public interface DocumentRepository extends PrivateKeyAndHistoryRepository<Docum
             "INNER JOIN `attr` ON `attr`.id = `document_attr`.attribute_id  " +
             "WHERE MATCH(`value`) AGAINST(:query  IN BOOLEAN MODE)", nativeQuery=true)
     List<Document> findFullTextMySQL(@Param("query") String query);
+
+    @Query(value = "SELECT DISTINCT document.* FROM document " +
+            "INNER JOIN document_attr ON document.id = document_attr.document_id " +
+            "INNER JOIN attr ON attr.id = document_attr.attribute_id  " +
+            "WHERE fulltext_attr @@ plainto_tsquery(:query)", nativeQuery=true)
+    List<Document> findFullTextPostgres(@Param("query") String query);
 }

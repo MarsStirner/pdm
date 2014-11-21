@@ -83,15 +83,21 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
 
     @Override
     public List<PersonalInfo> find(String query, String senderOid) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
+        List<Person> persons = null;
         if(PdmSpringConfiguration.dataBaseType ==  PdmSpringConfiguration.DataBaseType.MYSQL) {
-            List<Person> persons = personDataRepository.findByNamesFullTextMySQL(query);
+            persons = personDataRepository.findByNamesFullTextMySQL(query);
             persons.addAll(getPersonsByDocAttr(documentRepository.findFullTextMySQL(query)));
             persons.addAll(getPersonsByAddr(addrRepository.findFullTextMySQL(query)));
             persons.addAll(getPersonsByAddr(addrRepository.findFullTextMySQLExt(query)));
             persons.addAll(getPersonsByTelecom(telecomRepository.findFullTextMySQL(query)));
             return personalDataBuilderService.createPersonalInfoShort(persons, senderOid);
+        } else if (PdmSpringConfiguration.dataBaseType ==  PdmSpringConfiguration.DataBaseType.POSTGRESQL) {
+            persons = personDataRepository.findByNamesFullTextPostgres(query);
+            persons.addAll(getPersonsByDocAttr(documentRepository.findFullTextPostgres(query)));
+            persons.addAll(getPersonsByAddr(addrRepository.findFullTextPostgres(query)));
+            persons.addAll(getPersonsByTelecom(telecomRepository.findFullTextPostgres(query)));
         }
-        return null;
+        return personalDataBuilderService.createPersonalInfoShort(persons, senderOid);
     }
 
     private Collection<? extends Person> getPersonsByTelecom(List<Telecom> telecomList) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {

@@ -343,7 +343,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
     public List<PersonalInfo> createPersonalInfoShort(Iterable<Person> persons, String senderOid) {
         List<PersonalInfo> res = new LinkedList<>();
         final byte[] keySystem = pdmXmlConfigService.getSystemDbKey(senderOid);
-        if (keySystem != null) {
+        if (keySystem != null && persons != null) {
             for (Person person: persons) {
                 Person personTop = person.top();
                 PersonalInfo personalInfo = new PersonalInfo();

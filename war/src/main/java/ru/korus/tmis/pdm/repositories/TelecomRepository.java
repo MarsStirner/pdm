@@ -16,7 +16,9 @@ public interface TelecomRepository extends PrivateKeyAndHistoryRepository<Teleco
 
     @Query(value = "SELECT DISTINCT `telecom`.* FROM `telecom` " +
             "WHERE MATCH(`value`) " +
-            "AGAINST(:query  IN BOOLEAN MODE)", nativeQuery=true)
+            "AGAINST(:query IN BOOLEAN MODE)", nativeQuery=true)
     List<Telecom> findFullTextMySQL(@Param("query") String query);
 
+    @Query(value = "SELECT DISTINCT telecom.* FROM telecom WHERE fulltext_telecom @@ plainto_tsquery(:query)", nativeQuery=true)
+    List<Telecom> findFullTextPostgres(@Param("query") String query);
 }

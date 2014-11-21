@@ -66,7 +66,7 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
         }
     }
 
-    public static final DataBaseType dataBaseType = DataBaseType.MYSQL;
+    public static final DataBaseType dataBaseType = DataBaseType.POSTGRESQL;
 
     @Autowired
     private AuthInterceptor authInterceptor;

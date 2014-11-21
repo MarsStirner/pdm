@@ -48,4 +48,8 @@ public interface AddrRepository extends PrivateKeyAndHistoryRepository<Addr> {
             "`unitType`) " +
             "AGAINST(:query  IN BOOLEAN MODE)", nativeQuery=true)
     List<Addr> findFullTextMySQLExt(@Param("query") String query);
+
+
+    @Query(value = "SELECT DISTINCT addr.* FROM addr WHERE fulltext_addr @@ plainto_tsquery(:query)", nativeQuery = true)
+    List<Addr> findFullTextPostgres(@Param("query") String query);
 }
