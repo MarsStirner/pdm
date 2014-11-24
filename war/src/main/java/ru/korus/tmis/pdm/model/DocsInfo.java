@@ -98,4 +98,12 @@ public class DocsInfo implements PdmUpdateble, PublicKeyInfo {
 
         return false;
     }
+
+    public String toQuery() {
+        String res = "";
+        for (ValueInfo v : attrs) {
+            res += v == null ? "" : (v.toQuery() + " ");
+        }
+        return res.trim();
+    }
 }

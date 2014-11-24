@@ -272,9 +272,31 @@ public class AddrInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
     }
 
     public boolean isNeedUpdate(AddrInfo addrInfo) {
-        if(this.getUse() != null && !this.getUse().equals(addrInfo.getUse())) {
+        if (this.getUse() != null && !this.getUse().equals(addrInfo.getUse())) {
             return true;
         }
         return !this.equals(addrInfo) || streetAddressLine != addrInfo.getStreetAddressLine();
+    }
+
+    public String toQuery() {
+        String res = "";
+
+        String addrAttrs[] = {
+                description,
+                country,
+                state,
+                county,
+                precinct,
+                city,
+                streetName,
+                streetAddressLine,
+                postalCode,
+                houseNumber,
+                buildingNumberSuffix,
+                additionalLocator};
+        for (String a : addrAttrs) {
+            res += a == null ? "" : (a + " ");
+        }
+        return res;
     }
 }

@@ -35,4 +35,20 @@ public class UpdateInfo {
     public boolean isForceUpdate() {
         return getType().equals(HistoryState.DELETED.name());
     }
+
+    static public UpdateInfo newInstance(String value) {
+        if(value == null) {
+            return null;
+        }
+
+        String state = HistoryState.MISPRINT.name();
+        if (value.equals("D")) {
+            state = HistoryState.DELETED.name();
+        } else if (value.equals("R")) {
+            state = HistoryState.EXPIRED.name();
+        }
+        UpdateInfo res = new UpdateInfo();
+        res.setType(state);
+        return res;
+    }
 }

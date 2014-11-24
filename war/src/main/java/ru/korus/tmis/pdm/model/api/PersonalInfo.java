@@ -1,5 +1,6 @@
 package ru.korus.tmis.pdm.model.api;
 
+import ru.korus.tmis.pdm.entities.HistoryState;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 
@@ -70,7 +71,7 @@ public class PersonalInfo {
     }
 
     public BirthInfo getBirthInfo() {
-        if(birthInfo == null) {
+        if (birthInfo == null) {
             birthInfo = new BirthInfo();
         }
         return birthInfo;
@@ -81,7 +82,7 @@ public class PersonalInfo {
     }
 
     public List<ValueInfo> getTelecoms() {
-        if(telecoms == null) {
+        if (telecoms == null) {
             telecoms = new LinkedList<>();
         }
         return telecoms;
@@ -92,7 +93,7 @@ public class PersonalInfo {
     }
 
     public List<AddrInfo> getAddressList() {
-        if(addressList == null) {
+        if (addressList == null) {
             addressList = new LinkedList<>();
         }
         return addressList;
@@ -103,7 +104,7 @@ public class PersonalInfo {
     }
 
     public List<DocsInfo> getDocs() {
-        if(documents == null) {
+        if (documents == null) {
             documents = new LinkedList<>();
         }
         return documents;
@@ -146,10 +147,10 @@ public class PersonalInfo {
     }
 
     public boolean isNeedUpdateNames(PersonalInfo that) {
-        if(that == null || that.getUpdateInfo() == null) {
+        if (that == null || that.getUpdateInfo() == null) {
             return false;
         }
-        Object ar[][] = { {family, that.family}, {given, that.given}, {middleName, that.middleName} };
+        Object ar[][] = {{family, that.family}, {given, that.given}, {middleName, that.middleName}};
         return that.updateInfo.isForceUpdate() || isNeedUpdate(ar);
     }
 
@@ -157,12 +158,19 @@ public class PersonalInfo {
         boolean res = false;
         boolean allObjIsNull = true;
         for (Object obj : objects) {
-            Object o1 = ((Object[])obj)[0];
-            Object o2 = ((Object[])obj)[1];
+            Object o1 = ((Object[]) obj)[0];
+            Object o2 = ((Object[]) obj)[1];
             allObjIsNull &= o2 == null;
-            res |= (o1 == null ? o2 != null : !o1.equals(o2) );
+            res |= (o1 == null ? o2 != null : !o1.equals(o2));
         }
         return !allObjIsNull && res;
     }
 
+    public String toQuery() {
+        String res = " ";
+        res += given == null ? "" : (given + " ");
+        res += middleName == null ? "" : (middleName + " ");
+        res += family == null ? "" : family;
+        return res.trim();
+    }
 }

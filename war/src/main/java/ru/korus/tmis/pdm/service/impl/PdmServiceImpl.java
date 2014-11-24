@@ -4,9 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.korus.tmis.pdm.entities.Addr;
-import ru.korus.tmis.pdm.entities.PrivateKey;
-import ru.korus.tmis.pdm.entities.Telecom;
 import ru.korus.tmis.pdm.model.*;
 import ru.korus.tmis.pdm.model.api.*;
 import ru.korus.tmis.pdm.service.*;
@@ -22,7 +19,6 @@ import javax.xml.bind.JAXBElement;
 import java.io.Serializable;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
@@ -107,11 +103,17 @@ public class PdmServiceImpl implements PdmService {
             ADExplicit addr = (ADExplicit) a;
             final String use = addr.getUse().isEmpty() ? null : addr.getUse().get(0).name();
 
-            final AddrInfo addrInfo = findByUseAttr(res.getAddressList(), use);
+            AddrInfo addrInfo = findByUseAttr(res.getAddressList(), use);
             if (addrInfo == null) {
-                res.getAddressList().add(AddrInfo.newInstance(addr, use));
+                addrInfo = AddrInfo.newInstance(addr, use);
+                res.getAddressList().add(addrInfo);
             } else {
                 addrInfo.set(AddrInfo.newInstance(addr, use));
+            }
+            if(a instanceof PRPAMT101302UV02PersonAddr) {
+                PRPAMT101302UV02PersonAddr updateAddr = (PRPAMT101302UV02PersonAddr) a;
+                String updateType = updateAddr.getUpdateMode() == null ? null : updateAddr.getUpdateMode().value();
+                addrInfo.setUpdateInfo(UpdateInfo.newInstance(updateType));
             }
         }
     }
@@ -122,12 +124,17 @@ public class PdmServiceImpl implements PdmService {
             final String use = telecom.getUse().isEmpty() ? null : telecom.getUse().get(0).name();
             ValueInfo tel = findByUseAttr(res.getTelecoms(), use);
             if (tel == null) {
-                ValueInfo valueInfo = new ValueInfo();
-                valueInfo.setDescription(use);
-                valueInfo.setValue(telecom.getValue());
-                res.getTelecoms().add(valueInfo);
+                tel = new ValueInfo();
+                tel.setDescription(use);
+                tel.setValue(telecom.getValue());
+                res.getTelecoms().add(tel);
             } else {
                 tel.setValue(telecom.getValue());
+            }
+            if(t instanceof PRPAMT101302UV02PersonTelecom) {
+                PRPAMT101302UV02PersonTelecom updateTel = (PRPAMT101302UV02PersonTelecom) t;
+                String updateType = updateTel.getUpdateMode() == null ? null : updateTel.getUpdateMode().value();
+                tel.setUpdateInfo(UpdateInfo.newInstance(updateType));
             }
         }
     }
@@ -161,6 +168,13 @@ public class PdmServiceImpl implements PdmService {
                         docs.put(name, docsInfo);
                     }
                     docsInfo.getAttrs().add(new ValueInfo(null, ii.getExtension(), root));
+                    if(obj instanceof PRPAMT101302UV02OtherIDsId) {
+                        PRPAMT101302UV02OtherIDsId updateAttr = (PRPAMT101302UV02OtherIDsId) obj;
+                        if(docsInfo.getUpdateInfo() == null) {
+                            String updateType = updateAttr.getUpdateMode() == null ? null : updateAttr.getUpdateMode().value();
+                            docsInfo.setUpdateInfo(UpdateInfo.newInstance(updateType));
+                        }
+                    }
                 }
             }
         }
@@ -232,12 +246,24 @@ public class PdmServiceImpl implements PdmService {
         List<PRPAMT101302UV02PersonName> names = identifiedPerson.getName();
 
         if (!names.isEmpty()) {
-            initNames(personalInfo, names.get(0));
+            PRPAMT101302UV02PersonName pn = names.get(0);
+            initNames(personalInfo, pn);
+            String updateType = pn.getUpdateMode() == null ? null : pn.getUpdateMode().value();
+            personalInfo.setUpdateInfo(UpdateInfo.newInstance(updateType));
         }
-        CE genderCode = identifiedPerson.getAdministrativeGenderCode();
-        personalInfo.setGender(genderCode == null ? null : new ValueInfo(null, genderCode.getCode(), genderCode.getCodeSystem()));
-        TS birthTime = identifiedPerson.getBirthTime();
-        personalInfo.getBirthInfo().setBirthDate(birthTime == null ? null : birthTime.getValue());
+        PRPAMT101302UV02PersonAdministrativeGenderCode genderCode = identifiedPerson.getAdministrativeGenderCode();
+        if(genderCode != null) {
+            personalInfo.setGender(new ValueInfo(null, genderCode.getCode(), genderCode.getCodeSystem()));
+            String updateType = genderCode.getUpdateMode() == null ? null : genderCode.getUpdateMode().value();
+            personalInfo.getGender().setUpdateInfo(UpdateInfo.newInstance(updateType));
+        }
+
+        PRPAMT101302UV02PersonBirthTime birthTime = identifiedPerson.getBirthTime();
+        if(birthTime != null) {
+            personalInfo.getBirthInfo().setBirthDate(birthTime.getValue());
+            String updateType = birthTime.getUpdateMode() == null ? null : birthTime.getUpdateMode().value();
+            personalInfo.getBirthInfo().setUpdateInfo(UpdateInfo.newInstance(updateType));
+        }
 
         initTelecom(personalInfo, identifiedPerson.getTelecom());
 
@@ -252,7 +278,17 @@ public class PdmServiceImpl implements PdmService {
 
         if (identifiedPerson.getBirthPlace() instanceof JAXBElement &&
                 identifiedPerson.getBirthPlace().getValue() instanceof PRPAMT101302UV02PersonBirthPlace) {
-            personalInfo.getBirthInfo().setBirthPlace(AddrInfo.newInstance(identifiedPerson.getBirthPlace().getValue().getAddr(), null));
+            BirthInfo birthInfo = personalInfo.getBirthInfo();
+            if(birthInfo == null) {
+                personalInfo.setBirthInfo(new BirthInfo());
+                birthInfo = personalInfo.getBirthInfo();
+            }
+            PRPAMT101302UV02BirthPlaceAddr addr = identifiedPerson.getBirthPlace().getValue().getAddr();
+            birthInfo.setBirthPlace(AddrInfo.newInstance(addr, null));
+            if(birthInfo.getUpdateInfo() == null) {
+                String updateType = addr.getUpdateMode() == null ? null : addr.getUpdateMode().value();
+                birthInfo.setUpdateInfo(UpdateInfo.newInstance(updateType));
+            }
         }
 
         return personalInfo;
@@ -354,7 +390,16 @@ public class PdmServiceImpl implements PdmService {
 
     @Override
     public PRPAIN101315UV02 update(PRPAIN101314UV02 parameters) {
-        logger.info("Update demographics info by id. Parsing input parameters...");
+        logger.info("Update person info. Parsing input parameters...");
+        final PersonalInfo person = newInstance(parameters);
+
+        logger.info("Find by demographics info. Find in storage...");
+        String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
+        final PersonalInfo personalInfo = update(person, senderId);
+        logger.info("Find by demographics info. Prepare and sending the response...");
+        return getPRPAIN101315UV02(personalInfo.getPublicKey());
+
+        /*logger.info("Update demographics info by id. Parsing input parameters...");
         for (PRPAMT101302UV02PersonAsOtherIDs cur :
                 parameters.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getAsOtherIDs()) {
             for (II ii : cur.getId()) {
@@ -381,18 +426,53 @@ public class PdmServiceImpl implements PdmService {
             }
         }
         logger.error("Update demographics info by id. Wrong input parameters. Not found PDM OID: {}", OID_PDM);
-        throw new RuntimeException("The PDM ID is not set");
+        throw new RuntimeException("The PDM ID is not set");*/
+    }
+
+    private PersonalInfo newInstance(PRPAIN101314UV02 parameters) {
+        PersonalInfo res = new PersonalInfo();
+        top:for (PRPAMT101302UV02PersonAsOtherIDs cur :
+                parameters.getControlActProcess().getSubject().getRegistrationRequest().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getAsOtherIDs()) {
+            for (II ii : cur.getId()) {
+                if (OID_PDM.equals(ii.getRoot())) {
+                    res.setPublicKey(ii.getExtension());
+                    break top;
+                }
+            }
+        }
+
+        return update(res, parameters);
     }
 
     @Override
     public PRPAIN101306UV02 findLike(PRPAIN101305UV02 parameters) {
         logger.info("Find Like. Parsing input parameters...");
-        final PersonalInfo person = newInstance(parameters);
+        final FindQuery query = toFindQuery(newInstance(parameters));
         logger.info("Find Like. Find like in storage...");
         String senderId = parameters.getSender().getDevice().getId().get(0).getRoot();
-        final List<PersonalInfo> personalDataList = findPersonLike(person, senderId);
+        final List<PersonalInfo> personalDataList = find(query, senderId);
         logger.info("Find Like. Prepare and sending the response...");
         return getPRPAIN101306UV02(personalDataList);
+    }
+
+    private FindQuery toFindQuery(PersonalInfo personalInfo) {
+        FindQuery res = new FindQuery();
+        String query = new String();
+        query += personalInfo.toQuery() + " ";
+        query += personalInfo.getBirthInfo().toQuery() + " ";
+        for (DocsInfo d : personalInfo.getDocs()) {
+            query += d.toQuery() + " ";
+        }
+
+        for (AddrInfo a : personalInfo.getAddressList()) {
+            query += a.toQuery() + " ";
+        }
+
+        for(ValueInfo v : personalInfo.getTelecoms()) {
+            query += v.toQuery() + " ";
+        }
+        res.setQuery(query.trim());
+        return res;
     }
 
     @Override

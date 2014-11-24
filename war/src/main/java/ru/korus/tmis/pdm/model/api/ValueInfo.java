@@ -89,4 +89,8 @@ public class ValueInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
         Object[][] ar = { {description, valueInfo.description}, {value, valueInfo.value}, {oid, valueInfo.oid}};
         return PersonalInfo.isNeedUpdate(ar);
     }
+
+    public String toQuery() {
+        return value == null ? "" : value;
+    }
 }

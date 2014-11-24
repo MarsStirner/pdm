@@ -47,4 +47,11 @@ public class BirthInfo implements PdmUpdateble {
         Object[][] ar = { {birthDate, birthInfo.birthDate}, {birthPlace, birthInfo.birthPlace} };
         return birthInfo.getUpdateInfo().isForceUpdate() || PersonalInfo.isNeedUpdate(ar);
     }
+
+    public String toQuery() {
+        String res = "";
+        res += birthDate == null ? "" : (birthDate + " ");
+        res += birthPlace == null ? "" : birthPlace.toQuery();
+        return res.trim();
+    }
 }

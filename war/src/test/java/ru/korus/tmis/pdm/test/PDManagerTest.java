@@ -194,6 +194,16 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
     public void findByPersonInfo() {
         ObjectFactory factory = new ObjectFactory();
         PRPAIN101305UV02 prm = factory.createPRPAIN101305UV02();
+
+        /* Идентификатор отправителя */
+        final MCCIMT000100UV01Sender sender = factory.createMCCIMT000100UV01Sender();
+        final MCCIMT000100UV01Device device = factory.createMCCIMT000100UV01Device();
+        final II senderId = factory.createII();
+        senderId.setRoot(SENDER_ID);
+        device.getId().add(senderId);
+        sender.setDevice(device);
+        prm.setSender(sender);
+
         final PRPAIN101305UV02QUQIMT021001UV01ControlActProcess controlActProcess = factory.createPRPAIN101305UV02QUQIMT021001UV01ControlActProcess();
         prm.setControlActProcess(controlActProcess);
         final PRPAMT101306UV02QueryByParameter query = factory.createPRPAMT101306UV02QueryByParameter();
@@ -265,7 +275,7 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
     }
 
 
-    //@Test
+    @Test
     public void update() {
         ObjectFactory factory = new ObjectFactory();
         final PRPAIN101314UV02 prm = factory.createPRPAIN101314UV02();
@@ -299,6 +309,7 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
         id.setExtension(newId);
 
         final PRPAMT101302UV02PersonName pn = factory.createPRPAMT101302UV02PersonName();
+        pn.setUpdateMode(PRPAMT101302UV02PersonNameUpdateMode.R);
         person.getName().add(pn);
         EnExplicitFamily family = factory.createEnExplicitFamily();
         family.setContent("Petrov");
@@ -312,12 +323,14 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
         middleName.setContent("Peterovich");
         pn.getContent().add(factory.createENExplicitGiven(middleName));
 
-       final PRPAMT101302UV02PersonTelecom telecom = factory.createPRPAMT101302UV02PersonTelecom();
+        final PRPAMT101302UV02PersonTelecom telecom = factory.createPRPAMT101302UV02PersonTelecom();
+        telecom.setUpdateMode(PRPAMT101302UV02PersonTelecomUpdateMode.R);
         person.getTelecom().add(telecom);
         telecom.setValue("tel:+7 (495) 999-99-99");
         telecom.getUse().add(TelecommunicationAddressUse.HP);
 
         final PRPAMT101302UV02PersonAddr personAddr = factory.createPRPAMT101302UV02PersonAddr();
+        personAddr.setUpdateMode(PRPAMT101302UV02PersonAddrUpdateMode.R);
         person.getAddr().add(personAddr);
         AdxpExplicitStreetAddressLine strAdrLine = factory.createAdxpExplicitStreetAddressLine();
         strAdrLine.setContent("Update address line");
@@ -325,6 +338,7 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
         personAddr.getUse().add(PostalAddressUse.HP);
 
         final PRPAMT101302UV02PersonAsOtherIDs passportOtherIDs = factory.createPRPAMT101302UV02PersonAsOtherIDs();
+        passportOtherIDs.setUpdateMode(PRPAMT101302UV02PersonAsOtherIDsUpdateMode.R);
         person.getAsOtherIDs().add(passportOtherIDs);
         final PRPAMT101302UV02OtherIDsId passportId = factory.createPRPAMT101302UV02OtherIDsId();
         passportOtherIDs.getId().add(passportId);
@@ -332,19 +346,21 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
         passportId.setExtension("1234578987654321");
 
         final PRPAMT101302UV02PersonAsOtherIDs snilsOtherIDs = factory.createPRPAMT101302UV02PersonAsOtherIDs();
+        snilsOtherIDs.setUpdateMode(PRPAMT101302UV02PersonAsOtherIDsUpdateMode.R);
         person.getAsOtherIDs().add(snilsOtherIDs);
         final PRPAMT101302UV02OtherIDsId snilsId = factory.createPRPAMT101302UV02OtherIDsId();
         passportOtherIDs.getId().add(snilsId);
         snilsId.setRoot(PdmServiceImpl.OID_DOC_PASSPORT_DATE);
         snilsId.setExtension("1313.1313.1980");
 
+        pdManager.login(SENDER_ID, SENDER_PASSWORD);
         final PRPAIN101315UV02 res = pdManager.update(prm);
         final List<II> listId = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getIdentifiedPerson().getId();
         String root = listId.get(0).getRoot();
         assertEquals(root, "3.0.0.0");
     }
 
-    //@Test
+    @Test
     public void findLike() {
         ObjectFactory factory = new ObjectFactory();
         PRPAIN101305UV02 prm = factory.createPRPAIN101305UV02();
@@ -356,12 +372,21 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
         final PRPAMT101306UV02ParameterList prmList = factory.createPRPAMT101306UV02ParameterList();
         query.setParameterList(prmList);
 
+         /* Идентификатор отправителя */
+        final MCCIMT000100UV01Sender sender = factory.createMCCIMT000100UV01Sender();
+        final MCCIMT000100UV01Device device = factory.createMCCIMT000100UV01Device();
+        final II senderId = factory.createII();
+        senderId.setRoot(SENDER_ID);
+        device.getId().add(senderId);
+        sender.setDevice(device);
+        prm.setSender(sender);
+
         final PRPAMT101306UV02PersonName personName = factory.createPRPAMT101306UV02PersonName();
         prmList.getPersonName().add(personName);
         final PNExplicit pn = factory.createPNExplicit();
         personName.getValue().add(pn);
         EnExplicitGiven giv = factory.createEnExplicitGiven();
-        giv.setContent("Ivan");
+        giv.setContent("Иван");
         pn.getContent().add(factory.createENExplicitGiven(giv));
 
        /* final PRPAMT101306UV02PersonAdministrativeGender gender = factory.createPRPAMT101306UV02PersonAdministrativeGender();
@@ -410,6 +435,7 @@ public class PDManagerTest extends AbstractTestNGSpringContextTests {
         otherId.getValue().add(ii);
         prmList.getOtherIDsScopingOrganization().add(otherId);*/
 
+        pdManager.login(SENDER_ID, SENDER_PASSWORD);
         PRPAIN101306UV02 res = pdManager.findLike(prm);
         final List<II> listId = res.getControlActProcess().getSubject().get(0).getRegistrationEvent().getSubject1().getIdentifiedPerson().getId();
         assertFalse(listId.isEmpty());
