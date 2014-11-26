@@ -125,6 +125,22 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
         properties.put("hibernate.connection.characterEncoding", "UTF-8");
         properties.put("hibernate.connection.charSet", "UTF-8");
 
+        properties.put("hibernate.connection.url", dataBaseType.url);
+        properties.put("hibernate.connection.username", PROPERTY_NAME_DATABASE_USERNAME);
+        properties.put("hibernate.connection.password", PROPERTY_NAME_DATABASE_PASSWORD);
+
+        properties.put("hibernate.temp.use_jdbc_metadata_defaults", "false");
+        properties.put("hibernate.auto_close_session", "true");
+        properties.put("hibernate.connection.provider_class", "org.hibernate.connection.C3P0ConnectionProvider");
+        properties.put("hibernate.c3p0.acquire_increment", 5);
+        properties.put("hibernate.c3p0.idle_test_period", 1800);
+        properties.put("hibernate.c3p0.max_size", 600);
+        properties.put("hibernate.c3p0.max_statements", 50);
+        properties.put("hibernate.c3p0.min_size", 5);
+        properties.put("hibernate.c3p0.timeout", 1800);
+        properties.put("hibernate.c3p0.numHelperThreads", 10);
+        properties.put("hibernate.c3p0.maxAdministrativeTaskTime", 15);
+
         return properties;
     }
 
