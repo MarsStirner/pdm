@@ -38,6 +38,8 @@ public interface PdmDaoService {
 
     PersonalInfo findById(byte[] privateKey, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException;
 
+    byte[] findFileById(byte[] privateKey, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException;
+
     /**
      * Поиск по персональным данным
      * @param person – набор персональных данных

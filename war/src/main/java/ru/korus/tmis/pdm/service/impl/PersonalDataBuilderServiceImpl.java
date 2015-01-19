@@ -2,11 +2,13 @@ package ru.korus.tmis.pdm.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.korus.tmis.pdm.entities.*;
+import ru.korus.tmis.pdm.entities.pdm.*;
+import ru.korus.tmis.pdm.entities.pdmfiles.PdmFiles;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.api.*;
-import ru.korus.tmis.pdm.repositories.*;
+import ru.korus.tmis.pdm.repositories.pdm.*;
+import ru.korus.tmis.pdm.repositories.pdmfiles.PdmFilesRepository;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 import ru.korus.tmis.pdm.service.PersonalDataBuilderService;
 import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
@@ -53,10 +55,16 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
     @Autowired
     private AttrRepository attrRepository;
 
+    @Autowired
+    private PdmFilesRepository pdmFilesRepository;
+
     @Override
     public Person createPersonalData(PersonalInfo personalInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
         Person res = new Person();
         final byte[] key = pdmXmlConfigService.getInternalKey();
+
+        final byte[] keyFile = pdmXmlConfigService.getInternalFileKey();
+
 
         initPersonName(personalInfo, res);
 
@@ -89,8 +97,20 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
             res.getDocs().add(new Docs(Crypting.crypt(key, document.getPrivateKey())));
         }
 
-        return res;
+        for (ValueInfo fileInfo : personalInfo.getFiles()) {
+            PdmFiles pdmFile = createFile(keyFile, fileInfo);
+            pdmFilesRepository.save(pdmFile);
+            res.getFiles().add(new Files(Crypting.crypt(key, pdmFile.getPrivateKey())));
+        }
 
+        return res;
+    }
+
+    private PdmFiles createFile(byte[] keyFile, ValueInfo fileInfo) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        PdmFiles res = new PdmFiles();
+        res.setData(Crypting.crypt(keyFile, fileInfo.getValue().getBytes()));
+        res.setOid(fileInfo.getOid());
+        return res;
     }
 
     @Override
@@ -101,6 +121,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         Person personNames = personalData.top();
         PersonalInfo res = new PersonalInfo();
         final byte[] key = pdmXmlConfigService.getInternalKey();
+        final byte[] keyFile = pdmXmlConfigService.getInternalFileKey();
         final byte[] keySystem = pdmXmlConfigService.getSystemDbKey(senderId);
 
         Identifier identifier = Crypting.toPublicKey(Crypting.toListByte(personalData.getPrivateKey()), keySystem);
@@ -151,6 +172,22 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
                 res.getDocuments().add(createDocsInfo(doc, senderId));
             }
         }
+
+        res.setFiles(new ArrayList<ValueInfo>(personalData.getFiles().size()));
+        for (EntityList internalKeyDoc : personalData.getFiles()) {
+            privateKey = Crypting.decrypt(key, internalKeyDoc.getPrivateKey());
+            PdmFiles file = pdmFilesRepository.findByPrivateKeyAndPrevIsNull(privateKey);
+            if(file != null) {
+                res.getFiles().add(createFileInfo(file, senderId));
+            }
+        }
+        return res;
+    }
+
+    private ValueInfo createFileInfo(PdmFiles file, String senderId) {
+        ValueInfo res = new ValueInfo();
+        res.setOid(file.getOid());
+        initPublicKey(file, senderId, res);
         return res;
     }
 

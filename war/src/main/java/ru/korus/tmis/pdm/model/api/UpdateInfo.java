@@ -1,6 +1,6 @@
 package ru.korus.tmis.pdm.model.api;
 
-import ru.korus.tmis.pdm.entities.HistoryState;
+import ru.korus.tmis.pdm.entities.pdm.HistoryState;
 
 import java.util.Date;
 

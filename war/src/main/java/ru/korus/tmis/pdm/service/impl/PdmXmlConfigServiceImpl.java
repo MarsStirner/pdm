@@ -44,6 +44,7 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
 
     static private final ru.korus.tmis.pdm.service.impl.xml.ObjectFactory pdmXlmFactory = new ObjectFactory();
     public static final String PDM_INTERNAL_PASSWORD = "X4k7PXQVgmcwjvQ5";
+    public static final String PDM_INTERNAL_FILE_PASSWORD ="YUwuHcreRdaTkxaz";
 
     @PostConstruct
     void loadXml() {
@@ -232,6 +233,12 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
     public byte[] getInternalKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
         final byte salt[] = pdmConfig.getAdmin().getSalt2() == null ? "9U4vD8fuwbyRC5Wz".getBytes() : Base64.decode(pdmConfig.getAdmin().getSalt2());
         return Crypting.genKey(PDM_INTERNAL_PASSWORD, salt, KEY_SIZE);
+    }
+
+    @Override
+    public byte[] getInternalFileKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+        final byte salt[] = pdmConfig.getAdmin().getSalt2() == null ? "crje6MJ4Ry8ITjHG".getBytes() : Base64.decode(pdmConfig.getAdmin().getSalt2());
+        return Crypting.genKey(PDM_INTERNAL_FILE_PASSWORD, salt, KEY_SIZE);
     }
 
 

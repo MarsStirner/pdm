@@ -35,6 +35,8 @@ public interface PdmService {
 
     PersonalInfo getPerson(String publicKey, String senderOid);
 
+    byte[] getFile(String publicKey, String senderOid);
+
     PersonalInfo update(PersonalInfo personalInfo, String senderOid);
 
     List<PersonalInfo> find(FindQuery findQuery, String senderOid);

@@ -9,6 +9,8 @@ import ru.korus.tmis.pdm.model.api.*;
 import ru.korus.tmis.pdm.service.AuthService;
 import ru.korus.tmis.pdm.service.PdmService;
 
+import javax.xml.bind.DatatypeConverter;
+
 /**
  * Author:      Sergey A. Zagrebelny <br>
  * Date:        31.10.2014, 12:02 <br>
@@ -63,12 +65,23 @@ public class PdmRestApiController {
         return res;
     }
 
-    @RequestMapping(value = "get", method = RequestMethod.POST)
+    @RequestMapping(value = "get", method = RequestMethod.GET)
     @ResponseBody
-    public PersonalInfo get(@RequestBody PersonInfoReq personInfoReq ) {
-        String senderOid = authService.checkToken(personInfoReq.getToken());
-        return pdmService.getPerson(personInfoReq.getPublicKey(), senderOid);
+    public PersonalInfo get(@RequestParam String token,
+                            @RequestParam String publicKey) {
+        String senderOid = authService.checkToken(token);
+        return pdmService.getPerson(publicKey, senderOid);
     }
+
+    @RequestMapping(value = "file", method = RequestMethod.GET, headers = "Accept=image/jpeg, image/jpg, image/png, image/gif")
+    @ResponseBody
+    public byte[] getFile(@RequestParam String token,
+                            @RequestParam String publicKey) {
+        String senderOid = authService.checkToken(token);
+        byte[] res = DatatypeConverter.parseBase64Binary(new String(pdmService.getFile(publicKey, senderOid)));
+        return res;
+    }
+
 
     @RequestMapping(value = "update", method = RequestMethod.PUT)
     @ResponseBody

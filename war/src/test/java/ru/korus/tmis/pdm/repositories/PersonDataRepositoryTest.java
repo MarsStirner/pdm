@@ -7,7 +7,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.testng.annotations.Test;
 import ru.korus.tmis.pdm.config.PdmSpringConfiguration;
 import ru.korus.tmis.pdm.config.SpringMongoConfig;
-import ru.korus.tmis.pdm.entities.*;
+import ru.korus.tmis.pdm.entities.pdm.Addresses;
+import ru.korus.tmis.pdm.entities.pdm.Person;
+import ru.korus.tmis.pdm.repositories.pdm.PersonDataRepository;
 import ru.korus.tmis.pdm.utilities.Crypting;
 
 import static org.testng.Assert.assertNotNull;
@@ -23,7 +25,7 @@ import static org.testng.Assert.assertNotNull;
 public class PersonDataRepositoryTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
-    PersonDataRepository  personDataRepository;
+    PersonDataRepository personDataRepository;
 
 
     @Test

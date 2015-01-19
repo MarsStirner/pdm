@@ -258,21 +258,59 @@
                             <jsp:param name="action" value="addDoc(newPerson.docs, newDoc)"/>
                         </jsp:include>
                     </fieldset>
+                    <fieldset class="form-group">
+                        <legend>Файлы</legend>
+                        <table class="table table-bordered">
+                            <thead>
+                            <th>oid</th>
+                            <th>Имя файла</th>
+                            </thead>
+                            <tbody>
+                            <tr data-ng-repeat="file in newPerson.files">
+                                <td>
+                                    <strong>{{file.oid}}</strong>
+                                </td>
+                                <td>
+                                    {{file.name}}
+                                    <%--<a href="/files/?publicKey={{file.publicKey}}&systemOid={{systemLogin.oid}}&token={{file.token}}">
+                                        {{file.name}}
+                                    </a>--%>
+
+                                    <button class="btn btn-sm pull-right" data-ng-click="removeAttr(doc,0)"
+                                            placeholder="удалить">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </button>
+                                    <button class="btn btn-sm pull-right" data-toggle="modal"
+                                            data-target="#newAttrUpdate{{doc.name}}_0"
+                                            placeholder="редактировать">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </button>
+                                    <jsp:include page="modal_new_person_doc_attr.jsp">
+                                        <jsp:param name="id" value="newAttrUpdate{{doc.name}}_0"/>
+                                        <jsp:param name="value" value="doc.attrs[0]"/>
+                                        <jsp:param name="docName" value="doc.name"/>
+                                        <jsp:param name="attrList" value="doc.attrs"/>
+                                        <jsp:param name="action" value=""/>
+                                    </jsp:include>
+                                </td>
+
+                            </tr>
+
+                            </tbody>
+                        </table>
+                        <button class="btn btn-default" data-toggle="modal" data-target="#newPersonFileAdd"
+                                placeholder="добавить">
+                            Добавить файл
+                        </button>
+                        <jsp:include page="modal_new_person_files.jsp">
+                            <jsp:param name="id" value="newPersonFileAdd"/>
+                            <jsp:param name="value" value="newFile"/>
+                            <jsp:param name="action" value="addFile(newFile)"/>
+                        </jsp:include>
+                    </fieldset>
                 </form>
             </div>
         </div>
     </div>
-
-    <%-- <div class="col">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                Файлы
-            </div>
-            <div class="panel-body">
-                //TODO
-            </div>
-        </div>
-    </div>--%>
-
 
 </div>

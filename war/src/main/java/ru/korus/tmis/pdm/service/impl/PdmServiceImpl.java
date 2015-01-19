@@ -804,6 +804,21 @@ public class PdmServiceImpl implements PdmService {
     }
 
     @Override
+    public byte[] getFile(String publicKey, String senderId) {
+        try {
+            return findFileById(publicKey, senderId);
+        } catch (BadPaddingException
+                | NoSuchAlgorithmException
+                | IllegalBlockSizeException
+                | NoSuchPaddingException
+                | InvalidKeyException
+                | InvalidKeySpecException e) {
+            logger.error("security exception", e);
+        }
+        return null;
+    }
+
+    @Override
     public PersonalInfo update(PersonalInfo personalInfo, String senderOid) {
         try {
             PersonalInfo personalInfoOld = findById(personalInfo.getPublicKey(), senderOid);
@@ -905,6 +920,11 @@ public class PdmServiceImpl implements PdmService {
     private PersonalInfo findById(String publicKey, String senderOid) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeyException, InvalidKeySpecException {
         byte[] privateKey = toPrivateKey(publicKey, senderOid);
         return pdmDaoServiceLocator.getPdmDaoService().findById(privateKey, senderOid);
+    }
+
+    private byte[] findFileById(String publicKey, String senderOid) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeyException, InvalidKeySpecException {
+        byte[] privateKey = toPrivateKey(publicKey, senderOid);
+        return pdmDaoServiceLocator.getPdmDaoService().findFileById(privateKey, senderOid);
     }
 
 

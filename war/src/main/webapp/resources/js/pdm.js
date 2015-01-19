@@ -51,7 +51,8 @@ function createController($scope, $http) {
                     {description: "Дата выдачи", value: "1977-01-15", oid: "3.0.0.2"}
                 ]
             }
-        ]
+        ],
+        files: []
     }
 
     $scope.updateTypes = [
@@ -224,8 +225,7 @@ function createController($scope, $http) {
     }
 
     $scope.loadPersonInfo = function (token, publicKey) {
-        var prm = {token: token, publicKey: publicKey};
-        $http.post("../api/get", prm).
+        $http.get("../api/get", {params: {token: token, publicKey: publicKey}}).
             success(function (data) {
                 $scope.newPerson = data;
             }
@@ -318,5 +318,22 @@ function createController($scope, $http) {
     $scope.sizeAttrs = function (index) {
         return $scope.newPerson.documents[index].attrs.length;
     }
+
+    $scope.onFileSet = function (files) {
+        var file = files[0]
+        var reader = new FileReader();
+        reader.onload = function(readerEvt) {
+            $scope.newFile.value = btoa(readerEvt.target.result);
+        };
+        $scope.newFile.name = file.name;
+        reader.readAsBinaryString(file);
+    }
+
+    $scope.addFile = function(newFile) {
+        $scope.newPerson.files.push(angular.copy(newFile));
+        $scope.newFile = null;
+    }
+
+
 
 }

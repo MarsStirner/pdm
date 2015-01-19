@@ -23,25 +23,25 @@ import java.util.Properties;
 @Configuration
 @ComponentScan(basePackages = "ru.korus.tmis.pdm")
 @EnableWebMvc
-@EnableJpaRepositories("ru.korus.tmis.pdm.repositories")
+@EnableJpaRepositories("ru.korus.tmis.pdm.repositories.pdm")
 public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
 
     /*** Spring Data JPA config **************************************************************************************/
-    private static final String PROPERTY_NAME_DATABASE_DRIVER_MYSQL = "com.mysql.jdbc.Driver";
-    private static final String PROPERTY_NAME_DATABASE_URL_MYSQL = "jdbc:mysql://localhost:3306/pdm?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
+    public static final String PROPERTY_NAME_DATABASE_DRIVER_MYSQL = "com.mysql.jdbc.Driver";
+    public static final String PROPERTY_NAME_DATABASE_URL_MYSQL = "jdbc:mysql://localhost:3306/pdm?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
 
-    private static final String PROPERTY_NAME_DATABASE_DRIVER_POSTGRESQL = "org.postgresql.Driver\n";
-    private static final String PROPERTY_NAME_DATABASE_URL_POSTGRESQL = "jdbc:postgresql://localhost:5432/pdm";
+    public static final String PROPERTY_NAME_DATABASE_DRIVER_POSTGRESQL = "org.postgresql.Driver\n";
+    public static final String PROPERTY_NAME_DATABASE_URL_POSTGRESQL = "jdbc:postgresql://localhost:5432/pdm";
 
-    private static final String PROPERTY_NAME_DATABASE_USERNAME = "root";
-    private static final String PROPERTY_NAME_DATABASE_PASSWORD = "root";
+    public static final String PROPERTY_NAME_DATABASE_USERNAME = "root";
+    public static final String PROPERTY_NAME_DATABASE_PASSWORD = "root";
 
-    private static final String PROPERTY_NAME_HIBERNATE_DIALECT_MYSQL = "org.hibernate.dialect.MySQL5InnoDBDialect";
+    public static final String PROPERTY_NAME_HIBERNATE_DIALECT_MYSQL = "org.hibernate.dialect.MySQL5InnoDBDialect";
 
-    private static final String PROPERTY_NAME_HIBERNATE_DIALECT_POSTGRESQL = "org.hibernate.dialect.PostgreSQLDialect";
+    public static final String PROPERTY_NAME_HIBERNATE_DIALECT_POSTGRESQL = "org.hibernate.dialect.PostgreSQLDialect";
 
-    private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "true";
-    private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "ru.korus.tmis.pdm.entities";
+    public static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "true";
+    public static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "ru.korus.tmis.pdm.entities";
 
     public enum DataBaseType {
 
@@ -63,6 +63,22 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
             this.driver = driver;
             this.url = url;
             this.dialect = dialect;
+        }
+
+        public String getDriver() {
+            return driver;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getUrlFiles() {
+            return url + "_files";
+        }
+
+        public String getDialect() {
+            return dialect;
         }
     }
 
@@ -108,13 +124,13 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
 
         entityManagerFactoryBean.setDataSource(dataSource());
         entityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
-        entityManagerFactoryBean.setPackagesToScan(PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN);
-        entityManagerFactoryBean.setJpaProperties(hibProperties());
+        entityManagerFactoryBean.setPackagesToScan(PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN + ".pdm");
+        entityManagerFactoryBean.setJpaProperties(hibProperties(dataBaseType.url));
 
         return entityManagerFactoryBean;
     }
 
-    private Properties hibProperties() {
+    public static Properties hibProperties(String url) {
         Properties properties = new Properties();
 
         properties.put("hibernate.hbm2ddl.auto", "update");
@@ -125,7 +141,7 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
         properties.put("hibernate.connection.characterEncoding", "UTF-8");
         properties.put("hibernate.connection.charSet", "UTF-8");
 
-        properties.put("hibernate.connection.url", dataBaseType.url);
+        properties.put("hibernate.connection.url", url );
         properties.put("hibernate.connection.username", PROPERTY_NAME_DATABASE_USERNAME);
         properties.put("hibernate.connection.password", PROPERTY_NAME_DATABASE_PASSWORD);
 

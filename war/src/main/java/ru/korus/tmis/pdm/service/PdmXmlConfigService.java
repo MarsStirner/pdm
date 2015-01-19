@@ -36,6 +36,8 @@ public interface PdmXmlConfigService {
 
     byte[] getInternalKey() throws NoSuchAlgorithmException, InvalidKeySpecException;
 
+    byte[] getInternalFileKey() throws NoSuchAlgorithmException, InvalidKeySpecException;
+
     boolean setNewCfgFile(String newLogin);
 
     boolean updateSystemPasswordKey(String newPassword, PdmConfig.Systems.System system);

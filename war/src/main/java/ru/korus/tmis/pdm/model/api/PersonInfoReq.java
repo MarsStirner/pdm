@@ -6,6 +6,8 @@ package ru.korus.tmis.pdm.model.api;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
+
+@Deprecated
 public class PersonInfoReq {
 
     private String token;

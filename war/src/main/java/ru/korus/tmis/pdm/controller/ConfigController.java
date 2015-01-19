@@ -28,6 +28,7 @@ import java.util.Map;
 public class ConfigController implements Serializable {
 
     public final static String MAIN_JSP = "main";
+    public final static String FILE_JSP = "file";
 
     @Autowired
     private ConfigService configService;

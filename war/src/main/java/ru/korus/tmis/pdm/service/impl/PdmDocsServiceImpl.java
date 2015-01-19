@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.model.PdmAttrInfo;
 import ru.korus.tmis.pdm.model.PdmDocs;
 import ru.korus.tmis.pdm.model.PdmDocsInfo;
+import ru.korus.tmis.pdm.model.PdmFilesInfo;
 import ru.korus.tmis.pdm.service.PdmDocsService;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
@@ -37,6 +38,14 @@ public class PdmDocsServiceImpl implements PdmDocsService {
             pdmDocsInfo.setNewDescription(doc.getDescription());
             initAttr(pdmDocsInfo, doc.getAttribute());
             res.getDocs().add(pdmDocsInfo);
+        }
+        res.setFiles(new LinkedList<PdmFilesInfo>());
+        for (PdmConfig.Files.File file : pdmXmlConfigService.getFiles()) {
+            PdmFilesInfo pdmFilesInfo = new PdmFilesInfo();
+            pdmFilesInfo.setName(file.getName());
+            pdmFilesInfo.setOid(file.getOid());
+            pdmFilesInfo.setDescription(file.getDescription());
+            res.getFiles().add(pdmFilesInfo);
         }
         return res;
     }

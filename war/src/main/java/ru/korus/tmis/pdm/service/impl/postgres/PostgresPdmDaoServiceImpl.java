@@ -3,13 +3,15 @@ package ru.korus.tmis.pdm.service.impl.postgres;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.config.PdmSpringConfiguration;
-import ru.korus.tmis.pdm.entities.*;
+import ru.korus.tmis.pdm.entities.pdm.*;
+import ru.korus.tmis.pdm.entities.pdmfiles.PdmFiles;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
 import ru.korus.tmis.pdm.model.api.UpdateInfo;
 import ru.korus.tmis.pdm.model.api.ValueInfo;
-import ru.korus.tmis.pdm.repositories.*;
+import ru.korus.tmis.pdm.repositories.pdm.*;
+import ru.korus.tmis.pdm.repositories.pdmfiles.PdmFilesRepository;
 import ru.korus.tmis.pdm.service.PdmDaoService;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 import ru.korus.tmis.pdm.service.PersonalDataBuilderService;
@@ -50,13 +52,16 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
     AddrRepository addrRepository;
 
     @Autowired
-    private  DocumentRepository documentRepository;
+    private DocumentRepository documentRepository;
 
     @Autowired
     PersonalDataBuilderService personalDataBuilderService;
 
     @Autowired
     private PdmXmlConfigService pdmXmlConfigService;
+
+    @Autowired
+    private PdmFilesRepository pdmFilesRepository;
 
     @Override
     public List<Byte> save(PersonalInfo personalInfo) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
@@ -75,6 +80,17 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
         Person personalData = personDataRepository.findByPrivateKeyAndPrevIsNull(privateKey);
         return personalData == null ? null : personalDataBuilderService.createPersonalInfo(personalData, senderId);
     }
+
+    @Override
+    public byte[] findFileById(byte[] privateKey, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
+        PdmFiles personalData = pdmFilesRepository.findByPrivateKeyAndPrevIsNull(privateKey);
+        if(personalData == null || personalData.getData() == null || personalData.getData().length == 0) {
+            return null;
+        } else {
+            return  Crypting.decrypt(pdmXmlConfigService.getInternalFileKey(), personalData.getData());
+        }
+    }
+
 
     @Override
     public List<PersonalInfo> find(PersonalInfo person, String senderId) {

@@ -64,6 +64,16 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
+    public byte[] findFileById(byte[] privateKey, String senderId) {
+        throw new RuntimeException("TODO!!");
+        /*PersonalData person = mongoOperation.findById(id, PersonalData.class);
+        if( person == null ) {
+            throw new RuntimeException("The person with id'" + id + "' not found");
+        }
+        return person;*/
+    }
+
+    @Override
     public List<PersonalInfo> find(PersonalInfo person, String senderId) {
       /*  String query = "";
         query += addFindPrm("given", person.getGiven());

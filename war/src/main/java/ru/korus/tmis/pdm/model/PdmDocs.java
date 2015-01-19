@@ -13,6 +13,11 @@ public class PdmDocs {
 
     private PdmDocsInfo newDoc;
 
+    private List<PdmFilesInfo> files;
+
+    private PdmFilesInfo newFile;
+
+
     public List<PdmDocsInfo> getDocs() {
         return docs;
     }
@@ -27,5 +32,21 @@ public class PdmDocs {
 
     public void setNewDoc(PdmDocsInfo newDoc) {
         this.newDoc = newDoc;
+    }
+
+    public List<PdmFilesInfo> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<PdmFilesInfo> files) {
+        this.files = files;
+    }
+
+    public PdmFilesInfo getNewFile() {
+        return newFile;
+    }
+
+    public void setNewFile(PdmFilesInfo newFile) {
+        this.newFile = newFile;
     }
 }

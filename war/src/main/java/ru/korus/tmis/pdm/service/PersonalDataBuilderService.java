@@ -1,6 +1,6 @@
 package ru.korus.tmis.pdm.service;
 
-import ru.korus.tmis.pdm.entities.*;
+import ru.korus.tmis.pdm.entities.pdm.*;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;

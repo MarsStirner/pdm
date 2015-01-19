@@ -1,10 +1,8 @@
 package ru.korus.tmis.pdm.model.api;
 
-import ru.korus.tmis.pdm.entities.HistoryState;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 
-import java.security.PublicKey;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,6 +35,8 @@ public class PersonalInfo {
     private List<AddrInfo> addressList;
 
     private List<DocsInfo> documents;
+
+    private List<ValueInfo> files;
 
     public String getGiven() {
         return given;
@@ -172,5 +172,16 @@ public class PersonalInfo {
         res += middleName == null ? "" : (middleName + " ");
         res += family == null ? "" : family;
         return res.trim();
+    }
+
+    public List<ValueInfo> getFiles() {
+        if(files == null) {
+            return new LinkedList<ValueInfo>();
+        }
+        return files;
+    }
+
+    public void setFiles(List<ValueInfo> files) {
+        this.files = files;
     }
 }
