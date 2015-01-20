@@ -1,6 +1,7 @@
 package ru.korus.tmis.pdm.service;
 
 import ru.korus.tmis.pdm.entities.pdm.*;
+import ru.korus.tmis.pdm.entities.pdmfiles.PdmFiles;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
@@ -35,6 +36,8 @@ public interface PersonalDataBuilderService {
     AddrInfo createAddrInfo(Addr addr, String senderOid);
 
     Document createDocument(DocsInfo docsInfo);
+
+    PdmFiles createFile(byte[] keyFile, ValueInfo fileInfo) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException;
 
     Attr createAttr(ValueInfo attr);
 

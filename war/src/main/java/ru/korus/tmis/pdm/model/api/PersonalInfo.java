@@ -123,6 +123,9 @@ public class PersonalInfo {
     }
 
     public List<DocsInfo> getDocuments() {
+        if(documents == null) {
+            documents = new LinkedList<>();
+        }
         return documents;
     }
 

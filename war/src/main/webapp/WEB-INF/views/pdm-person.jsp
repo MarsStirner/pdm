@@ -315,7 +315,7 @@
                                     <strong>{{file.oid}}</strong>
                                 </td>
                                 <td>
-
+                                    {{file.name}}
                                     <a href="/file/?publicKey={{file.publicKey}}&systemOid={{systemLogin.oid}}&token=${token}">
                                         {{file.publicKey}}
                                     </a>
@@ -346,10 +346,12 @@
                                 placeholder="добавить">
                             Добавить файл
                         </button>
+
                         <jsp:include page="modal_new_person_files.jsp">
                             <jsp:param name="id" value="newPersonFileAdd"/>
                             <jsp:param name="value" value="newFile"/>
-                            <jsp:param name="action" value="addFile(newFile)"/>
+                            <jsp:param name="isUpdate" value="true"/>
+                            <jsp:param name="action" value="updateFile(newFile)"/>
                         </jsp:include>
                     </fieldset>
                 </form>

@@ -58,6 +58,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
     @Autowired
     private PdmFilesRepository pdmFilesRepository;
 
+
     @Override
     public Person createPersonalData(PersonalInfo personalInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
         Person res = new Person();
@@ -106,7 +107,8 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         return res;
     }
 
-    private PdmFiles createFile(byte[] keyFile, ValueInfo fileInfo) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+    @Override
+    public PdmFiles createFile(byte[] keyFile, ValueInfo fileInfo) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         PdmFiles res = new PdmFiles();
         res.setData(Crypting.crypt(keyFile, fileInfo.getValue().getBytes()));
         res.setOid(fileInfo.getOid());

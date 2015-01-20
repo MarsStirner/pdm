@@ -879,6 +879,20 @@ public class PdmServiceImpl implements PdmService {
                     }
                 }
             }
+
+            //update files
+            Map<String, ValueInfo> filesByPublicKey = initObjByPublicKey(personalInfoOld.getFiles());
+            for (ValueInfo filesInfo : personalInfo.getFiles()) {
+                if(filesInfo.getPublicKey() == null) {
+                    pdmDaoServiceLocator.getPdmDaoService().addFiles(privateKey, filesInfo);
+                } else {
+                    ValueInfo fileOld = filesByPublicKey.get(filesInfo.getPublicKey());
+                    if (fileOld != null && fileOld.isNeedUpdate(filesInfo)) {
+                        byte[] privateKeyFile = toPrivateKey(fileOld.getPublicKey(), senderOid);
+                        pdmDaoServiceLocator.getPdmDaoService().updateFile(privateKeyFile, filesInfo);
+                    }
+                }
+            }
             return personalInfo;
         } catch (BadPaddingException
                 | NoSuchAlgorithmException

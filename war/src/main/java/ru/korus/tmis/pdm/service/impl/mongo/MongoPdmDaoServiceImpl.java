@@ -152,6 +152,17 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
+    public void addFiles(byte[] privateKey, ValueInfo valueInfo) {
+        throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void updateFile(byte[] privateKeyFile, ValueInfo filesInfo) {
+        throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+
+    @Override
     public void updateDoc(byte[] privateKeyDoc, DocsInfo docsInfo) {
         throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
     }

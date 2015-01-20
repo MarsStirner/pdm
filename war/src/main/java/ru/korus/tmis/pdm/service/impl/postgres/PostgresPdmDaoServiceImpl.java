@@ -303,5 +303,31 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
         personDataRepository.save(personalData);
     }
 
+    @Override
+    public void addFiles(byte[] privateKey, ValueInfo fileInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+        byte[] fileKey = pdmXmlConfigService.getInternalFileKey();
+        PdmFiles pdmFiles = personalDataBuilderService.createFile(fileKey, fileInfo);
+        pdmFilesRepository.save(pdmFiles);
+        final byte[] key = pdmXmlConfigService.getInternalKey();
+        Person personalData = personDataRepository.findByPrivateKeyAndPrevIsNull(privateKey);
+        personalData.getFiles().add(new Files(Crypting.crypt(key, pdmFiles.getPrivateKey())));
+        personDataRepository.save(personalData);
+    }
+
+    @Override
+    public void updateFile(byte[] privateKey, ValueInfo fileInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
+        PdmFiles fileTop = pdmFilesRepository.findByPrivateKeyAndPrevIsNull(privateKey).top();
+        UpdateInfo updateInfo = fileInfo.getUpdateInfo();
+        HistoryState historyState = HistoryState.valueOf(updateInfo.getType());
+        byte[] fileKey = pdmXmlConfigService.getInternalFileKey();
+        PdmFiles fileNew = historyState == HistoryState.DELETED ? null : personalDataBuilderService.createFile(fileKey, fileInfo);
+        fileTop.initNextPrev(fileNew, updateInfo.getBegDate());
+        if(fileNew != null) {
+            pdmFilesRepository.save(fileNew);
+        }
+        fileTop.setHistoryState(historyState);
+        pdmFilesRepository.save(fileTop);
+    }
+
 
 }

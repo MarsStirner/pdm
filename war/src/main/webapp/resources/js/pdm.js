@@ -211,8 +211,18 @@ function createController($scope, $http) {
         var prm = {
             token: $scope.newPerson.token,
             publicKey: $scope.personInfo.publicKey,
+
             documents: [
-                 doc
+                {
+                    description: doc.description,
+                    attrs: doc.attrs,
+                    name: doc.name,
+                    publicKey: doc.publicKey,
+                    updateInfo: {
+                        type: doc.updateType.code
+                    }
+
+                }
             ]
         }
         $http.put("../api/update", prm)
@@ -332,6 +342,27 @@ function createController($scope, $http) {
     $scope.addFile = function(newFile) {
         $scope.newPerson.files.push(angular.copy(newFile));
         $scope.newFile = null;
+    }
+
+    $scope.updateFile = function(newFile) {
+        var prm = {
+            token: urlParam('token'),
+            publicKey: $scope.personInfo.publicKey,
+            files: [
+                newFile
+            ]
+        }
+        $http.put("../api/update", prm)
+    }
+
+    urlParam = function(name){
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (results==null){
+            return null;
+        }
+        else{
+            return results[1] || 0;
+        }
     }
 
 

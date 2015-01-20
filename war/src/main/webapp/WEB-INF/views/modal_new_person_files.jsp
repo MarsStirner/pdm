@@ -27,6 +27,13 @@
                             </c:forEach>
                         </select>
                     </div>
+                    <div class="form-group" data-ng-if="${param.isUpdate}" >
+                        <label for="updateTypeFile">Причина обновления:</label>
+                        <select id="updateTypeFile" class="form-control" placeholder="тип обновления"
+                                data-ng-model="${param.value}.updateType"
+                                data-ng-options="type.name for type in updateTypes"
+                                data-ng-init="${param.value}.updateType=updateTypes[0]"></select>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
