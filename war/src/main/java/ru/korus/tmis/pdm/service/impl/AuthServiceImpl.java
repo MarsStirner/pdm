@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -105,7 +106,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public boolean logout(String token) {
+    synchronized public boolean logout(String token) {
         return tokens.remove(token) != null;
     }
 
@@ -119,7 +120,8 @@ public class AuthServiceImpl implements AuthService {
         AuthData authDataByToken = getAuthDataByToken(token);
         return authDataByToken == null ? null : authDataByToken.login;
     }
-    private AuthData getAuthDataByToken(String tokenValue) {
+
+    synchronized private AuthData getAuthDataByToken(String tokenValue) {
         AuthData authData = tokens.get(tokenValue);
         if (authData != null) {
             authData.loginTime = new Date();
@@ -130,11 +132,15 @@ public class AuthServiceImpl implements AuthService {
     //TODO java.util.ConcurrentModificationException!
     synchronized private void clearToken() {
         Date deadline = new Date((new Date()).getTime() - MAX_IDLE_MINUTES * 60 * 1000);
-        for (Map.Entry<String, AuthData> token : tokens.entrySet()) {
-            if (token.getValue().loginTime.before(deadline)) {
-                tokens.remove(token.getKey());
+        Iterator it = tokens.entrySet().iterator();
+        while (it.hasNext())
+        {
+            Map.Entry<String, AuthData> item = (Map.Entry<String, AuthData>)it.next();
+            if (item.getValue().loginTime.before(deadline)) {
+                it.remove();
             }
         }
+
     }
 
     private void clearCooke(HttpServletResponse response, Cookie[] cookies) {

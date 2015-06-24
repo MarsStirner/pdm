@@ -27,8 +27,10 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
                              HttpServletResponse response, Object handler) throws Exception {
         boolean isAuth = authService.checkTokenCookies(request, response);
         request.getSession().setAttribute(AUTH_SESSION, true);
+        String uri = request.getRequestURI();
         String servletInfo = request.getServletPath();
-        if (!isAuth &&
+        if (!uri.startsWith("/api")&&
+                !isAuth &&
                 !(ViewState.ROOT.getPath().equals(servletInfo) ||
                         ViewState.AUTH.getPath().equals(servletInfo))) {
             String path = serviceUrl(request, ViewState.AUTH.getPath());
