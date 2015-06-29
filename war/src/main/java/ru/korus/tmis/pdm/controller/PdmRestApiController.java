@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ru.korus.tmis.pdm.model.PdmDocsInfo;
 import ru.korus.tmis.pdm.model.api.FindQuery;
 import ru.korus.tmis.pdm.model.api.*;
 import ru.korus.tmis.pdm.service.AuthService;
+import ru.korus.tmis.pdm.service.PdmDocsService;
 import ru.korus.tmis.pdm.service.PdmService;
 
 import javax.xml.bind.DatatypeConverter;
+import java.util.List;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -27,6 +30,9 @@ public class PdmRestApiController {
 
     @Autowired
     PdmService pdmService;
+
+    @Autowired
+    PdmDocsService pdmDocsService;
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     @ResponseBody
@@ -103,4 +109,11 @@ public class PdmRestApiController {
         return res;
     }
 
+    //pdmDocsService.getDocsInfo();
+
+    @RequestMapping(value = "docs/meta", method = RequestMethod.GET)
+    @ResponseBody
+    public ru.korus.tmis.pdm.model.PdmDocs getDocsMeta() {
+        return pdmDocsService.getDocsInfo();
+    }
 }

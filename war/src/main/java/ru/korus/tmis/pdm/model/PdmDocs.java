@@ -11,11 +11,11 @@ import java.util.List;
 public class PdmDocs {
     private List<PdmDocsInfo> docs;
 
-    private PdmDocsInfo newDoc;
+    private transient PdmDocsInfo newDoc;
 
     private List<PdmFilesInfo> files;
 
-    private PdmFilesInfo newFile;
+    private transient PdmFilesInfo newFile;
 
 
     public List<PdmDocsInfo> getDocs() {

@@ -1,5 +1,7 @@
 package ru.korus.tmis.pdm.model;
 
+import org.springframework.data.annotation.Transient;
+
 import java.util.List;
 
 /**
@@ -16,11 +18,11 @@ public class PdmDocsInfo extends PdmMessage {
 
     private List<PdmAttrInfo> attrs;
 
-    private String newName;
+    private transient String newName;
 
-    private String newDescription;
+    private transient String newDescription;
 
-    private PdmAttrInfo newAttr;
+    private transient PdmAttrInfo newAttr;
 
     public String getName() {
         return name;

@@ -14,11 +14,11 @@ public class PdmAttrInfo {
 
     private String oid;
 
-    private String newDescription;
+    private transient String newDescription;
 
-    private String newOid;
+    private transient String newOid;
 
-    private String newName;
+    private transient String newName;
 
     public String getName() {
         return name;

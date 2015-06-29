@@ -1,5 +1,7 @@
 package ru.korus.tmis.pdm.model;
 
+import org.springframework.data.annotation.Transient;
+
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,7 +14,8 @@ import java.util.Date;
  */
 public class PdmMessage {
 
-    private final Format formatter = new SimpleDateFormat("HH:mm:ss");
+    @Transient
+    private transient  final Format formatter = new SimpleDateFormat("HH:mm:ss");
 
     public static enum PdmMsgType {
         INFO("success"),
@@ -29,9 +32,9 @@ public class PdmMessage {
         }
     }
 
-    private String msg;
+    private transient  String msg;
 
-    private PdmMsgType type;
+    private transient  PdmMsgType type;
 
     public String getMsg() {
         return msg;
