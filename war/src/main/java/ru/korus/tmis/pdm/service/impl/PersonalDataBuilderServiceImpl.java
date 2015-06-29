@@ -240,6 +240,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         PdmConfig.Docs.Doc.Attribute attrXml = pdmXmlConfigService.getObjectByOid(oid);
         if (attrXml != null) {
             res.setDescription(attrXml.getDescription());
+            res.setName(attrXml.getName());
         }
         return res;
     }

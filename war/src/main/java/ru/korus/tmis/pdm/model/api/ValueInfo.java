@@ -23,6 +23,8 @@ public class ValueInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
 
     private UpdateInfo updateInfo;
 
+    private String name;
+
     public ValueInfo() {
 
     }
@@ -92,5 +94,13 @@ public class ValueInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
 
     public String toQuery() {
         return value == null ? "" : value;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 }
