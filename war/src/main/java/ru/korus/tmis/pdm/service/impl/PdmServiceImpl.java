@@ -4,6 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.korus.tmis.pdm.entities.pdm.Addr;
+import ru.korus.tmis.pdm.entities.pdm.Document;
+import ru.korus.tmis.pdm.entities.pdm.Telecom;
+import ru.korus.tmis.pdm.entities.pdmfiles.*;
 import ru.korus.tmis.pdm.model.*;
 import ru.korus.tmis.pdm.model.api.*;
 import ru.korus.tmis.pdm.service.*;
@@ -842,7 +846,9 @@ public class PdmServiceImpl implements PdmService {
             Map<String, ValueInfo> telecomByPublicKey = initObjByPublicKey(personalInfoOld.getTelecoms());
             for (ValueInfo telecom : personalInfo.getTelecoms()) {
                 if(telecom.getPublicKey() == null) {
-                    pdmDaoServiceLocator.getPdmDaoService().addTelecom(privateKey, telecom);
+                    Telecom tel = pdmDaoServiceLocator.getPdmDaoService().addTelecom(privateKey, telecom);
+                    ValueInfo telNew = personalDataBuilderService.createValueInfo(tel, senderOid);
+                    telecom.setPublicKey(telNew.getPublicKey());
                 } else {
                     ValueInfo telecomOld = telecomByPublicKey.get(telecom.getPublicKey());
                     if (telecomOld != null && telecomOld.isNeedUpdate(telecom)) {
@@ -856,7 +862,9 @@ public class PdmServiceImpl implements PdmService {
             Map<String, AddrInfo> addrByPublicKey = initObjByPublicKey(personalInfoOld.getAddressList());
             for (AddrInfo addrInfo : personalInfo.getAddressList()) {
                 if(addrInfo.getPublicKey() == null) {
-                    pdmDaoServiceLocator.getPdmDaoService().addAddr(privateKey, addrInfo);
+                    Addr addr = pdmDaoServiceLocator.getPdmDaoService().addAddr(privateKey, addrInfo);
+                    AddrInfo addrInfoNew = personalDataBuilderService.createAddrInfo(addr, senderOid);
+                    addrInfo.setPublicKey(addrInfoNew.getPublicKey());
                 } else {
                     AddrInfo addrOld = addrByPublicKey.get(addrInfo.getPublicKey());
                     if (addrOld != null && addrOld.isNeedUpdate(addrInfo)) {
@@ -870,7 +878,9 @@ public class PdmServiceImpl implements PdmService {
             Map<String, DocsInfo> docByPublicKey = initObjByPublicKey(personalInfoOld.getDocuments());
             for (DocsInfo docsInfo : personalInfo.getDocuments()) {
                 if(docsInfo.getPublicKey() == null) {
-                    pdmDaoServiceLocator.getPdmDaoService().addDocs(privateKey, docsInfo);
+                    Document doc = pdmDaoServiceLocator.getPdmDaoService().addDocs(privateKey, docsInfo);
+                    DocsInfo docsInfoNew = personalDataBuilderService.createDocsInfo(doc, senderOid);
+                    docsInfo.setPublicKey(docsInfoNew.getPublicKey());
                 } else {
                     DocsInfo docOld = docByPublicKey.get(docsInfo.getPublicKey());
                     if (docOld != null && docOld.isNeedUpdate(docsInfo)) {
@@ -884,7 +894,9 @@ public class PdmServiceImpl implements PdmService {
             Map<String, ValueInfo> filesByPublicKey = initObjByPublicKey(personalInfoOld.getFiles());
             for (ValueInfo filesInfo : personalInfo.getFiles()) {
                 if(filesInfo.getPublicKey() == null) {
-                    pdmDaoServiceLocator.getPdmDaoService().addFiles(privateKey, filesInfo);
+                    ru.korus.tmis.pdm.entities.pdmfiles.PdmFiles f = pdmDaoServiceLocator.getPdmDaoService().addFiles(privateKey, filesInfo);
+                    ValueInfo filesInfoNew = personalDataBuilderService.createFileInfo(f, senderOid);
+                    filesInfo.setPublicKey(filesInfoNew.getPublicKey());
                 } else {
                     ValueInfo fileOld = filesByPublicKey.get(filesInfo.getPublicKey());
                     if (fileOld != null && fileOld.isNeedUpdate(filesInfo)) {

@@ -67,17 +67,17 @@ public interface PdmDaoService {
 
     void updateTelecom(byte[] privateKeyTelecom, ValueInfo telecom);
 
-    void addTelecom(byte[] privateKey, ValueInfo telecom) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
+    ru.korus.tmis.pdm.entities.pdm.Telecom addTelecom(byte[] privateKey, ValueInfo telecom) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
 
     void updateAddr(byte[] privateKeyAddr, AddrInfo addrInfo);
 
-    void addAddr(byte[] privateKey, AddrInfo addrInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
+    ru.korus.tmis.pdm.entities.pdm.Addr addAddr(byte[] privateKey, AddrInfo addrInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
 
     void updateDoc(byte[] privateKeyDoc, DocsInfo docsInfo);
 
-    void addDocs(byte[] privateKey, DocsInfo docsInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
+    ru.korus.tmis.pdm.entities.pdm.Document addDocs(byte[] privateKey, DocsInfo docsInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
 
-    void addFiles(byte[] privateKey, ValueInfo fileInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
+    ru.korus.tmis.pdm.entities.pdmfiles.PdmFiles addFiles(byte[] privateKey, ValueInfo fileInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
 
     void updateFile(byte[] privateKey, ValueInfo fileInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException;
 }

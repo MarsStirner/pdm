@@ -132,7 +132,7 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public void addTelecom(byte[] privateKey, ValueInfo telecom) {
+    public ru.korus.tmis.pdm.entities.pdm.Telecom addTelecom(byte[] privateKey, ValueInfo telecom) {
         throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -142,17 +142,17 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public void addAddr(byte[] privateKey, AddrInfo addrInfo) {
+    public ru.korus.tmis.pdm.entities.pdm.Addr addAddr(byte[] privateKey, AddrInfo addrInfo) {
         throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void addDocs(byte[] privateKey, DocsInfo docsInfo) {
+    public ru.korus.tmis.pdm.entities.pdm.Document addDocs(byte[] privateKey, DocsInfo docsInfo) {
         throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void addFiles(byte[] privateKey, ValueInfo valueInfo) {
+    public ru.korus.tmis.pdm.entities.pdmfiles.PdmFiles addFiles(byte[] privateKey, ValueInfo valueInfo) {
         throw new RuntimeException("Not implemented");  //To change body of implemented methods use File | Settings | File Templates.
     }
 

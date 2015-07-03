@@ -246,13 +246,14 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public void addTelecom(byte[] privateKey, ValueInfo telecomInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+    public Telecom addTelecom(byte[] privateKey, ValueInfo telecomInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
         Telecom telecom = personalDataBuilderService.createTelecom(telecomInfo);
         telecomRepository.save(telecom);
         final byte[] key = pdmXmlConfigService.getInternalKey();
         Person personalData = personDataRepository.findByPrivateKeyAndPrevIsNull(privateKey);
         personalData.getTelecoms().add(new Telecoms(Crypting.crypt(key, telecom.getPrivateKey())));
         personDataRepository.save(personalData);
+        return telecom;
     }
 
     @Override
@@ -270,13 +271,14 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public void addAddr(byte[] privateKey, AddrInfo addrInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+    public Addr addAddr(byte[] privateKey, AddrInfo addrInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
         Addr addr = personalDataBuilderService.createAddr(addrInfo);
         addrRepository.save(addr);
         final byte[] key = pdmXmlConfigService.getInternalKey();
         Person personalData = personDataRepository.findByPrivateKeyAndPrevIsNull(privateKey);
         personalData.getAddress().add(new Addresses(Crypting.crypt(key, addr.getPrivateKey())));
         personDataRepository.save(personalData);
+        return addr;
     }
 
     @Override
@@ -294,17 +296,18 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public void addDocs(byte[] privateKey, DocsInfo docsInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+    public Document addDocs(byte[] privateKey, DocsInfo docsInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
         Document doc = personalDataBuilderService.createDocument(docsInfo);
         documentRepository.save(doc);
         final byte[] key = pdmXmlConfigService.getInternalKey();
         Person personalData = personDataRepository.findByPrivateKeyAndPrevIsNull(privateKey);
         personalData.getDocs().add(new Docs(Crypting.crypt(key, doc.getPrivateKey())));
         personDataRepository.save(personalData);
+        return doc;
     }
 
     @Override
-    public void addFiles(byte[] privateKey, ValueInfo fileInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+    public PdmFiles addFiles(byte[] privateKey, ValueInfo fileInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
         byte[] fileKey = pdmXmlConfigService.getInternalFileKey();
         PdmFiles pdmFiles = personalDataBuilderService.createFile(fileKey, fileInfo);
         pdmFilesRepository.save(pdmFiles);
@@ -312,6 +315,7 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
         Person personalData = personDataRepository.findByPrivateKeyAndPrevIsNull(privateKey);
         personalData.getFiles().add(new Files(Crypting.crypt(key, pdmFiles.getPrivateKey())));
         personDataRepository.save(personalData);
+        return pdmFiles;
     }
 
     @Override

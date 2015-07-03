@@ -186,7 +186,8 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         return res;
     }
 
-    private ValueInfo createFileInfo(PdmFiles file, String senderId) {
+    @Override
+    public ValueInfo createFileInfo(PdmFiles file, String senderId) {
         ValueInfo res = new ValueInfo();
         res.setOid(file.getOid());
         initPublicKey(file, senderId, res);
