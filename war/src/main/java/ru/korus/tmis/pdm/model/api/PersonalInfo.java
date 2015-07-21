@@ -3,6 +3,7 @@ package ru.korus.tmis.pdm.model.api;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -123,7 +124,7 @@ public class PersonalInfo {
     }
 
     public List<DocsInfo> getDocuments() {
-        if(documents == null) {
+        if (documents == null) {
             documents = new LinkedList<>();
         }
         return documents;
@@ -178,7 +179,7 @@ public class PersonalInfo {
     }
 
     public List<ValueInfo> getFiles() {
-        if(files == null) {
+        if (files == null) {
             return new LinkedList<ValueInfo>();
         }
         return files;

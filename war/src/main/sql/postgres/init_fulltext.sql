@@ -7,9 +7,11 @@ SET fulltext_names = (
   to_tsvector('english', coalesce(given, '') || ' ' || coalesce(family, '') || ' ' || coalesce("middleName", '')) ||
   to_tsvector('russian', coalesce(given, '') || ' ' || coalesce(family, '') || ' ' || coalesce("middleName", '')));
 
-CREATE INDEX "fulltext_names_idx"
+CREATE INDEX fulltext_names_idx
 ON person
-USING GIN (person.fulltext_names);
+USING gin
+(fulltext_names);
+
 
 CREATE FUNCTION person_trigger()
   RETURNS TRIGGER AS $$

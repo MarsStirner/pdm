@@ -86,10 +86,10 @@ public interface PDManager {
 
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/login")
     @WebResult(targetNamespace = "urn:hl7-org:v3", partName = "result")
-    public String login(String oid, String password);
+    public String login(@WebParam String oid, @WebParam String password);
 
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/logout")
     @WebResult(targetNamespace = "urn:hl7-org:v3", partName = "result")
-    public boolean logout(String token);
+    public Boolean logout(@WebParam String token);
 
 }

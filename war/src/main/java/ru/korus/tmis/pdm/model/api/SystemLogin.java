@@ -1,5 +1,7 @@
 package ru.korus.tmis.pdm.model.api;
 
+import java.io.Serializable;
+
 /**
  * Author:      Sergey A. Zagrebelny <br>
  * Date:        07.11.2014, 15:11 <br>

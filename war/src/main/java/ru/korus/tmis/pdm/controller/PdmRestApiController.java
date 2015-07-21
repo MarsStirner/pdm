@@ -12,6 +12,7 @@ import ru.korus.tmis.pdm.service.PdmDocsService;
 import ru.korus.tmis.pdm.service.PdmService;
 
 import javax.xml.bind.DatatypeConverter;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "api")
 @Scope("session")
-public class PdmRestApiController {
+public class PdmRestApiController  implements Serializable {
 
     @Autowired
     AuthService authService;

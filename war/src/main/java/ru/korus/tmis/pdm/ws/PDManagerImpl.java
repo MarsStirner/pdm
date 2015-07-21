@@ -18,17 +18,19 @@ import javax.jws.WebService;
  */
 
 @Service
+/*
 @WebService(endpointInterface = "ru.korus.tmis.pdm.ws.hl7.PDManager", targetNamespace = "http://www.korusconsulting.ru/PDManager/",
         serviceName = "tmis-pdm", portName = "portPdm", name = "PDManager")
-public class PDManagerImpl implements PDManager {
+*/
+public class PDManagerImpl /*implements PDManager*/ {/*
 
 
     @Autowired
     PdmService pdmService;
 
-    /**
+    *//**
      * @see ru.korus.tmis.pdm.ws.hl7.PDManager#add(ru.korus.tmis.pdm.ws.hl7.PRPAIN101311UV02)
-     */
+     *//*
     @Override
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/new")
     @WebResult(name = "PRPA_IN101312UV02", targetNamespace = "urn:hl7-org:v3", partName = "parameters")
@@ -36,9 +38,9 @@ public class PDManagerImpl implements PDManager {
         return pdmService.add(parameters);
     }
 
-    /**
+    *//**
      * @see ru.korus.tmis.pdm.ws.hl7.PDManager#findCandidates(ru.korus.tmis.pdm.ws.hl7.PRPAIN101305UV02)
-     */
+     *//*
     @Override
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/findCandidates")
     @WebResult(name = "PRPA_IN101306UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
@@ -46,9 +48,9 @@ public class PDManagerImpl implements PDManager {
         return pdmService.findCandidates(parameters);
     }
 
-    /**
+    *//**
      * @see ru.korus.tmis.pdm.ws.hl7.PDManager#getDemographics(ru.korus.tmis.pdm.ws.hl7.PRPAIN101307UV02)
-     */
+     *//*
     @Override
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/getDemographics")
     @WebResult(name = "PRPA_IN101308UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
@@ -56,9 +58,9 @@ public class PDManagerImpl implements PDManager {
         return pdmService.getDemographics(parameters);
     }
 
-    /**
+    *//**
      * @see ru.korus.tmis.pdm.ws.hl7.PDManager#update(ru.korus.tmis.pdm.ws.hl7.PRPAIN101314UV02)
-     */
+     *//*
     @Override
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/new")
     @WebResult(name = "PRPA_IN101315UV02", targetNamespace = "urn:hl7-org:v3", partName = "result")
@@ -87,10 +89,10 @@ public class PDManagerImpl implements PDManager {
     @Override
     @WebMethod(action = "http://www.korusconsulting.ru/PDManager/logout")
     @WebResult(targetNamespace = "urn:hl7-org:v3", partName = "result")
-    public boolean logout(String token) {
+    public Boolean logout(String token) {
         return pdmService.logout(token);
     }
 
 
-
+*/
 }
