@@ -76,6 +76,10 @@ function createController($scope, $http) {
         password: "a"
     }
 
+    $scope.rbm = {
+        url: "http://10.1.2.11:5005"
+    }
+
     $scope.createRes = {
     }
 
@@ -245,8 +249,8 @@ function createController($scope, $http) {
     $scope.loginAndLoad = function () {
         $http.post("api/login", $scope.systemLogin).
             success(function (data) {
-                $scope.newPerson.token = data.id;
-                $http.get("api/persons/?token=" + data.id).
+                $scope.newPerson.token = encodeURIComponent(data.id);
+                $http.get("api/persons/?token=" + $scope.newPerson.token).
                     success(function (data) {
                         $scope.persons = data.personList;
                         for (var i = 0; i < $scope.persons.length; i++) {
@@ -277,6 +281,14 @@ function createController($scope, $http) {
         $http.post(window.location.origin + "/api/login", $scope.systemLogin).
             success(function (data) {
                 $scope.newPerson.token = data.id;
+                $scope.newPerson.tokenEncode = encodeURIComponent(data.id);
+            }
+        );
+    }
+
+    $scope.updateOidList = function () {
+        $http.get(window.location.origin + "/docs/updateOidList/?url=" + $scope.rbm.url).
+            success(function (data) {
             }
         );
     }

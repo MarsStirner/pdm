@@ -15,8 +15,6 @@ import java.util.List;
  */
 public class PersonalInfo {
 
-    private String token;
-
     private String publicKey;
 
     private String given;
@@ -102,25 +100,6 @@ public class PersonalInfo {
 
     public void setAddressList(List<AddrInfo> addressList) {
         this.addressList = addressList;
-    }
-
-    public List<DocsInfo> getDocs() {
-        if (documents == null) {
-            documents = new LinkedList<>();
-        }
-        return documents;
-    }
-
-    public void setDocs(List<DocsInfo> docs) {
-        this.documents = docs;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
     public List<DocsInfo> getDocuments() {

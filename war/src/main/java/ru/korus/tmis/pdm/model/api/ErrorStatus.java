@@ -14,6 +14,8 @@ public class ErrorStatus {
 
     public static final ErrorStatus CRYPT_ERROR = new ErrorStatus(2 , "cryptographic algorithm error: %s");
 
+    public static final ErrorStatus WRONG_PARAMETERS = new ErrorStatus(3 , "wrong parameters");
+
     private final int errorNumber;
 
     private final String msg;

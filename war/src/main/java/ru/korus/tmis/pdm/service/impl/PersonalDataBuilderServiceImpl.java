@@ -89,7 +89,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
             res.getTelecoms().add(new Telecoms(Crypting.crypt(key, telecom.getPrivateKey())));
         }
 
-        for (DocsInfo docsInfo : personalInfo.getDocs()) {
+        for (DocsInfo docsInfo : personalInfo.getDocuments()) {
             Document document = createDocument(docsInfo);
             for (Attr attr : document.getAttribute()) {
                 attrRepository.save(attr);
@@ -287,6 +287,9 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         res.setState(addrTop.getState());
         res.setStreetAddressLine(addrTop.getStreetAddressLine());
         res.setStreetName(addrTop.getStreetName());
+        res.setKladr(addr.getKladr());
+        res.setKladrCity(addr.getKladrCity());
+        res.setIsCity(addr.isCity());
         initPublicKey(addr, senderOid, res);
         return res;
     }
@@ -376,6 +379,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         res.setState(addrInfo.getState());
         res.setStreetAddressLine(addrInfo.getStreetAddressLine());
         res.setStreetName(addrInfo.getStreetName());
+        res.setKladr(addrInfo.getKladr());
         initBegDate(addrInfo, res);
         return res;
     }

@@ -77,6 +77,7 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
             objectByOid.put(f.getOid(), f);
         }
         docsByName.clear();
+        docsByAttrOid.clear();
         for (PdmConfig.Docs.Doc doc : pdmConfig.getDocs().getDoc()) {
             docsByName.put(doc.getName(), doc);
             for (PdmConfig.Docs.Doc.Attribute attribute : doc.getAttribute()) {
@@ -176,7 +177,7 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
                 e.printStackTrace();
             }
         }
-        throw new RuntimeException("Unknown system OID: " + oid);
+        return null;
     }
 
     @Override
@@ -297,6 +298,7 @@ public class PdmXmlConfigServiceImpl implements PdmXmlConfigService {
         }
         return doc;
     }
+
 
     private PdmConfig.Docs.Doc getDocByAttrOid(String oid) {
         return docsByAttrOid.get(oid);

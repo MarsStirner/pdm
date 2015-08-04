@@ -6,10 +6,14 @@ import ru.korus.tmis.pdm.model.PdmAttrInfo;
 import ru.korus.tmis.pdm.model.PdmDocs;
 import ru.korus.tmis.pdm.model.PdmDocsInfo;
 import ru.korus.tmis.pdm.model.PdmFilesInfo;
+import ru.korus.tmis.pdm.model.rbm.RbmData;
+import ru.korus.tmis.pdm.model.rbm.RbmDocInfo;
+import ru.korus.tmis.pdm.model.rbm.RbmField;
 import ru.korus.tmis.pdm.service.PdmDocsService;
 import ru.korus.tmis.pdm.service.PdmXmlConfigService;
 import ru.korus.tmis.pdm.service.impl.xml.PdmConfig;
 
+import javax.xml.bind.JAXBException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,24 +55,81 @@ public class PdmDocsServiceImpl implements PdmDocsService {
     }
 
     @Override
-    public boolean addDoc(PdmDocsInfo newDoc) {
-        if (pdmXmlConfigService.getDocByName(newDoc.getName()) == null
-                && newDoc.getName() != null
-                && !newDoc.getName().isEmpty()) {
-            PdmConfig.Docs.Doc doc = PdmXmlConfigServiceImpl.getPdmXlmFactory().createPdmConfigDocsDoc();
-            pdmXmlConfigService.getDocs().add(doc);
+    public boolean addDocs(List<RbmData> newDocs) throws JAXBException {
+        List<PdmDocsInfo> newDocList = new LinkedList<>();
+        for(RbmData rbmData : newDocs) {
+            for(RbmDocInfo rbmDocInfo : rbmData.getTypes()) {
+                newDocList.add(toPdmDocInfo(rbmDocInfo));
+            }
+        }
+        return addNewDocs(newDocList);
+    }
 
-            doc.setName(newDoc.getName());
-            doc.setDescription(newDoc.getDescription());
+    private PdmDocsInfo toPdmDocInfo(RbmDocInfo rbmDocInfo) {
+        PdmDocsInfo res = new PdmDocsInfo();
+        res.setName(rbmDocInfo.getName());
+        res.setDescription(rbmDocInfo.getCode());
+        res.setAttrs(toAttrList(rbmDocInfo.getFields()));
+        return res;
+    }
+
+    private List<PdmAttrInfo> toAttrList(List<RbmField> fields) {
+        List<PdmAttrInfo> res = new LinkedList<>();
+        for( RbmField rbmField :  fields) {
+            res.add(toAttr(rbmField));
+        }
+        return res;
+    }
+
+    private PdmAttrInfo toAttr(RbmField rbmField) {
+        PdmAttrInfo res = new PdmAttrInfo();
+        res.setNewName(rbmField.getName());
+        res.setNewDescription(rbmField.getCode());
+        res.setNewOid(rbmField.getOid());
+        return res;
+    }
+
+    private boolean addNewDocs(List<PdmDocsInfo> newDocs) throws JAXBException {
+        pdmXmlConfigService.getDocs().clear();
+        for(PdmDocsInfo pdmDocsInfo : newDocs) {
+            PdmConfig.Docs.Doc doc = addNewDoc(pdmDocsInfo);
+            for (PdmAttrInfo pdmAttrInfo : pdmDocsInfo.getAttrs()) {
+                addAttr(pdmAttrInfo, doc);
+            }
+        }
+        pdmXmlConfigService.initObjectMap();
+        pdmXmlConfigService.saveXml();
+        return true;
+    }
+
+    @Override
+    public boolean addDoc(PdmDocsInfo newDoc) {
+        boolean res = false;
+        PdmConfig.Docs.Doc doc = addNewDoc(newDoc);
+        if ( doc != null ) {
+            pdmXmlConfigService.initObjectMap();
             PdmConfig.Docs.Doc.Attribute newAttr = new PdmConfig.Docs.Doc.Attribute();
             newAttr.setDescription("Введите наименование нового атрибута!");
             newAttr.setOid("Введите новый OID атрибута в '" + newDoc.getName() + "'!");
             newAttr.setName("Введите код!");
             doc.getAttribute().add(newAttr);
-
-            pdmXmlConfigService.initObjectMap();
+            res = true;
         }
-        return false;
+        return res;
+    }
+
+    private PdmConfig.Docs.Doc addNewDoc(PdmDocsInfo newDoc) {
+        PdmConfig.Docs.Doc doc  = null;
+        if (pdmXmlConfigService.getDocByName(newDoc.getName()) == null
+                && newDoc.getName() != null
+                && !newDoc.getName().isEmpty()) {
+            doc = PdmXmlConfigServiceImpl.getPdmXlmFactory().createPdmConfigDocsDoc();
+            pdmXmlConfigService.getDocs().add(doc);
+
+            doc.setName(newDoc.getName());
+            doc.setDescription(newDoc.getDescription());
+        }
+        return doc;
     }
 
     @Override
@@ -137,15 +198,19 @@ public class PdmDocsServiceImpl implements PdmDocsService {
         if(pdmXmlConfigService.getObjectByOid(newAttrInfo.getNewOid()) == null) {
             PdmConfig.Docs.Doc doc = pdmXmlConfigService.getDocByName(pdmDocsInfo.getName());
             if(doc != null) {
-                PdmConfig.Docs.Doc.Attribute newAttr = new PdmConfig.Docs.Doc.Attribute();
-                newAttr.setName(newAttrInfo.getNewName());
-                newAttr.setDescription(newAttrInfo.getNewDescription());
-                newAttr.setOid(newAttrInfo.getNewOid());
-                doc.getAttribute().add(newAttr);
+                addAttr(newAttrInfo, doc);
                 return pdmXmlConfigService.saveIfNeeded(true);
             }
         }
         return false;
+    }
+
+    private void addAttr(PdmAttrInfo newAttrInfo, PdmConfig.Docs.Doc doc) {
+        PdmConfig.Docs.Doc.Attribute newAttr = new PdmConfig.Docs.Doc.Attribute();
+        newAttr.setName(newAttrInfo.getNewName());
+        newAttr.setDescription(newAttrInfo.getNewDescription());
+        newAttr.setOid(newAttrInfo.getNewOid());
+        doc.getAttribute().add(newAttr);
     }
 
     private boolean checkAttrNewOid(String newOid, PdmConfig.Docs.Doc.Attribute attribute) {

@@ -3,16 +3,16 @@ package ru.korus.tmis.pdm.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import ru.korus.tmis.pdm.model.PdmDocs;
 import ru.korus.tmis.pdm.model.PdmDocsInfo;
 import ru.korus.tmis.pdm.model.PdmMessage;
+import ru.korus.tmis.pdm.model.rbm.RbmResponse;
 import ru.korus.tmis.pdm.service.PdmDocsService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +34,8 @@ public class PdmDocsController implements Serializable {
     private Map<String, PdmMessage> lastMsg = new HashMap<>();
     private PdmMessage msgNewDocs = null;
     private boolean isClearMsg = true;
+    private String urlPdm = "http://10.1.2.11:5005/";
+
 
     @RequestMapping(method = RequestMethod.GET)
     public String get(Map<String, Object> model) {
@@ -53,6 +55,7 @@ public class PdmDocsController implements Serializable {
         }
         model.put("pdmDocs", docsInfo);
         model.put("msgNewDocs", msgNewDocs);
+        model.put("rbmUrl", urlPdm);
         return ConfigController.MAIN_JSP;
     }
 
@@ -155,6 +158,20 @@ public class PdmDocsController implements Serializable {
                     PdmMessage.PdmMsgType.ERROR);
         }
         isClearMsg = false;
+        return ViewState.DOCS.redirect();
+    }
+
+    @RequestMapping(value = "updateOidList", method = RequestMethod.GET)
+    public String updateOidList(@RequestParam String url,
+                               Map<String, Object> model,
+                            HttpServletRequest request) throws JAXBException {
+        urlPdm = url;
+        RestTemplate restTemplate = new RestTemplate();
+        RbmResponse rbmResponse = restTemplate.getForObject(url + "/api/v1/rbPspdDocumentClass/", RbmResponse.class);
+        if( "ok".equals(rbmResponse.getMeta().getStatus()) ){
+            pdmDocsService.addDocs(rbmResponse.getData());
+        }
+
         return ViewState.DOCS.redirect();
     }
 }

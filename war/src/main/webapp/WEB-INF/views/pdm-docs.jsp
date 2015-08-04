@@ -4,8 +4,19 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
-<div class="pdm-frame">
+<div class="pdm-frame"  ng-app="" ng-controller="createController">
     <div class="col">
+
+        <fieldset class="form-group">
+            <legend></legend>
+            <div class="col-xs-7">
+                <label for="rbmUrlPD">url подсистемы справочников:</label>
+                <input type="text" id="rbmUrlPD" class="form-control" placeholder="url подсистемы справочников" data-ng-model="rbm.url" data-ng-init="rbm.url = '${rbmUrl}'"/>
+            </div>
+            <div class="col-xs-5">
+                <button type="submit" class="btn btn-primary  pull-right" placeholder="обновить из ПУС" data-ng-click="updateOidList()">Обновить из ПУС</button>
+            </div>
+        </fieldset>
 
         <table class="table table-bordered">
             <thead>

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import ru.korus.tmis.pdm.entities.pdm.Addr;
 import ru.korus.tmis.pdm.entities.pdm.Document;
 import ru.korus.tmis.pdm.entities.pdm.Telecom;
-import ru.korus.tmis.pdm.entities.pdmfiles.*;
 import ru.korus.tmis.pdm.model.*;
 import ru.korus.tmis.pdm.model.api.*;
 import ru.korus.tmis.pdm.service.*;
@@ -186,7 +185,7 @@ public class PdmServiceImpl implements PdmService {
 
     private void addDocs(PersonalInfo res, Map<String, DocsInfo> docs) {
         for (DocsInfo doc : docs.values()) {
-            res.getDocs().add(doc);
+            res.getDocuments().add(doc);
         }
     }
 
@@ -464,7 +463,7 @@ public class PdmServiceImpl implements PdmService {
         String query = new String();
         query += personalInfo.toQuery() + " ";
         query += personalInfo.getBirthInfo().toQuery() + " ";
-        for (DocsInfo d : personalInfo.getDocs()) {
+        for (DocsInfo d : personalInfo.getDocuments()) {
             query += d.toQuery() + " ";
         }
 
@@ -597,7 +596,7 @@ public class PdmServiceImpl implements PdmService {
             person.getIdentifiedPerson().setAdministrativeGenderCode(getHL7Gender(personalInfo));
             person.getIdentifiedPerson().setBirthTime(getHL7BirthDate(personalInfo));
 
-            for (DocsInfo doc : personalInfo.getDocs()) {
+            for (DocsInfo doc : personalInfo.getDocuments()) {
                 for (ValueInfo attr : doc.getAttrs()) {
                     PRPAMT101310UV02OtherIDs otherId = factoryHL7.createPRPAMT101310UV02OtherIDs();
                     otherId.getId().add(createII(attr));
@@ -654,7 +653,7 @@ public class PdmServiceImpl implements PdmService {
             person.getIdentifiedPerson().setAdministrativeGenderCode(getHL7Gender(personalInfo));
             person.getIdentifiedPerson().setBirthTime(getHL7BirthDate(personalInfo));
 
-            for (DocsInfo doc : personalInfo.getDocs()) {
+            for (DocsInfo doc : personalInfo.getDocuments()) {
                 for (ValueInfo attr : doc.getAttrs()) {
                     PRPAMT101303UV02OtherIDs otherId = factoryHL7.createPRPAMT101303UV02OtherIDs();
                     otherId.getId().add(createII(attr));
@@ -774,7 +773,7 @@ public class PdmServiceImpl implements PdmService {
 
     private List<Byte> save(PersonalInfo personalInfo) {
         boolean isAdded = false;
-        for (DocsInfo docInfo : personalInfo.getDocs()) {
+        for (DocsInfo docInfo : personalInfo.getDocuments()) {
             isAdded |= pdmDaoServiceLocator.getPdmDaoService().find(docInfo);
         }
         if (!isAdded) {
@@ -931,6 +930,22 @@ public class PdmServiceImpl implements PdmService {
             logger.error("security exception", e);
         }
         return null;
+    }
+
+    @Override
+    public Persons getPersonList(List<PersonalInfo> publicKeyList, String senderOid) {
+        Persons res = new Persons();
+        res.setPersonList(new ArrayList<PersonalInfo>(publicKeyList.size()));
+        res.setPersonErrorList(new ArrayList<String>());
+        for(PersonalInfo publicKey : publicKeyList) {
+            PersonalInfo personalInfo = getPerson(publicKey.getPublicKey(), senderOid);
+            if(personalInfo == null) {
+                res.getPersonErrorList().add(publicKey.getPublicKey());
+            } else {
+                res.getPersonList().add(personalInfo);
+            }
+        }
+        return res;
     }
 
 

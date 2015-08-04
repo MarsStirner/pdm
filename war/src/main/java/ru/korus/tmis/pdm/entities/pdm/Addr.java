@@ -71,6 +71,12 @@ public class Addr extends Use<Addr> {
 
     private String city;
 
+    private String kladr;
+
+    private String kladrCity;
+
+    private boolean isCity;
+
     static public Addr fromJson(String json) {
         try {
             return (new Gson()).fromJson(json, Addr.class);
@@ -179,6 +185,9 @@ public class Addr extends Use<Addr> {
         this.deliveryInstallationType = addr.deliveryInstallationType;
         this.state = addr.state;
         this.city = addr.city;
+        this.kladr = addr.kladr;
+        this.kladr = addr.kladrCity;
+        this.isCity = addr.isCity;
     }
 
     public String getCountry() {
@@ -399,5 +408,29 @@ public class Addr extends Use<Addr> {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getKladr() {
+        return kladr;
+    }
+
+    public void setKladr(String kladr) {
+        this.kladr = kladr;
+    }
+
+    public String getKladrCity() {
+        return kladrCity;
+    }
+
+    public void setKladrCity(String kladrCity) {
+        this.kladrCity = kladrCity;
+    }
+
+    public boolean isCity() {
+        return isCity;
+    }
+
+    public void setCity(boolean isCity) {
+        this.isCity = isCity;
     }
 }

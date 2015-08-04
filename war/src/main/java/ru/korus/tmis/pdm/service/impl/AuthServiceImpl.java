@@ -11,6 +11,7 @@ import ru.korus.tmis.pdm.utilities.Crypting;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.DatatypeConverter;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
@@ -81,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
 
         String token = null;
         for (int tryIndex = 0;
-             tryIndex < 10 && tokens.get(token = Base64.encode(Crypting.getSecureRandomBytes(16))) != null; ++tryIndex)
+             tryIndex < 10 && tokens.get(token = DatatypeConverter.printBase64Binary(Crypting.getSecureRandomBytes(16))) != null; ++tryIndex)
             ;
 
         if (tokens.get(token) == null) {

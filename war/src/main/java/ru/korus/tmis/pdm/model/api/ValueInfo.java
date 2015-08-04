@@ -51,6 +51,7 @@ public class ValueInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
         this.value = value;
     }
 
+    //TODO remove from json
     @Override
     public String getUse() {
         return description;

@@ -31,10 +31,16 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
     public static final String PROPERTY_NAME_DATABASE_URL_MYSQL = "jdbc:mysql://localhost:3306/pdm?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8";
 
     public static final String PROPERTY_NAME_DATABASE_DRIVER_POSTGRESQL = "org.postgresql.Driver\n";
-    public static final String PROPERTY_NAME_DATABASE_URL_POSTGRESQL = "jdbc:postgresql://localhost:5432/zhpd";
 
+    public static final String DATABASE_HOST = System.getProperty("pdm.database.host", "localhost:5432");
+    public static final String PDM = System.getProperty("pdm.database.name","pdm");
+    public static final String PROPERTY_NAME_DATABASE_URL_POSTGRESQL = "jdbc:postgresql://" + DATABASE_HOST + "/" + PDM;
+    public static final String PROPERTY_NAME_DATABASE_USERNAME = System.getProperty("pdm.database.username","root");
+    public static final String PROPERTY_NAME_DATABASE_PASSWORD = System.getProperty("pdm.database.password","root");;
+
+/*    public static final String PROPERTY_NAME_DATABASE_URL_POSTGRESQL = "jdbc:postgresql://localhost:5432/zhpd";
     public static final String PROPERTY_NAME_DATABASE_USERNAME = "tmis";
-    public static final String PROPERTY_NAME_DATABASE_PASSWORD = "q1w2e3r4t5";
+    public static final String PROPERTY_NAME_DATABASE_PASSWORD = "q1w2e3r4t5";*/
 
     public static final String PROPERTY_NAME_HIBERNATE_DIALECT_MYSQL = "org.hibernate.dialect.MySQL5InnoDBDialect";
 

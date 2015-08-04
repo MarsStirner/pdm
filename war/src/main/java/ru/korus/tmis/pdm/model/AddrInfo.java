@@ -46,6 +46,9 @@ public class AddrInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
     //Номер дома
     private String houseNumber;
 
+    //КЛАДР
+    private String kladr;
+
     //Корпус
     private String buildingNumberSuffix;
 
@@ -55,6 +58,8 @@ public class AddrInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
     private String publicKey;
 
     private UpdateInfo updateInfo;
+    private String kladrCity;
+    private boolean isCity;
 
     public String getDescription() {
         return description;
@@ -166,6 +171,14 @@ public class AddrInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
 
     public void setUpdateInfo(UpdateInfo updateInfo) {
         this.updateInfo = updateInfo;
+    }
+
+    public String getKladr() {
+        return kladr;
+    }
+
+    public void setKladr(String kladr) {
+        this.kladr = kladr;
     }
 
     static public AddrInfo newInstance(ADExplicit addr, String use) {
@@ -298,5 +311,25 @@ public class AddrInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
             res += a == null ? "" : (a + " ");
         }
         return res;
+    }
+
+    public void setKladrCity(String kladrCity) {
+        this.kladrCity = kladrCity;
+    }
+
+    public String getKladrCity() {
+        return kladrCity;
+    }
+
+    public void setIsCity(boolean isCity) {
+        this.isCity = isCity;
+    }
+
+    public boolean isCity() {
+        return isCity;
+    }
+
+    public void setCity(boolean isCity) {
+        this.isCity = isCity;
     }
 }

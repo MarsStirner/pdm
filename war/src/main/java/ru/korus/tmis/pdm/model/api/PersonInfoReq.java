@@ -1,5 +1,7 @@
 package ru.korus.tmis.pdm.model.api;
 
+import java.util.List;
+
 /**
  * Author:      Sergey A. Zagrebelny <br>
  * Date:        10.11.2014, 12:01 <br>
@@ -7,12 +9,20 @@ package ru.korus.tmis.pdm.model.api;
  * Description:  <br>
  */
 
-@Deprecated
+/**
+ * Входные данные для CRUD операций
+ */
 public class PersonInfoReq {
 
+    /**
+     * Токен авторизации подсистемы (см. /api/login)
+     */
     private String token;
 
-    private String publicKey;
+    /**
+     * Персональный данные
+     */
+    private List<PersonalInfo> personalInfo;
 
     public String getToken() {
         return token;
@@ -22,11 +32,11 @@ public class PersonInfoReq {
         this.token = token;
     }
 
-    public String getPublicKey() {
-        return publicKey;
+    public List<PersonalInfo> getPersonalInfo() {
+        return personalInfo;
     }
 
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+    public void setPersonalInfo(List<PersonalInfo> personalInfo) {
+        this.personalInfo = personalInfo;
     }
 }

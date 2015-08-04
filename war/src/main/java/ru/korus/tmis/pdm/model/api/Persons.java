@@ -13,6 +13,8 @@ public class Persons extends WithErrorStatus {
 
     List<PersonalInfo> personList;
 
+    List<String> personErrorList;
+
     public List<PersonalInfo> getPersonList() {
         if(personList == null) {
             personList = new LinkedList<>();
@@ -22,5 +24,13 @@ public class Persons extends WithErrorStatus {
 
     public void setPersonList(List<PersonalInfo> personList) {
         this.personList = personList;
+    }
+
+    public List<String> getPersonErrorList() {
+        return personErrorList;
+    }
+
+    public void setPersonErrorList(List<String> personErrorList) {
+        this.personErrorList = personErrorList;
     }
 }

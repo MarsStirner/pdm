@@ -67,7 +67,7 @@
                                         {{person.middleName}}
                                     </td>
                                     <td>
-                                        <a href="/person/?publicKey={{person.publicKey}}&systemOid={{systemLogin.oid}}&token={{newPerson.token}}">
+                                        <a href="/person/?publicKey={{person.publicKey}}&systemOid={{systemLogin.oid}}&token={{newPerson.tokenEncode}}">
                                             {{person.publicKey}}
                                         </a>
                                     </td>
