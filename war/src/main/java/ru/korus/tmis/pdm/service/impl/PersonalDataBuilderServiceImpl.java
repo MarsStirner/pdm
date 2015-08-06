@@ -116,11 +116,10 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
     }
 
     @Override
-    public PersonalInfo createPersonalInfo(Person personalData, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+    public PersonalInfo createPersonalInfo(Person personalData, String senderId, WithHistory withHistory) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
         if (personalData == null) {
             return null;
         }
-        Person personNames = personalData.top();
         PersonalInfo res = new PersonalInfo();
         final byte[] key = pdmXmlConfigService.getInternalKey();
         final byte[] keyFile = pdmXmlConfigService.getInternalFileKey();
@@ -129,20 +128,21 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         Identifier identifier = Crypting.toPublicKey(Crypting.toListByte(personalData.getPrivateKey()), keySystem);
         res.setPublicKey(identifier == null ? null : identifier.getId());
 
-        res.setGiven(personNames.getGiven());
-        res.setFamily(personNames.getFamily());
-        res.setMiddleName(personNames.getMiddleName());
+        Person personNames = personalData.top();
+        initNames(res, personNames, withHistory);
 
         byte[] privateKey = Crypting.decrypt(key, personalData.getGender());
         Term gender = termRepository.findByPrivateKeyAndPrevIsNull(privateKey);
         if (gender != null) {
-            res.setGender(createValueInfo(gender.top()));
+            res.setGender(createValueInfo(gender.top(), withHistory));
         }
 
-        privateKey = Crypting.decrypt(key, personalData.getBirthInfo()); Birth birthInfo = birthInfoRepository.findByPrivateKeyAndPrevIsNull(privateKey); if (birthInfo != null) {
-            Birth birth = birthInfo.top();
-            res.getBirthInfo().setBirthDate(birth.getBirthDate());
-            res.getBirthInfo().setBirthPlace(createAddrInfo(birth.getBirthPlace(), senderId));
+        privateKey = Crypting.decrypt(key, personalData.getBirthInfo());
+        Birth birth = birthInfoRepository.findByPrivateKeyAndPrevIsNull(privateKey);
+        if (birth != null) {
+            Birth birthTop = birth.top();
+            res.getBirthInfo().setBirthDate(birthTop.getBirthDate());
+            res.getBirthInfo().setBirthPlace(createAddrInfo(birthTop.getBirthPlace().top(), senderId, withHistory));
         }
 
         res.setAddressList(new ArrayList<AddrInfo>(personalData.getAddress().size()));
@@ -150,7 +150,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
             privateKey = Crypting.decrypt(key, internalKeyAddr.getPrivateKey());
             Addr addr = addrRepository.findByPrivateKeyAndPrevIsNull(privateKey);
             if (addr != null) {
-                res.getAddressList().add(createAddrInfo(addr, senderId));
+                res.getAddressList().add(createAddrInfo(addr.top(), senderId, withHistory));
             }
         }
 
@@ -159,7 +159,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
             privateKey = Crypting.decrypt(key, internalKeyTel.getPrivateKey());
             Telecom telecom = telecomRepository.findByPrivateKeyAndPrevIsNull(privateKey);
             if(telecom != null) {
-                ValueInfo telecomInfo = createValueInfo(telecom, senderId);
+                ValueInfo telecomInfo = createValueInfo(telecom.top(), senderId, withHistory);
                 if (telecomInfo != null) {
                     res.getTelecoms().add(telecomInfo);
                 }
@@ -171,16 +171,31 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
             privateKey = Crypting.decrypt(key, internalKeyDoc.getPrivateKey());
             Document doc = documentRepository.findByPrivateKeyAndPrevIsNull(privateKey);
             if(doc != null) {
-                res.getDocuments().add(createDocsInfo(doc, senderId));
+                res.getDocuments().add(createDocsInfo(doc.top(), senderId, withHistory));
             }
         }
 
         res.setFiles(new ArrayList<ValueInfo>(personalData.getFiles().size()));
         for (EntityList internalKeyDoc : personalData.getFiles()) {
-            privateKey = Crypting.decrypt(key, internalKeyDoc.getPrivateKey());
+            privateKey = Crypting.decrypt(keyFile, internalKeyDoc.getPrivateKey());
             PdmFiles file = pdmFilesRepository.findByPrivateKeyAndPrevIsNull(privateKey);
             if(file != null) {
                 res.getFiles().add(createFileInfo(file, senderId));
+            }
+        }
+        return res;
+    }
+
+    private PersonalInfo initNames(PersonalInfo res, Person personNames, WithHistory withHistory) {
+        res.setGiven(personNames.getGiven());
+        res.setFamily(personNames.getFamily());
+        res.setMiddleName(personNames.getMiddleName());
+        res.setBegDate(personNames.getBegDate());
+        res.setEndDate(personNames.getEndDate());
+        Person prev = personNames.getPrev();
+        if(withHistory != null && withHistory.getIsHistory() && prev != null ) {
+            if(withHistory.getDate() == null || prev.getEndDate().after(withHistory.getDate())) {
+                res.setPrev(initNames(new PersonalInfo(), prev, withHistory));
             }
         }
         return res;
@@ -194,26 +209,31 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         return res;
     }
 
-    private ValueInfo createValueInfo(Term gender) {
+    private ValueInfo createValueInfo(Term gender, WithHistory withHistory) {
         ValueInfo res = new ValueInfo();
         res.setValue(gender.getCode());
         res.setDescription(gender.getCodeSystem());
+        Term prev = gender.getPrev();
+        if(withHistory != null && withHistory.getIsHistory() && prev != null) {
+            if(withHistory.getDate() == null || prev.getEndDate().after(withHistory.getDate())) {
+                res.setPrev(createValueInfo(prev, withHistory));
+            }
+        }
         return res;
     }
 
     @Override
-    public DocsInfo createDocsInfo(Document doc, String senderOid) {
+    public DocsInfo createDocsInfo(Document doc, String senderOid, WithHistory withHistory) {
         if (doc == null) {
             return null;
         }
-        Document docTop = doc.top();
         DocsInfo res = new DocsInfo();
-        res.setAttrs(new ArrayList<ValueInfo>(docTop.getAttribute().size()));
-        for (Attr attr : docTop.getAttribute()) {
+        res.setAttrs(new ArrayList<ValueInfo>(doc.getAttribute().size()));
+        for (Attr attr : doc.getAttribute()) {
             res.getAttrs().add(createValueInfo(attr));
         }
 
-        for (Attr attr : docTop.getAttribute()) {
+        for (Attr attr : doc.getAttribute()) {
             if (attr.getOid() != null) {
                 PdmConfig.Docs.Doc docConfig = pdmXmlConfigService.getDocsNameByAttrOid(Crypting.decodeOID(attr.getOid()));
                 if (docConfig != null) {
@@ -225,7 +245,12 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         }
 
         initPublicKey(doc, senderOid, res);
-
+        Document prev = doc.getPrev();
+        if(withHistory != null && withHistory.getIsHistory() && prev != null) {
+            if(withHistory.getDate() == null || prev.getEndDate().after(withHistory.getDate())) {
+                res.setPrev(createDocsInfo(prev, senderOid, withHistory));
+            }
+        }
         return res;
     }
 
@@ -247,18 +272,23 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
     }
 
     @Override
-    public ValueInfo createValueInfo(Telecom telecom, String senderOid) {
+    public ValueInfo createValueInfo(Telecom telecom, String senderOid, WithHistory withHistory) {
         if (telecom == null) {
             return null;
         }
-        Telecom telecomTop = telecom.top();
-        if (telecomTop.getHistoryState() == HistoryState.DELETED ) {
+        if (telecom.getHistoryState() == HistoryState.DELETED ) {
             return null;
         }
         ValueInfo res = new ValueInfo();
         initPublicKey(telecom, senderOid, res);
-        res.setValue(telecomTop.getValue());
-        res.setDescription(telecomTop.getUse());
+        res.setValue(telecom.getValue());
+        res.setDescription(telecom.getUse());
+        Telecom prev = telecom.getPrev();
+        if(withHistory != null && withHistory.getIsHistory() && prev != null) {
+            if (withHistory.getDate() == null || prev.getEndDate().after(withHistory.getDate())) {
+                res.setPrev(createValueInfo(prev, senderOid, withHistory));
+            }
+        }
         return res;
     }
 
@@ -269,28 +299,33 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
     }
 
     @Override
-    public AddrInfo createAddrInfo(Addr addr, String senderOid) {
+    public AddrInfo createAddrInfo(Addr addr, String senderOid, WithHistory withHistory) {
         if (addr == null) {
             return null;
         }
-        Addr addrTop = addr.top();
         AddrInfo res = new AddrInfo();
-        res.setDescription(addrTop.getUse());
-        res.setAdditionalLocator(addrTop.getAdditionalLocator());
-        res.setBuildingNumberSuffix(addrTop.getBuildingNumberSuffix());
-        res.setCity(addrTop.getCity());
-        res.setCountry(addrTop.getCountry());
-        res.setCounty(addrTop.getCounty());
-        res.setHouseNumber(addrTop.getHouseNumber());
-        res.setPostalCode(addrTop.getPostalCode());
-        res.setPrecinct(addrTop.getPrecinct());
-        res.setState(addrTop.getState());
-        res.setStreetAddressLine(addrTop.getStreetAddressLine());
-        res.setStreetName(addrTop.getStreetName());
+        res.setDescription(addr.getUse());
+        res.setAdditionalLocator(addr.getAdditionalLocator());
+        res.setBuildingNumberSuffix(addr.getBuildingNumberSuffix());
+        res.setCity(addr.getCity());
+        res.setCountry(addr.getCountry());
+        res.setCounty(addr.getCounty());
+        res.setHouseNumber(addr.getHouseNumber());
+        res.setPostalCode(addr.getPostalCode());
+        res.setPrecinct(addr.getPrecinct());
+        res.setState(addr.getState());
+        res.setStreetAddressLine(addr.getStreetAddressLine());
+        res.setStreetName(addr.getStreetName());
         res.setKladr(addr.getKladr());
         res.setKladrCity(addr.getKladrCity());
         res.setIsCity(addr.isCity());
         initPublicKey(addr, senderOid, res);
+        Addr prev = addr.getPrev();
+        if(withHistory != null && withHistory.getIsHistory() && prev != null) {
+            if(withHistory.getDate() == null || prev.getEndDate().after(withHistory.getDate())) {
+                res.setPrev(createAddrInfo(prev, senderOid, withHistory));
+            }
+        }
         return res;
     }
 

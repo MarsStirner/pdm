@@ -3,7 +3,6 @@ package ru.korus.tmis.pdm.model.api;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +12,7 @@ import java.util.List;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class PersonalInfo {
+public class PersonalInfo extends History<PersonalInfo> {
 
     private String publicKey;
 

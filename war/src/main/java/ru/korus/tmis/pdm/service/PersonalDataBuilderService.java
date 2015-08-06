@@ -6,6 +6,7 @@ import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
 import ru.korus.tmis.pdm.model.api.ValueInfo;
+import ru.korus.tmis.pdm.model.api.WithHistory;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -25,17 +26,17 @@ public interface PersonalDataBuilderService {
 
     Person createPersonalData(PersonalInfo personalInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
 
-    PersonalInfo createPersonalInfo(Person personalData, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
+    PersonalInfo createPersonalInfo(Person personalData, String senderId, WithHistory withHistory) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
 
     ValueInfo createFileInfo(PdmFiles file, String senderId);
 
-    DocsInfo createDocsInfo(Document doc, String senderOid);
+    DocsInfo createDocsInfo(Document doc, String senderOid, WithHistory withHistory);
 
     ValueInfo createValueInfo(Attr attr);
 
-    ValueInfo createValueInfo(Telecom telecom, String senderId);
+    ValueInfo createValueInfo(Telecom telecom, String senderOid, WithHistory withHistory);
 
-    AddrInfo createAddrInfo(Addr addr, String senderOid);
+    AddrInfo createAddrInfo(Addr addr, String senderOid, WithHistory withHistory);
 
     Document createDocument(DocsInfo docsInfo);
 

@@ -9,6 +9,7 @@ import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
 import ru.korus.tmis.pdm.model.api.ValueInfo;
+import ru.korus.tmis.pdm.model.api.WithHistory;
 import ru.korus.tmis.pdm.service.PdmDaoService;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public PersonalInfo findById(byte[] privateKey, String senderId) {
+    public PersonalInfo findById(byte[] privateKey, String senderId, WithHistory withHistory) {
         throw new RuntimeException("TODO!!");
         /*PersonalData person = mongoOperation.findById(id, PersonalData.class);
         if( person == null ) {

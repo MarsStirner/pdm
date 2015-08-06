@@ -1,9 +1,6 @@
 package ru.korus.tmis.pdm.service;
 
-import ru.korus.tmis.pdm.model.api.FindQuery;
-import ru.korus.tmis.pdm.model.api.PersonalInfo;
-import ru.korus.tmis.pdm.model.api.Identifier;
-import ru.korus.tmis.pdm.model.api.Persons;
+import ru.korus.tmis.pdm.model.api.*;
 import ru.korus.tmis.pdm.ws.hl7.*;
 
 import java.util.List;
@@ -34,7 +31,7 @@ public interface PdmService {
 
     List<PersonalInfo> getPersons(String senderOid);
 
-    PersonalInfo getPerson(String publicKey, String senderOid);
+    PersonalInfo getPerson(String publicKey, String senderId, WithHistory withHistory);
 
     byte[] getFile(String publicKey, String senderOid);
 
@@ -42,5 +39,5 @@ public interface PdmService {
 
     List<PersonalInfo> find(FindQuery findQuery, String senderOid);
 
-    Persons getPersonList(List<PersonalInfo> publicKeyList, String senderOid);
+    Persons getPersonList(List<PersonalInfo> publicKeyList, String senderOid, WithHistory withHistory);
 }

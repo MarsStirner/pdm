@@ -375,7 +375,9 @@ public class PdmServiceImpl implements PdmService {
 
             logger.info("Get demographics info by id. Find demographics info for id = " + publicKey);
             try {
-                personalDataList.add(findById(publicKey, senderId));
+                WithHistory withHistory = new WithHistory();
+                withHistory.setIsHistory(false);
+                personalDataList.add(findById(publicKey, senderId, withHistory));
             } catch (BadPaddingException
                     | NoSuchAlgorithmException
                     | NoSuchPaddingException
@@ -792,9 +794,9 @@ public class PdmServiceImpl implements PdmService {
     }
 
     @Override
-    public PersonalInfo getPerson(String publicKey, String senderId) {
+    public PersonalInfo getPerson(String publicKey, String senderId, WithHistory withHistory) {
         try {
-            return findById(publicKey, senderId);
+            return findById(publicKey, senderId, withHistory);
         } catch (BadPaddingException
                 | NoSuchAlgorithmException
                 | IllegalBlockSizeException
@@ -824,7 +826,9 @@ public class PdmServiceImpl implements PdmService {
     @Override
     public PersonalInfo update(PersonalInfo personalInfo, String senderOid) {
         try {
-            PersonalInfo personalInfoOld = findById(personalInfo.getPublicKey(), senderOid);
+            WithHistory withHistory = new WithHistory();
+            withHistory.setIsHistory(false);
+            PersonalInfo personalInfoOld = findById(personalInfo.getPublicKey(), senderOid, withHistory);
             byte[] privateKey = toPrivateKey(personalInfo.getPublicKey(), senderOid);
 
             // update Name, MiddleName, Family
@@ -846,7 +850,7 @@ public class PdmServiceImpl implements PdmService {
             for (ValueInfo telecom : personalInfo.getTelecoms()) {
                 if(telecom.getPublicKey() == null) {
                     Telecom tel = pdmDaoServiceLocator.getPdmDaoService().addTelecom(privateKey, telecom);
-                    ValueInfo telNew = personalDataBuilderService.createValueInfo(tel, senderOid);
+                    ValueInfo telNew = personalDataBuilderService.createValueInfo(tel.top(), senderOid, withHistory);
                     telecom.setPublicKey(telNew.getPublicKey());
                 } else {
                     ValueInfo telecomOld = telecomByPublicKey.get(telecom.getPublicKey());
@@ -862,7 +866,7 @@ public class PdmServiceImpl implements PdmService {
             for (AddrInfo addrInfo : personalInfo.getAddressList()) {
                 if(addrInfo.getPublicKey() == null) {
                     Addr addr = pdmDaoServiceLocator.getPdmDaoService().addAddr(privateKey, addrInfo);
-                    AddrInfo addrInfoNew = personalDataBuilderService.createAddrInfo(addr, senderOid);
+                    AddrInfo addrInfoNew = personalDataBuilderService.createAddrInfo(addr.top(), senderOid, withHistory);
                     addrInfo.setPublicKey(addrInfoNew.getPublicKey());
                 } else {
                     AddrInfo addrOld = addrByPublicKey.get(addrInfo.getPublicKey());
@@ -878,7 +882,7 @@ public class PdmServiceImpl implements PdmService {
             for (DocsInfo docsInfo : personalInfo.getDocuments()) {
                 if(docsInfo.getPublicKey() == null) {
                     Document doc = pdmDaoServiceLocator.getPdmDaoService().addDocs(privateKey, docsInfo);
-                    DocsInfo docsInfoNew = personalDataBuilderService.createDocsInfo(doc, senderOid);
+                    DocsInfo docsInfoNew = personalDataBuilderService.createDocsInfo(doc, senderOid, withHistory);
                     docsInfo.setPublicKey(docsInfoNew.getPublicKey());
                 } else {
                     DocsInfo docOld = docByPublicKey.get(docsInfo.getPublicKey());
@@ -933,12 +937,12 @@ public class PdmServiceImpl implements PdmService {
     }
 
     @Override
-    public Persons getPersonList(List<PersonalInfo> publicKeyList, String senderOid) {
+    public Persons getPersonList(List<PersonalInfo> publicKeyList, String senderOid, WithHistory withHistory) {
         Persons res = new Persons();
         res.setPersonList(new ArrayList<PersonalInfo>(publicKeyList.size()));
         res.setPersonErrorList(new ArrayList<String>());
         for(PersonalInfo publicKey : publicKeyList) {
-            PersonalInfo personalInfo = getPerson(publicKey.getPublicKey(), senderOid);
+            PersonalInfo personalInfo = getPerson(publicKey.getPublicKey(), senderOid, withHistory);
             if(personalInfo == null) {
                 res.getPersonErrorList().add(publicKey.getPublicKey());
             } else {
@@ -958,9 +962,9 @@ public class PdmServiceImpl implements PdmService {
     }
 
 
-    private PersonalInfo findById(String publicKey, String senderOid) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeyException, InvalidKeySpecException {
+    private PersonalInfo findById(String publicKey, String senderOid, WithHistory withHistory) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeyException, InvalidKeySpecException {
         byte[] privateKey = toPrivateKey(publicKey, senderOid);
-        return pdmDaoServiceLocator.getPdmDaoService().findById(privateKey, senderOid);
+        return pdmDaoServiceLocator.getPdmDaoService().findById(privateKey, senderOid, withHistory);
     }
 
     private byte[] findFileById(String publicKey, String senderOid) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeyException, InvalidKeySpecException {

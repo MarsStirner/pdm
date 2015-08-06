@@ -10,6 +10,7 @@ import ru.korus.tmis.pdm.model.DocsInfo;
 import ru.korus.tmis.pdm.model.api.PersonalInfo;
 import ru.korus.tmis.pdm.model.api.UpdateInfo;
 import ru.korus.tmis.pdm.model.api.ValueInfo;
+import ru.korus.tmis.pdm.model.api.WithHistory;
 import ru.korus.tmis.pdm.repositories.pdm.*;
 import ru.korus.tmis.pdm.repositories.pdmfiles.PdmFilesRepository;
 import ru.korus.tmis.pdm.service.PdmDaoService;
@@ -76,9 +77,9 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public PersonalInfo findById(byte[] privateKey, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
+    public PersonalInfo findById(byte[] privateKey, String senderId, WithHistory withHistory) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException {
         Person personalData = personDataRepository.findByPrivateKeyAndPrevIsNull(privateKey);
-        return personalData == null ? null : personalDataBuilderService.createPersonalInfo(personalData, senderId);
+        return personalData == null ? null : personalDataBuilderService.createPersonalInfo(personalData, senderId, withHistory);
     }
 
     @Override

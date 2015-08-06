@@ -254,6 +254,14 @@
             <version>9.1-901-1.jdbc4</version>
         </dependency>
 
+        <!-- Other -->
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <!--DO NOT UPDATE THIS VERSION. Version 2.0.0 is incompatible with Spring 4.1.1 -->
+            <version>0.9.1</version>
+            <scope>test</scope>
+        </dependency>
 
         <!--
                 <dependency>

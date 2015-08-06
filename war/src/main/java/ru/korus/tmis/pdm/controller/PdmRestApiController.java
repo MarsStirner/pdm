@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.korus.tmis.pdm.model.PdmDocsInfo;
 import ru.korus.tmis.pdm.model.api.FindQuery;
 import ru.korus.tmis.pdm.model.api.*;
 import ru.korus.tmis.pdm.service.AuthService;
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -103,7 +101,9 @@ public class PdmRestApiController  implements Serializable, PdmRestApi {
     public PersonalInfo get(@RequestParam String token,
                             @RequestParam String publicKey) {
         String senderOid = authService.checkToken(token);
-        return pdmService.getPerson(publicKey, senderOid);
+        WithHistory withHistory = new WithHistory();
+        withHistory.setIsHistory(false);
+        return pdmService.getPerson(publicKey, senderOid, withHistory);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class PdmRestApiController  implements Serializable, PdmRestApi {
         Persons res = new Persons();
         String senderOid = checkSenderOid(personInfoReq, res);
         if (senderOid != null) {
-            res = pdmService.getPersonList(personInfoReq.getPersonalInfo(), senderOid);
+            res = pdmService.getPersonList(personInfoReq.getPersonalInfo(), senderOid, personInfoReq.getWithHistory());
         }
         return res;
     }

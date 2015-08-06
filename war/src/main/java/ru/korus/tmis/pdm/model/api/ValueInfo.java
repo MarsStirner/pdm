@@ -1,9 +1,6 @@
 package ru.korus.tmis.pdm.model.api;
 
 import ru.korus.tmis.pdm.model.UseInfo;
-import ru.korus.tmis.pdm.model.api.UpdateInfo;
-
-import java.security.PublicKey;
 
 /**
  * Author:      Sergey A. Zagrebelny <br>
@@ -11,7 +8,7 @@ import java.security.PublicKey;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class ValueInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
+public class ValueInfo extends History<ValueInfo> implements UseInfo, PdmUpdateble, PublicKeyInfo {
 
     private String publicKey;
 

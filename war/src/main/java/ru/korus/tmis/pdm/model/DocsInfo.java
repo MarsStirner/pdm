@@ -1,9 +1,6 @@
 package ru.korus.tmis.pdm.model;
 
-import ru.korus.tmis.pdm.model.api.PdmUpdateble;
-import ru.korus.tmis.pdm.model.api.PublicKeyInfo;
-import ru.korus.tmis.pdm.model.api.UpdateInfo;
-import ru.korus.tmis.pdm.model.api.ValueInfo;
+import ru.korus.tmis.pdm.model.api.*;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -16,7 +13,7 @@ import java.util.Map;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class DocsInfo implements PdmUpdateble, PublicKeyInfo {
+public class DocsInfo  extends History<DocsInfo> implements PdmUpdateble, PublicKeyInfo {
 
     private String description;
 

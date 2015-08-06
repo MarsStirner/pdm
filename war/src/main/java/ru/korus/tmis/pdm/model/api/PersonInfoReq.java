@@ -19,6 +19,7 @@ public class PersonInfoReq {
      */
     private String token;
 
+    private WithHistory withHistory;
     /**
      * Персональный данные
      */
@@ -38,5 +39,13 @@ public class PersonInfoReq {
 
     public void setPersonalInfo(List<PersonalInfo> personalInfo) {
         this.personalInfo = personalInfo;
+    }
+
+    public WithHistory getWithHistory() {
+        return withHistory;
+    }
+
+    public void setWithHistory(WithHistory withHistory) {
+        this.withHistory = withHistory;
     }
 }

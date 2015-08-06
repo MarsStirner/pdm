@@ -1,8 +1,6 @@
 package ru.korus.tmis.pdm.model;
 
-import ru.korus.tmis.pdm.model.api.PdmUpdateble;
-import ru.korus.tmis.pdm.model.api.PublicKeyInfo;
-import ru.korus.tmis.pdm.model.api.UpdateInfo;
+import ru.korus.tmis.pdm.model.api.*;
 import ru.korus.tmis.pdm.ws.hl7.*;
 
 import javax.xml.bind.JAXBElement;
@@ -14,7 +12,7 @@ import java.io.Serializable;
  * Company:     Korus Consulting IT<br>
  * Description:  <br>
  */
-public class AddrInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
+public class AddrInfo extends History<AddrInfo> implements UseInfo, PdmUpdateble, PublicKeyInfo {
 
     //Тип
     private String description;
@@ -58,8 +56,10 @@ public class AddrInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
     private String publicKey;
 
     private UpdateInfo updateInfo;
+
     private String kladrCity;
-    private boolean isCity;
+
+    private Boolean isCity;
 
     public String getDescription() {
         return description;
@@ -321,15 +321,11 @@ public class AddrInfo implements UseInfo, PdmUpdateble, PublicKeyInfo {
         return kladrCity;
     }
 
-    public void setIsCity(boolean isCity) {
-        this.isCity = isCity;
-    }
-
-    public boolean isCity() {
+    public Boolean getIsCity() {
         return isCity;
     }
 
-    public void setCity(boolean isCity) {
+    public void setIsCity(Boolean isCity) {
         this.isCity = isCity;
     }
 }
