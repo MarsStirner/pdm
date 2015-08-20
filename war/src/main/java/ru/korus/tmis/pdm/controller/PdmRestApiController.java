@@ -62,7 +62,8 @@ public class PdmRestApiController  implements Serializable, PdmRestApi {
         if (senderOid == null) {
             res.setStatus(ErrorStatus.ACCESS_DENIED);
         }
-        else if (personInfoReq.getPersonalInfo().isEmpty()){
+        else if (personInfoReq.getPersonalInfo() == null || personInfoReq.getPersonalInfo().isEmpty()){
+            senderOid = null;
             res.setStatus(ErrorStatus.WRONG_PARAMETERS);
         }
         return senderOid;

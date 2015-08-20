@@ -36,11 +36,11 @@ public class PdmSpringConfiguration extends WebMvcConfigurerAdapter {
     public static final String PDM = System.getProperty("pdm.database.name","zhpd");
     public static final String PROPERTY_NAME_DATABASE_URL_POSTGRESQL = "jdbc:postgresql://" + DATABASE_HOST + "/" + PDM;
     public static final String PROPERTY_NAME_DATABASE_USERNAME = System.getProperty("pdm.database.username","tmis");
-    public static final String PROPERTY_NAME_DATABASE_PASSWORD = System.getProperty("pdm.database.password","q1w2e3r4t5");;
+    public static final String PROPERTY_NAME_DATABASE_PASSWORD = System.getProperty("pdm.database.password","q1w2e3r4t5");
 
-/*    public static final String PROPERTY_NAME_DATABASE_URL_POSTGRESQL = "jdbc:postgresql://localhost:5432/zhpd";
-    public static final String PROPERTY_NAME_DATABASE_USERNAME = "tmis";
-    public static final String PROPERTY_NAME_DATABASE_PASSWORD = "q1w2e3r4t5";*/
+/*    public static final String PROPERTY_NAME_DATABASE_URL_POSTGRESQL = "jdbc:postgresql://localhost:5432/pdm";
+    public static final String PROPERTY_NAME_DATABASE_USERNAME = "root";
+    public static final String PROPERTY_NAME_DATABASE_PASSWORD = "root";*/
 
     public static final String PROPERTY_NAME_HIBERNATE_DIALECT_MYSQL = "org.hibernate.dialect.MySQL5InnoDBDialect";
 

@@ -1,8 +1,11 @@
 package ru.korus.tmis.pdm.model.api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import ru.korus.tmis.pdm.entities.pdm.HistoryState;
 import ru.korus.tmis.pdm.model.AddrInfo;
 import ru.korus.tmis.pdm.model.DocsInfo;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,6 +69,10 @@ public class PersonalInfo extends History<PersonalInfo> {
 
     public void setGender(ValueInfo gender) {
         this.gender = gender;
+    }
+
+    public PersonalInfo() {
+        super();
     }
 
     public BirthInfo getBirthInfo() {

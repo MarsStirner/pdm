@@ -14,7 +14,7 @@ public class History<T> {
 
     private T prev;
 
-    private HistoryState historyState = HistoryState.ACTIVE;
+    private String historyState = HistoryState.ACTIVE.name();
 
     private Date begDate;
 
@@ -28,11 +28,11 @@ public class History<T> {
         this.prev = prev;
     }
 
-    public HistoryState getHistoryState() {
+    public String getHistoryState() {
         return historyState;
     }
 
-    public void setHistoryState(HistoryState historyState) {
+    public void setHistoryState(String historyState) {
         this.historyState = historyState;
     }
 
@@ -50,5 +50,8 @@ public class History<T> {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public History() {
     }
 }

@@ -11,48 +11,50 @@
  }*/
 function createController($scope, $http) {
     $scope.newPerson = {
-        family: "Тестов",
-        given: "Тест",
-        middleName: "Тестович",
-        gender: {
-            value: "M", description: "2.16.840.1.113883.5.1"
-        },
-        birthInfo: {
-            birthDate: "1970-01-30",
-            birthPlace: {
-                streetAddressLine: "Марс"
-            }
-        },
-        telecoms: [
-            { description: "WP", value: "tel:+7 (495) 229-53-70" },
-            { value: "mailto:test@hitsl.ru" }
-        ],
-        addressList: [
-            {
-                description: "H",
-                country: "2",
-                state: "3",
-                county: "4",
-                precinct: "5",
-                city: "6",
-                streetName: "7",
-                postalCode: "8",
-                houseNumber: "9",
-                buildingNumberSuffix: "10",
-                additionalLocator: "11",
-                streetAddressLine: "12"
-            }
-        ],
-        documents: [
-            {   description: "ПАСПОРТ РФ",
-                name: "passport",
-                attrs: [
-                    {description: "Номер паспорта", value: "1234 567890", oid: "3.0.0.1"},
-                    {description: "Дата выдачи", value: "1977-01-15", oid: "3.0.0.2"}
-                ]
-            }
-        ],
-        files: []
+        personalInfo : [{
+            family: "Тестов",
+            given: "Тест",
+            middleName: "Тестович",
+            gender: {
+                value: "M", description: "2.16.840.1.113883.5.1"
+            },
+            birthInfo: {
+                birthDate: "1970-01-30",
+                birthPlace: {
+                    streetAddressLine: "Марс"
+                }
+            },
+            telecoms: [
+                { description: "WP", value: "tel:+7 (495) 229-53-70" },
+                { value: "mailto:test@hitsl.ru" }
+            ],
+            addressList: [
+                {
+                    description: "H",
+                    country: "2",
+                    state: "3",
+                    county: "4",
+                    precinct: "5",
+                    city: "6",
+                    streetName: "7",
+                    postalCode: "8",
+                    houseNumber: "9",
+                    buildingNumberSuffix: "10",
+                    additionalLocator: "11",
+                    streetAddressLine: "12"
+                }
+            ],
+            documents: [
+                {   description: "ПАСПОРТ РФ",
+                    name: "passport",
+                    attrs: [
+                        {description: "Номер паспорта", value: "1234 567890", oid: "3.0.0.1"},
+                        {description: "Дата выдачи", value: "1977-01-15", oid: "3.0.0.2"}
+                    ]
+                }
+            ],
+            files: []
+        }]
     }
 
     $scope.updateTypes = [
@@ -89,9 +91,9 @@ function createController($scope, $http) {
 
     $scope.updateNames = function () {
         var prm = {
-            family: $scope.newPerson.family,
-            given: $scope.newPerson.given,
-            middleName: $scope.newPerson.middleName,
+            family: $scope.newPerson.personalInfo.family,
+            given: $scope.newPerson.personalInfo.given,
+            middleName: $scope.newPerson.personalInfo.middleName,
             token: $scope.newPerson.token,
             publicKey: $scope.personInfo.publicKey,
             updateInfo: {
@@ -106,7 +108,7 @@ function createController($scope, $http) {
             token: $scope.newPerson.token,
             publicKey: $scope.personInfo.publicKey,
             gender: {
-                value: $scope.newPerson.gender.value, description: "2.16.840.1.113883.5.1",
+                value: $scope.newPerson.personalInfo.gender.value, description: "2.16.840.1.113883.5.1",
                 updateInfo: {
                     type: $scope.updateTypeGender.code
                 }
@@ -120,8 +122,8 @@ function createController($scope, $http) {
             token: $scope.newPerson.token,
             publicKey: $scope.personInfo.publicKey,
             birthInfo: {
-                birthDate: $scope.newPerson.birthInfo.birthDate,
-                birthPlace: $scope.newPerson.birthInfo.birthPlace,
+                birthDate: $scope.newPerson.personalInfo.birthInfo.birthDate,
+                birthPlace: $scope.newPerson.personalInfo.birthInfo.birthPlace,
                 updateInfo: {
                     type: $scope.updateTypeBirthInfo.code
                 }
@@ -326,19 +328,19 @@ function createController($scope, $http) {
 
 
     $scope.removeTelecom = function (index) {
-        $scope.newPerson.telecoms.splice(index, 1);
+        $scope.newPerson.personalInfo.telecoms.splice(index, 1);
     }
 
     $scope.removeAddress = function (index) {
-        $scope.newPerson.address.splice(index, 1);
+        $scope.newPerson.personalInfo.personalInfo.address.splice(index, 1);
     }
 
     $scope.removeDoc = function (index) {
-        $scope.newPerson.documents.splice(index, 1);
+        $scope.newPerson.personalInfo.documents.splice(index, 1);
     }
 
     $scope.sizeAttrs = function (index) {
-        return $scope.newPerson.documents[index].attrs.length;
+        return $scope.newPerson.personalInfo.documents[index].attrs.length;
     }
 
     $scope.onFileSet = function (files) {
@@ -352,7 +354,7 @@ function createController($scope, $http) {
     }
 
     $scope.addFile = function(newFile) {
-        $scope.newPerson.files.push(angular.copy(newFile));
+        $scope.newPerson.personalInfo.files.push(angular.copy(newFile));
         $scope.newFile = null;
     }
 
