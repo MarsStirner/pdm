@@ -25,6 +25,18 @@ import java.util.List;
  */
 public class Crypting {
 
+    static Cipher cipher;
+    static {
+        try {
+            cipher = Cipher.getInstance(PdmServiceImpl.CRYPT_TYPE);
+        } catch (NoSuchAlgorithmException e) {
+
+
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static byte[] genKey(String pass, byte[] salt, int size) throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         PBEKeySpec spec = new PBEKeySpec(pass.toCharArray(), salt, 1, size);
@@ -52,7 +64,6 @@ public class Crypting {
 
     public static byte[] decrypt(byte[] key, byte[] privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Key aesKey = new SecretKeySpec(key, PdmServiceImpl.CRYPT_TYPE);
-        Cipher cipher = Cipher.getInstance(PdmServiceImpl.CRYPT_TYPE);
         cipher.init(Cipher.DECRYPT_MODE, aesKey);
         return cipher.doFinal(privateKey);
     }

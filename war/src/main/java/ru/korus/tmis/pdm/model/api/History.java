@@ -20,6 +20,8 @@ public class History<T> {
 
     private Date endDate;
 
+    private String magic;
+
     public T getPrev() {
         return prev;
     }
@@ -50,6 +52,14 @@ public class History<T> {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String getMagic() {
+        return magic;
+    }
+
+    public void setMagic(String magic) {
+        this.magic = magic;
     }
 
     public History() {
