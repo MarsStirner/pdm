@@ -20,15 +20,18 @@ public class PrivateKey<T> {
     public static final int PRIVATE_KEY_SIZE = 32;
 
     @Id
-    private String id = DatatypeConverter.printBase64Binary(Crypting.getSecureRandomBytes(PRIVATE_KEY_SIZE));
+    private String id = null;
 
     /**
      * Уникальный идентификатор субъекта ПДн в ЗХПД
      */
     @Column(length = PrivateKey.PRIVATE_KEY_SIZE)
-    private byte[] privateKey = Crypting.getSecureRandomBytes(PrivateKey.PRIVATE_KEY_SIZE);
+    private byte[] privateKey = null;
 
     public String getId() {
+        if (id == null) {
+            id = DatatypeConverter.printBase64Binary(Crypting.getSecureRandomBytes(PRIVATE_KEY_SIZE));
+        }
         return id;
     }
 
@@ -41,6 +44,9 @@ public class PrivateKey<T> {
     }
 
     public byte[] getPrivateKey() {
+        if ( privateKey == null ) {
+            privateKey = Crypting.getSecureRandomBytes(PrivateKey.PRIVATE_KEY_SIZE);
+        }
         return privateKey;
     }
 

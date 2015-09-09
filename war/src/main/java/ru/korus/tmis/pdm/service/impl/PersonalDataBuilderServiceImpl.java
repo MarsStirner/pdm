@@ -219,7 +219,7 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
     private ValueInfo createValueInfo(Term gender, WithHistory withHistory) {
         ValueInfo res = new ValueInfo();
         res.setValue(gender.getCode());
-        res.setDescription(gender.getCodeSystem());
+        res.setOid(gender.getCodeSystem());
         Term prev = gender.getPrev();
         if(withHistory != null && withHistory.getIsHistory() && prev != null) {
             if(withHistory.getDate() == null || prev.getEndDate().after(withHistory.getDate())) {
