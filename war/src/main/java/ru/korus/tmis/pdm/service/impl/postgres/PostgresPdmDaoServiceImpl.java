@@ -65,8 +65,8 @@ public class PostgresPdmDaoServiceImpl implements PdmDaoService {
     private PdmFilesRepository pdmFilesRepository;
 
     @Override
-    public List<Byte> save(PersonalInfo personalInfo) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
-        Person personalData = personalDataBuilderService.createPersonalData(personalInfo);
+    public List<Byte> save(PersonalInfo personalInfo, String senderId) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
+        Person personalData = personalDataBuilderService.createPersonalData(personalInfo, senderId);
         personDataRepository.save(personalData);
         return Crypting.toListByte(personalData.getPrivateKey());
     }

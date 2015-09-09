@@ -313,9 +313,17 @@ public class PdmServiceImpl implements PdmService {
     @Override
     public Identifier add(PersonalInfo personalInfo, String senderOid) {
         logger.info("Adding a new person. Save to storage...");
-        return toPublicKey(save(personalInfo), senderOid);
+        return toPublicKey(save(personalInfo, senderOid), senderOid);
     }
 
+    @Override
+    public PersonalInfo addRest(PersonalInfo personalInfo, String senderOid) {
+        logger.info("Adding a new person. Save to storage...");
+        List<Byte> privateKey = save(personalInfo, senderOid);
+        byte key[] = pdmXmlConfigService.getSystemDbKey(senderOid);
+        personalInfo.setPublicKey(Crypting.toPublicKey(privateKey, key).getId());
+        return personalInfo;
+    }
 
     private Identifier toPublicKey(List<Byte> privateKey, String senderId) {
         byte key[] = pdmXmlConfigService.getSystemDbKey(senderId);
@@ -506,7 +514,7 @@ public class PdmServiceImpl implements PdmService {
 
     private void savePerson(PersonalInfo personalInfoNew) {
         try {
-            pdmDaoServiceLocator.getPdmDaoService().save(personalInfoNew);
+            pdmDaoServiceLocator.getPdmDaoService().save(personalInfoNew, null);
         } catch (BadPaddingException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -773,14 +781,14 @@ public class PdmServiceImpl implements PdmService {
     }
 
 
-    private List<Byte> save(PersonalInfo personalInfo) {
+    private List<Byte> save(PersonalInfo personalInfo, String senderId) {
         boolean isAdded = false;
         for (DocsInfo docInfo : personalInfo.getDocuments()) {
             isAdded |= pdmDaoServiceLocator.getPdmDaoService().find(docInfo);
         }
         if (!isAdded) {
             try {
-                return pdmDaoServiceLocator.getPdmDaoService().save(personalInfo);
+                return pdmDaoServiceLocator.getPdmDaoService().save(personalInfo, senderId);
             } catch (BadPaddingException
                     | NoSuchAlgorithmException
                     | IllegalBlockSizeException

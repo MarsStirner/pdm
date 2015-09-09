@@ -24,7 +24,7 @@ import java.util.List;
  */
 public interface PersonalDataBuilderService {
 
-    Person createPersonalData(PersonalInfo personalInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
+    Person createPersonalData(PersonalInfo personalInfo, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
 
     PersonalInfo createPersonalInfo(Person personalData, String senderId, WithHistory withHistory) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException;
 

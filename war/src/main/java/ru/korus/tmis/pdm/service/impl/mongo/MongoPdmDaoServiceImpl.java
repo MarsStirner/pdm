@@ -38,7 +38,7 @@ public class MongoPdmDaoServiceImpl implements PdmDaoService {
     }
 
     @Override
-    public List<Byte> save(PersonalInfo personalData) {
+    public List<Byte> save(PersonalInfo personalData, String senderId) {
         //mongoOperation.save(personalData);
         //TODO implement!
         throw new RuntimeException("TODO!!");

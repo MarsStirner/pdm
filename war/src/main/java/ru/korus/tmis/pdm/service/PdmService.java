@@ -17,6 +17,8 @@ public interface PdmService {
 
     Identifier add(PersonalInfo personalInfo, String senderOid);
 
+    PersonalInfo addRest(PersonalInfo personalInfo, String senderOid);
+
     PRPAIN101306UV02 findCandidates(PRPAIN101305UV02 parameters);
 
     PRPAIN101308UV02 getDemographics(PRPAIN101307UV02 parameters);

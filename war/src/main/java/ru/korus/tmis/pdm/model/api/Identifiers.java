@@ -10,13 +10,13 @@ import java.util.List;
  */
 public class Identifiers  extends WithErrorStatus {
 
-    private List<String> publicKeyList;
+    private List<PersonalInfo> personalInfoList;
 
-    public List<String> getPublicKeyList() {
-        return publicKeyList;
+    public List<PersonalInfo> getPersonalInfoList() {
+        return personalInfoList;
     }
 
-    public void setPublicKeyList(List<String> publicKeyList) {
-        this.publicKeyList = publicKeyList;
+    public void setPersonalInfoList(List<PersonalInfo> personalInfoList) {
+        this.personalInfoList = personalInfoList;
     }
 }

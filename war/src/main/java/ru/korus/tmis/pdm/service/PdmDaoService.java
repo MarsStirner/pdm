@@ -26,9 +26,10 @@ public interface PdmDaoService {
     /**
      * Сохранение ПД новой персоны
      * @param personalData - ПД
+     * @param senderId
      * @return - private key
      */
-    List<Byte> save(PersonalInfo personalData) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException;
+    List<Byte> save(PersonalInfo personalData, String senderId) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException;
 
     /**
      * Проверка наличия документа в хранилище

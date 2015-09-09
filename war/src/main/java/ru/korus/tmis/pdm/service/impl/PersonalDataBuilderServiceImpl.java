@@ -60,12 +60,12 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
 
 
     @Override
-    public Person createPersonalData(PersonalInfo personalInfo) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
+    public Person createPersonalData(PersonalInfo personalInfo, String senderId) throws InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchPaddingException {
         Person res = new Person();
         final byte[] key = pdmXmlConfigService.getInternalKey();
 
         final byte[] keyFile = pdmXmlConfigService.getInternalFileKey();
-
+        byte keySystem[] = pdmXmlConfigService.getSystemDbKey(senderId);
 
         initPersonName(personalInfo, res);
 
@@ -81,12 +81,14 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
             Addr addr = createAddr(addrInfo);
             addrRepository.save(addr);
             res.getAddress().add(new Addresses(Crypting.crypt(key, addr.getPrivateKey())));
+            addrInfo.setPublicKey(Crypting.toPublicKey( Crypting.toListByte(addr.getPrivateKey()), keySystem).getId());
         }
 
         for (ValueInfo telecomInfo : personalInfo.getTelecoms()) {
             Telecom telecom = createTelecom(telecomInfo);
             telecomRepository.save(telecom);
             res.getTelecoms().add(new Telecoms(Crypting.crypt(key, telecom.getPrivateKey())));
+            telecomInfo.setPublicKey(Crypting.toPublicKey(Crypting.toListByte(telecom.getPrivateKey()), keySystem).getId());
         }
 
         for (DocsInfo docsInfo : personalInfo.getDocuments()) {
@@ -96,12 +98,14 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
             }
             documentRepository.save(document);
             res.getDocs().add(new Docs(Crypting.crypt(key, document.getPrivateKey())));
+            docsInfo.setPublicKey(Crypting.toPublicKey(Crypting.toListByte(document.getPrivateKey()), keySystem).getId());
         }
 
         for (ValueInfo fileInfo : personalInfo.getFiles()) {
             PdmFiles pdmFile = createFile(keyFile, fileInfo);
             pdmFilesRepository.save(pdmFile);
             res.getFiles().add(new Files(Crypting.crypt(key, pdmFile.getPrivateKey())));
+            fileInfo.setPublicKey(Crypting.toPublicKey( Crypting.toListByte(pdmFile.getPrivateKey()), keySystem).getId());
         }
 
         return res;
@@ -142,7 +146,10 @@ public class PersonalDataBuilderServiceImpl implements PersonalDataBuilderServic
         if (birth != null) {
             Birth birthTop = birth.top();
             res.getBirthInfo().setBirthDate(birthTop.getBirthDate());
-            res.getBirthInfo().setBirthPlace(createAddrInfo(birthTop.getBirthPlace().top(), senderId, withHistory));
+            Addr birthPlace = birthTop.getBirthPlace();
+            if ( birthPlace != null ) {
+                res.getBirthInfo().setBirthPlace(createAddrInfo(birthPlace.top(), senderId, withHistory));
+            }
         }
 
         res.setAddressList(new ArrayList<AddrInfo>(personalData.getAddress().size()));

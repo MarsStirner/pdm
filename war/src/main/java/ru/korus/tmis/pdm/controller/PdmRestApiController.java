@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ru.korus.tmis.pdm.entities.pdm.Person;
 import ru.korus.tmis.pdm.model.api.FindQuery;
 import ru.korus.tmis.pdm.model.api.*;
 import ru.korus.tmis.pdm.service.AuthService;
@@ -47,11 +48,9 @@ public class PdmRestApiController  implements Serializable, PdmRestApi {
         Identifiers res = new Identifiers();
         String senderOid = checkSenderOid(personInfoReq, res);
         if (senderOid != null) {
-            res.setPublicKeyList(new ArrayList<String>(personInfoReq.getPersonalInfo().size()));
+            res.setPersonalInfoList(new ArrayList<PersonalInfo>(personInfoReq.getPersonalInfo().size()));
             for(PersonalInfo personalInfo : personInfoReq.getPersonalInfo()) {
-                Identifier newPersonId = pdmService.add(personalInfo, senderOid);
-                String id = newPersonId == null ? null : newPersonId.getId();
-                res.getPublicKeyList().add(id);
+                res.getPersonalInfoList().add(pdmService.addRest(personalInfo, senderOid));
             }
         }
         return res;
